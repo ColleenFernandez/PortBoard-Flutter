@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "61035994730",
+    "project_id": "portboard-driver",
+    "storage_bucket": "portboard-driver.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:61035994730:android:6aad233ac3723c0c197413",
+        "android_client_info": {
+          "package_name": "com.portboard.driver"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "61035994730-g0qp5bfc9gqkdoqd6t7a83iv4gp2b98k.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.portboard.driver",
+            "certificate_hash": "e87ae9d574925831e9c0f6aecd71cec7dff714aa"
+          }
+        },
+        {
+          "client_id": "61035994730-ooevnaa1acalicci2qj1k93c0gs339b7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAOxliSN2_ZIiWQoJC6Y6yyc4fgxHqsh94"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "61035994730-ooevnaa1acalicci2qj1k93c0gs339b7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

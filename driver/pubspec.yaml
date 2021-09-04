@@ -1,0 +1,59 @@
+name: driver
+description: A new Flutter project.
+
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.12.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.2
+  logger: ^1.0.0 # logger
+  shared_preferences: ^2.0.6 # shared preference
+  fluttertoast: ^8.0.7 # toast message
+  flutter_absolute_path: ^1.0.6
+  intl: ^0.17.0 # internationalization localization
+  pin_code_fields: ^7.2.0 # OTP code
+  multi_image_picker: ^4.8.1 # multi image picker  https://pub.dev/packages/multi_image_picker/versions/4.7.15
+  country_code_picker: ^2.0.2
+  modal_progress_hud: ^0.1.3 # progress view
+  fbroadcast: ^1.1.1 # broadcast
+  change_app_package_name: ^1.0.0 # change app package name
+  progress_dialog: ^1.2.4 # progress dialog
+
+  # https
+  dio: ^4.0.0
+  http: ^0.13.3
+
+  firebase_core: ^1.3.0
+  firebase_analytics: ^8.1.2
+  firebase_auth: ^2.0.0
+  firebase_messaging: ^10.0.4
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+
+  uses-material-design: true
+  assets:
+    - assets/images/logo.png
+    - assets/images/female.png
+    - assets/images/ic_back.png
+    - assets/images/ic_drop_down.png
+    - assets/images/ic_small_right_triangle.png
+    - assets/images/male.png
+    - assets/images/check_in.png
+
+  fonts:
+    - family: RobotoCondensed
+      fonts:
+        - asset: assets/fonts/RobotoCondensed-Bold.ttf
+        - asset: assets/fonts/RobotoCondensed-Light.ttf
+        - asset: assets/fonts/RobotoCondensed-Regular.ttf
