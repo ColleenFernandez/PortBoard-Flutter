@@ -1,5 +1,6 @@
 import 'package:driver/assets/AppColors.dart';
 import 'package:driver/assets/Assets.dart';
+import 'package:driver/common/Common.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -39,7 +40,7 @@ class _FirstPageState extends State<FirstPage> {
             height: 48,
             margin: EdgeInsets.only(left: 30, right: 30, top: 30, bottom: 100),
             child: ElevatedButton(onPressed: () {
-
+              Navigator.pushNamed(context, '/InputPhoneNumberPage');
             }, child: Text('Sign Up', style: TextStyle(color: Colors.black)),
               style: ElevatedButton.styleFrom(side: BorderSide(width: 1, color: AppColors.green), primary: Colors.white)),
           ),

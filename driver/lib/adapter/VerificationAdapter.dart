@@ -1,7 +1,7 @@
 import 'package:driver/assets/AppColors.dart';
 import 'package:driver/common/Common.dart';
 import 'package:driver/common/Constants.dart';
-import 'package:driver/model/verification_model.dart';
+import 'package:driver/model/VerificationModel.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 

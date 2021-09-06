@@ -1,8 +1,10 @@
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:driver/assets/AppColors.dart';
+import 'package:driver/common/API.dart';
 import 'package:driver/common/Constants.dart';
 import 'package:driver/main.dart';
 import 'package:driver/utils/log_utils.dart';
+import 'package:driver/utils/utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -103,8 +105,12 @@ class _InputPhoneNumberPageState extends State<InputPhoneNumberPage> {
                   width: double.infinity,
                   height: 50,
                   child: ElevatedButton(onPressed: () {
-                    //Navigator.pushNamed(context, '/PhoneOTPPage', arguments: {Constants.PHONE: edtPhone.text});
-                    sendOTP();
+                    if (edtPhone.text.isNotEmpty){
+                      sendOTP();
+                    }else {
+                      showToast('Please input phone number');
+                    }
+
                   }, child: Text('Verify'), style: ElevatedButton.styleFrom(primary: AppColors.green)),
                 )
               ],

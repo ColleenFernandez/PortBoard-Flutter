@@ -4,4 +4,7 @@ class Constants {
   static const String APPROVED = 'Approved';
   static const String REJECTED = 'Rejected';
   static const String NOT_SUBMITTED = 'Not Submitted';
+  static const String ACCOUNT_STATUS = '5'; // 5 means user is a driver
+  static const String MALE = 'male';
+  static const String FEMALE = 'female';
 }

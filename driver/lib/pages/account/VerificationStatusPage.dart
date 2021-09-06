@@ -1,6 +1,6 @@
 import 'package:driver/adapter/VerificationAdapter.dart';
 import 'package:driver/common/Constants.dart';
-import 'package:driver/model/verification_model.dart';
+import 'package:driver/model/VerificationModel.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -76,7 +76,13 @@ class _VerificationStatusPageState extends State<VerificationStatusPage> {
                 shrinkWrap: true,
                 padding: EdgeInsets.only(bottom: 10, left: 20, right: 20),
                 itemBuilder: (BuildContext context, int index) {
-                  return VerificationAdapter().verificationItem(context, allData[index]);
+                  return InkWell(
+                    onTap: () {
+                      VerificationModel model = allData[index];
+                      if (model.status != Constants.APPROVED){
+                        Navigator.pushNamed(context, '/SubmitDriverLicensePage');
+                      }
+                    }, child: VerificationAdapter().verificationItem(context, allData[index]));
                 }
             )
           ],

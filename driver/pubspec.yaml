@@ -25,6 +25,8 @@ dependencies:
   fbroadcast: ^1.1.1 # broadcast
   change_app_package_name: ^1.0.0 # change app package name
   progress_dialog: ^1.2.4 # progress dialog
+  flutter_datetime_picker: ^1.5.1 # Date and Time picker
+  dio_cookie_manager: ^2.0.0 # dio cookie manager
 
   # https
   dio: ^4.0.0
@@ -50,6 +52,7 @@ flutter:
     - assets/images/ic_small_right_triangle.png
     - assets/images/male.png
     - assets/images/check_in.png
+    - assets/images/default_img.png
 
   fonts:
     - family: RobotoCondensed

@@ -1,23 +1,74 @@
 import 'package:driver/assets/AppColors.dart';
 import 'package:driver/assets/Assets.dart';
+import 'package:driver/common/API.dart';
+import 'package:driver/common/Common.dart';
+import 'package:driver/common/Constants.dart';
 import 'package:driver/pages/MainPage.dart';
+import 'package:driver/utils/Prefs.dart';
+import 'package:driver/utils/utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:progress_dialog/progress_dialog.dart';
 
 class RegisterUserDetailPage extends StatefulWidget {
+
+  String phone = '';
+  RegisterUserDetailPage(this.phone);
+
   @override
   _RegisterUserDetailPageState createState() => _RegisterUserDetailPageState();
 }
 
 class _RegisterUserDetailPageState extends State<RegisterUserDetailPage> {
+  late final ProgressDialog progressDialog;
+  final api = API();
 
   TextEditingController edtFirstName = new TextEditingController();
   TextEditingController edtLastName = new TextEditingController();
-  TextEditingController edtMiddleName = new TextEditingController();
   TextEditingController edtEmail = new TextEditingController();
 
-  bool noMiddleName = false, maleSelected = true;
+  bool noMiddleName = false;
+  String gender = Constants.MALE;
 
+
+  @override
+  void initState() {
+    super.initState();
+    progressDialog = ProgressDialog(context);
+    progressDialog.style(progressWidget: Container(padding: EdgeInsets.all(13), child: CircularProgressIndicator(color: AppColors.green)));
+  }
+
+  bool isValid(){
+
+    if (edtFirstName.text.isEmpty){
+      showToast('Please input firstname');
+      return false;
+    }
+
+    if (edtLastName.text.isEmpty){
+      showToast('Please input lastname');
+      return false;
+    }
+
+    if (edtEmail.text.isEmpty){
+      showToast('Please input email');
+      return false;
+    }
+
+    return true;
+  }
+  void registerUserDetail() {
+    progressDialog.show();
+    api.register(widget.phone, edtFirstName.text, edtLastName.text, edtEmail.text, gender, Constants.ACCOUNT_STATUS).then((value) {
+      progressDialog.hide();
+      if (value is String){
+        showToast(value);
+      }else {
+        Common.userModel = value;
+        gotoMainPage();
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +113,7 @@ class _RegisterUserDetailPageState extends State<RegisterUserDetailPage> {
                           borderSide: BorderSide(color: AppColors.green, width: 2)
                       )
                   ),
-                  controller: edtFirstName,
+                  controller: edtLastName,
                   style: TextStyle(fontSize: 20),
                 ),
               ),
@@ -79,7 +130,7 @@ class _RegisterUserDetailPageState extends State<RegisterUserDetailPage> {
                           borderSide: BorderSide(color: AppColors.green, width: 2)
                       )
                   ),
-                  controller: edtFirstName,
+                  controller: edtEmail,
                   style: TextStyle(fontSize: 20),
                 ),
               ),
@@ -90,7 +141,7 @@ class _RegisterUserDetailPageState extends State<RegisterUserDetailPage> {
                   InkWell(
                     onTap: () {
                       setState(() {
-                        maleSelected = true;
+                        gender = Constants.MALE;
                       });
                     },
                     child: Container(
@@ -104,7 +155,7 @@ class _RegisterUserDetailPageState extends State<RegisterUserDetailPage> {
                           Image(image: Assets.IMG_MALE, height: 80),
                           SizedBox(height: 10),
                           Visibility(
-                            visible: maleSelected,
+                            visible: gender == Constants.MALE,
                               child: Image(image: Assets.IC_CHECK_IN, height: 20))
                         ],
                       ),
@@ -114,7 +165,7 @@ class _RegisterUserDetailPageState extends State<RegisterUserDetailPage> {
                   InkWell(
                     onTap: () {
                       setState(() {
-                        maleSelected = false;
+                        gender = Constants.FEMALE;
                       });
                     },
                     child: Container(
@@ -128,7 +179,7 @@ class _RegisterUserDetailPageState extends State<RegisterUserDetailPage> {
                           Image(image: Assets.IMG_FEMALE, height: 80),
                           SizedBox(height: 10),
                           Visibility(
-                            visible: !maleSelected,
+                            visible: gender == Constants.FEMALE,
                               child: Image(image: Assets.IC_CHECK_IN, height: 20))
                         ],
                       ),
@@ -145,7 +196,9 @@ class _RegisterUserDetailPageState extends State<RegisterUserDetailPage> {
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(primary: AppColors.green),
                   onPressed: () {
-                    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) => MainPage()), ModalRoute.withName('/MainPage'));
+                    if (isValid()){
+                      registerUserDetail();
+                    }
                   },
                   child: Text('Register', style: TextStyle(fontSize: 18)),
                 ),
@@ -155,5 +208,11 @@ class _RegisterUserDetailPageState extends State<RegisterUserDetailPage> {
         ),
       ),
     );
+  }
+
+  // go to page
+  void gotoMainPage() {
+    Prefs.save(Constants.PHONE, widget.phone);
+    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) => MainPage()), ModalRoute.withName('/MainPage'));
   }
 }

@@ -1,6 +1,8 @@
 import 'package:driver/assets/AppColors.dart';
+import 'package:driver/common/API.dart';
+import 'package:driver/common/Common.dart';
 import 'package:driver/common/Constants.dart';
-import 'package:driver/pages/login_signup_account/RegisterUserDetailPage.dart';
+import 'package:driver/utils/Prefs.dart';
 import 'package:driver/utils/log_utils.dart';
 import 'package:driver/utils/utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -8,6 +10,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:progress_dialog/progress_dialog.dart';
+
+import '../MainPage.dart';
+import 'RegisterUserDetailPage.dart';
 
 class PhoneOTPPage extends StatefulWidget{
 
@@ -20,14 +25,36 @@ class PhoneOTPPage extends StatefulWidget{
 
 class _PhoneOTPPageState extends State<PhoneOTPPage> {
 
+  final api = API();
   late final ProgressDialog progressDialog;
   String phone = '', verificationId = '', verifyCode = '';
+  bool isUserExist = true;
 
   @override
   void initState() {
     super.initState();
     progressDialog = ProgressDialog(context);
     progressDialog.style(progressWidget: Container(padding: EdgeInsets.all(13), child: CircularProgressIndicator(color: AppColors.green)));
+  }
+
+  void getUserModel() async{
+    progressDialog.show();
+    api.login(phone).then((value) {
+      progressDialog.hide();
+
+      if (value is String){
+        showToast(value);
+        setState(() {
+          isUserExist = false;
+        });
+      }else{
+        Common.userModel = value;
+        gotoMainPage();
+      }
+    }).onError((error, stackTrace) {
+      progressDialog.hide();
+      showToast(error.toString());
+    });
   }
 
   void sendOTP() async{
@@ -56,13 +83,9 @@ class _PhoneOTPPageState extends State<PhoneOTPPage> {
       if (value.user != null){
         progressDialog.hide();
         showToast('Phone verification succeed');
-        gotoRegisterUserDetailPage();
+        getUserModel();
       }
     });
-  }
-
-  void gotoRegisterUserDetailPage(){
-    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) => RegisterUserDetailPage()), ModalRoute.withName('/RegisterUserDetailPage'));
   }
 
   @override
@@ -134,10 +157,40 @@ class _PhoneOTPPageState extends State<PhoneOTPPage> {
                   Icon(Icons.arrow_right, color: AppColors.green)
                 ],
               ),
-            )
+            ),
+            Visibility(
+                visible: !isUserExist ,
+                child: Column(
+                  children: [
+                    Container(
+                        margin: EdgeInsets.only(left: 30, right: 30, top: 100),
+                        child: Text('User is not registered, Please continue for Sign Up',style: TextStyle(fontSize: 17),)),
+                    Container(
+                      height: 48,
+                      width: double.infinity,
+                      margin: EdgeInsets.only(left: 30, right: 30, top: 20),
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(primary: AppColors.green),
+                        onPressed: () {
+                          gotoRegisterUserDetailPage();
+                        }, child: Text('Continue with Signup'),
+                      ),
+                    ),
+                  ],
+                ))
           ],
         ),
       ),
     );
+  }
+
+  // goto pages
+  void gotoMainPage(){
+    Prefs.save(Constants.PHONE, phone);
+    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) => MainPage()), ModalRoute.withName('/MainPage'));
+  }
+
+  void gotoRegisterUserDetailPage(){
+    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) => RegisterUserDetailPage(phone)), ModalRoute.withName('/RegisterUserDetailPage'));
   }
 }
