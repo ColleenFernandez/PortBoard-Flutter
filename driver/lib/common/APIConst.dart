@@ -31,4 +31,13 @@ class APIConst{
   static const String MCMX_NUMBER = 'mcmx_number';
   static const String CARRIER_ID = 'carrier_id';
   static const String USER = 'user';
+  static const String NUMBER = 'number';
+  static const String LICENSE_MODEL = 'licenseModel';
+  static const String EXPIRATION_DATE = 'expiration_date';
+  static const String PHOTO_FRONT = 'photo_front';
+  static const String PHOTO_BACK = 'photo_back';
+  static const String DRIVER_ID = 'driver_id';
+  static const String FRONT_PICTURE = 'frontPicture';
+  static const String BACK_PICTURE = 'backPicture';
+  static const String LICENSE_NUMBER = 'licenseNumber';
 }

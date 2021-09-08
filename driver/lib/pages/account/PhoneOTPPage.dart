@@ -100,9 +100,9 @@ class _PhoneOTPPageState extends State<PhoneOTPPage> {
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-            backgroundColor: Colors.white,
+            backgroundColor: AppColors.darkBlue,
             elevation: 2,
-            iconTheme: IconThemeData(color: Colors.black87)),
+            iconTheme: IconThemeData(color: Colors.white)),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

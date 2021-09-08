@@ -1,4 +1,5 @@
 import 'package:driver/adapter/VerificationAdapter.dart';
+import 'package:driver/assets/AppColors.dart';
 import 'package:driver/common/Constants.dart';
 import 'package:driver/model/VerificationModel.dart';
 import 'package:flutter/cupertino.dart';
@@ -21,7 +22,7 @@ class _VerificationStatusPageState extends State<VerificationStatusPage> {
 
   void getVerificationData(){
     VerificationModel model1 = new VerificationModel();
-    model1.status = Constants.APPROVED;
+    model1.status = Constants.NOT_SUBMITTED;
     model1.documentName = 'Driver License';
     model1.expireDate = 0;
     model1.reason = '';
@@ -46,10 +47,10 @@ class _VerificationStatusPageState extends State<VerificationStatusPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-          backgroundColor: Colors.white,
-          title: Text('Verification Status', style: TextStyle(color: Colors.black87, fontSize: 16)),
+          backgroundColor: AppColors.darkBlue,
+          title: Text('Verification Status', style: TextStyle(color: Colors.white, fontSize: 16)),
           elevation: 2,
-          iconTheme: IconThemeData(color: Colors.black87)),
+          iconTheme: IconThemeData(color: Colors.white)),
       body: SingleChildScrollView(
         child: Column(
           children: [

@@ -65,9 +65,9 @@ class _InputPhoneNumberPageState extends State<InputPhoneNumberPage> {
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-            backgroundColor: Colors.white,
+            backgroundColor: AppColors.darkBlue,
             elevation: 2,
-            iconTheme: IconThemeData(color: Colors.black87)),
+            iconTheme: IconThemeData(color: Colors.white)),
         body: Container(
             padding: EdgeInsets.only(left: 30, right: 30, top: 50),
             child: Column(

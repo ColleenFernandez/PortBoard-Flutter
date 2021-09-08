@@ -15,7 +15,7 @@ import 'package:progress_dialog/progress_dialog.dart';
 
 void main() {
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-    statusBarColor: AppColors.green
+    statusBarColor: AppColors.darkBlue
   ));
   runApp(MyApp());
 }

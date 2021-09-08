@@ -6,6 +6,7 @@ import 'package:dio/adapter.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:driver/common/APIConst.dart';
+import 'package:driver/model/DriverLicenseModel.dart';
 import 'package:driver/model/UserModel.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:cookie_jar/cookie_jar.dart';
@@ -23,6 +24,29 @@ class API {
     'Content-Type': 'application/x-www-form-urlencoded',
   };
 
+  Future<dynamic> submitDriverLicense(String frontPicPath, String backPicPath, String state, String licenseNumber, String expireDate, String driverId) async {
+    final url = baseURL + '/submitDriverLicense';
+    final params = FormData.fromMap({
+      APIConst.FRONT_PICTURE : await MultipartFile.fromFile(frontPicPath),
+      APIConst.BACK_PICTURE : await MultipartFile.fromFile(backPicPath),
+      APIConst.STATUS : state,
+      APIConst.LICENSE_NUMBER : licenseNumber,
+      APIConst.EXPIRATION_DATE : expireDate,
+      APIConst.DRIVER_ID : driverId
+    });
+
+    final res = await dio.post(url, data: params);
+    if (res.statusCode != 200){
+      return APIConst.SERVER_ERROR;
+    }
+
+    final msg = res.data[APIConst.MSG];
+    if (msg != APIConst.SUCCESS){
+      return msg;
+    }
+
+    return DriverLicenseModel.fromJSON(res.data[APIConst.LICENSE_MODEL]);
+  }
 
   Future<dynamic> login(String phone) async{
 

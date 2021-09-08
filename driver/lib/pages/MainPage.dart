@@ -18,14 +18,14 @@ class _MainPageState extends State<MainPage> {
     final textTheme = theme.textTheme;
 
     return Scaffold(
-      appBar: AppBar(backgroundColor: AppColors.green),
+      appBar: AppBar(backgroundColor: AppColors.darkBlue),
 
       drawer: Drawer(
         child: Column(
           children: [
             Container(
               height: 200,
-              color: AppColors.green,
+              color: AppColors.darkBlue,
             ),
             ListTile(
               leading: Icon(Icons.fact_check_outlined, color: Colors.black),

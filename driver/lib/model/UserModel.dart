@@ -1,4 +1,5 @@
 import 'package:driver/common/APIConst.dart';
+import 'package:driver/model/DriverLicenseModel.dart';
 import 'package:flutter/material.dart';
 
 class UserModel {
@@ -29,6 +30,7 @@ class UserModel {
   String usdotNumber = '';
   String mcmxNumber = '';
   String carrierId = '';
+  DriverLicenseModel licenseModel = new DriverLicenseModel();
 
   UserModel();
 

@@ -77,9 +77,9 @@ class _RegisterUserDetailPageState extends State<RegisterUserDetailPage> {
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-            backgroundColor: Colors.white,
+            backgroundColor: AppColors.darkBlue,
             elevation: 0,
-            iconTheme: IconThemeData(color: Colors.black87)),
+            iconTheme: IconThemeData(color: Colors.white)),
         body: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
