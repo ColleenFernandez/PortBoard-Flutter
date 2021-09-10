@@ -18,7 +18,9 @@ class _MainPageState extends State<MainPage> {
     final textTheme = theme.textTheme;
 
     return Scaffold(
-      appBar: AppBar(backgroundColor: AppColors.darkBlue),
+      appBar: AppBar(
+          title: Text('Home', style: TextStyle(color: Colors.white)),
+          backgroundColor: AppColors.darkBlue),
 
       drawer: Drawer(
         child: Column(

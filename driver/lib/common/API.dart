@@ -29,7 +29,7 @@ class API {
     final params = FormData.fromMap({
       APIConst.FRONT_PICTURE : await MultipartFile.fromFile(frontPicPath),
       APIConst.BACK_PICTURE : await MultipartFile.fromFile(backPicPath),
-      APIConst.STATUS : state,
+      APIConst.STATE : state,
       APIConst.LICENSE_NUMBER : licenseNumber,
       APIConst.EXPIRATION_DATE : expireDate,
       APIConst.DRIVER_ID : driverId

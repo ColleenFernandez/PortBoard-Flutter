@@ -22,10 +22,9 @@ class _FirstPageState extends State<FirstPage> {
     return Scaffold(
       body: Column(
         children: [
-          SizedBox(height: 150,),
-          Center(child: Image(image: Assets.IMG_LOGO, width: 90, height: 150)),
+          SizedBox(height: 60,),
+          Center(child: Image(image: Assets.IMG_LOGO, width: 170, height: 280)),
           SizedBox(height: 20,),
-          Text('Port Board Driver', style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, fontFamily: 'RobotoCondensed')),
           Spacer(),
           Container(
             width: double.infinity,

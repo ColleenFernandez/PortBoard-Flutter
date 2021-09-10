@@ -53,6 +53,8 @@ flutter:
     - assets/images/male.png
     - assets/images/check_in.png
     - assets/images/default_img.png
+    - assets/images/wait_approve.png
+    - assets/images/company_logo.png
 
   fonts:
     - family: RobotoCondensed

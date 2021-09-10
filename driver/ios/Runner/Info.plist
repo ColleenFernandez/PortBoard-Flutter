@@ -70,5 +70,7 @@
 			<true/>
 		</dict>
 	</dict>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Please allow this permission to upload photo</string>
 </dict>
 </plist>

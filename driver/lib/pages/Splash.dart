@@ -67,10 +67,9 @@ class _SplashPageState extends State<SplashPage> {
     return Scaffold(
       body: Column(
         children: [
-          SizedBox(height: 150),
-          Center(child: Image(image: Assets.IMG_LOGO, width: 90, height: 150)),
+          SizedBox(height: 80),
+          Center(child: Image(image: Assets.IMG_LOGO, width: 200, height: 350)),
           SizedBox(height: 20,),
-          Text('Port Board', style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
         ],
       ),
     );

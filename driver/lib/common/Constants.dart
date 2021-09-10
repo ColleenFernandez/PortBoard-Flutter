@@ -8,4 +8,5 @@ class Constants {
   static const String MALE = 'male';
   static const String FEMALE = 'female';
   static const String LICENSE_PIC_BASE_URL = 'https://portboard.app/siteadmin/uploads/drivers-documents/';
+  static const String DRIVER_LICENSE = 'Driver License';
 }

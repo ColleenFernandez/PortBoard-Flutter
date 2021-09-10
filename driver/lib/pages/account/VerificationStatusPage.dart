@@ -23,7 +23,7 @@ class _VerificationStatusPageState extends State<VerificationStatusPage> {
   void getVerificationData(){
     VerificationModel model1 = new VerificationModel();
     model1.status = Constants.NOT_SUBMITTED;
-    model1.documentName = 'Driver License';
+    model1.documentName = Constants.DRIVER_LICENSE;
     model1.expireDate = 0;
     model1.reason = '';
 
@@ -80,7 +80,7 @@ class _VerificationStatusPageState extends State<VerificationStatusPage> {
                   return InkWell(
                     onTap: () {
                       VerificationModel model = allData[index];
-                      if (model.status != Constants.APPROVED){
+                      if (model.status != Constants.APPROVED && model.documentName == Constants.DRIVER_LICENSE){
                         Navigator.pushNamed(context, '/SubmitDriverLicensePage');
                       }
                     }, child: VerificationAdapter().verificationItem(context, allData[index]));
