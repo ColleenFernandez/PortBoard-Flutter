@@ -1,3 +1,5 @@
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+
 class Constants {
   static const String PHONE = 'phone';
   static const String VERIFICATION_ID = '';
@@ -9,4 +11,6 @@ class Constants {
   static const String FEMALE = 'female';
   static const String LICENSE_PIC_BASE_URL = 'https://portboard.app/siteadmin/uploads/drivers-documents/';
   static const String DRIVER_LICENSE = 'Driver License';
+  static const String TWIC_CARD = 'Twic Card';
+  static const LatLng initMapPosition = const LatLng(0.0, 0.0);
 }

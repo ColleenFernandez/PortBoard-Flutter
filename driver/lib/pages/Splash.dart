@@ -30,7 +30,10 @@ class _SplashPageState extends State<SplashPage> {
     super.initState();
     progressDialog = ProgressDialog(context);
     progressDialog.style(progressWidget: Container(padding: EdgeInsets.all(13), child: CircularProgressIndicator(color: AppColors.green)));
-    readSession();
+
+    Future.delayed(const Duration(milliseconds: 5000), () {
+      readSession();
+    });
   }
 
   void readSession() async {
@@ -38,9 +41,7 @@ class _SplashPageState extends State<SplashPage> {
     if (phone != null){
       login();
     }else {
-      Future.delayed(const Duration(milliseconds: 2000), () {
-        Navigator.pushNamed(context, '/FirstPage');
-      });
+      Navigator.pushNamed(context, '/FirstPage');
     }
   }
 
@@ -65,13 +66,7 @@ class _SplashPageState extends State<SplashPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          SizedBox(height: 80),
-          Center(child: Image(image: Assets.IMG_LOGO, width: 200, height: 350)),
-          SizedBox(height: 20,),
-        ],
-      ),
+      body: Image(image: Assets.IMG_SPLASH_BG),
     );
   }
 }

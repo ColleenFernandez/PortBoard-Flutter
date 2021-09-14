@@ -23,7 +23,7 @@ class _FirstPageState extends State<FirstPage> {
       body: Column(
         children: [
           SizedBox(height: 60,),
-          Center(child: Image(image: Assets.IMG_LOGO, width: 170, height: 280)),
+          Center(child: Image(image: Assets.IMG_LOGO, width: 250, height: 350)),
           SizedBox(height: 20,),
           Spacer(),
           Container(

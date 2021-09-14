@@ -9,6 +9,10 @@
    <application
         android:label="PortBoard Driver"
         android:icon="@mipmap/ic_launcher">
+
+       <meta-data android:name="com.google.android.geo.API_KEY"
+           android:value="AIzaSyA_X-FjXFT18MKZMhORUsfdxszWnRC3FiI"/>
+
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

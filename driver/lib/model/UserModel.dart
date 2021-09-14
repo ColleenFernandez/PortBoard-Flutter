@@ -1,5 +1,6 @@
 import 'package:driver/common/APIConst.dart';
 import 'package:driver/model/DriverLicenseModel.dart';
+import 'package:driver/model/TwicCardModel.dart';
 import 'package:flutter/material.dart';
 
 class UserModel {
@@ -31,6 +32,7 @@ class UserModel {
   String mcmxNumber = '';
   String carrierId = '';
   DriverLicenseModel licenseModel = new DriverLicenseModel();
+  TwicCardModel twicCardModel = new TwicCardModel();
 
   UserModel();
 

@@ -29,7 +29,7 @@ class _VerificationStatusPageState extends State<VerificationStatusPage> {
 
     VerificationModel model2 = new VerificationModel();
     model2.status = Constants.REJECTED;
-    model2.documentName = 'Twic Card';
+    model2.documentName = Constants.TWIC_CARD;
     model2.expireDate = 0;
     model2.reason = 'Twic card picture is not clear, Please take out picture with high quality, and submit again.';
 
@@ -82,6 +82,10 @@ class _VerificationStatusPageState extends State<VerificationStatusPage> {
                       VerificationModel model = allData[index];
                       if (model.status != Constants.APPROVED && model.documentName == Constants.DRIVER_LICENSE){
                         Navigator.pushNamed(context, '/SubmitDriverLicensePage');
+                      }
+
+                      if (model.status != Constants.APPROVED && model.documentName == Constants.TWIC_CARD){
+                        Navigator.pushNamed(context, '/SubmitTwicCardPage');
                       }
                     }, child: VerificationAdapter().verificationItem(context, allData[index]));
                 }

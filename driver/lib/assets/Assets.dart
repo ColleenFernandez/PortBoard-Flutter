@@ -8,4 +8,5 @@ class Assets{
   static const DEFAULT_IMG = AssetImage('assets/images/default_img.png');
   static const WAIT_APPROVE_IMG = AssetImage('assets/images/wait_approve.png');
   static const IMG_COMPANY_LOGO = AssetImage('assets/images/company_logo.png');
+  static const IMG_SPLASH_BG = AssetImage('assets/images/bg_splash.gif');
 }
