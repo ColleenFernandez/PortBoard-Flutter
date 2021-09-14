@@ -122,6 +122,8 @@ class JobModel {
       model.longitude = 0.0;
     }
 
+    model.estimated_price_driver = res[APIConst.estimated_price_driver];
+
     return model;
   }
 }

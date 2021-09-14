@@ -181,7 +181,7 @@ class _SubmitTwicCardPageState extends State<SubmitTwicCardPage> {
                 margin: EdgeInsets.only(left: 30, right: 30, top: 5),
                 child: Stack(
                   children: [
-                    StsImgView(image: frontPic),
+                    StsImgView(image: frontPic, width: double.infinity, height: 250),
                     Positioned(right: 0, bottom: 0,
                         child: FloatingActionButton(
                             mini: true,
@@ -201,7 +201,7 @@ class _SubmitTwicCardPageState extends State<SubmitTwicCardPage> {
                 margin: EdgeInsets.only(left: 30, right: 30, top: 5),
                 child: Stack(
                   children: [
-                    StsImgView(image: backPic),
+                    StsImgView(image: backPic, width: double.infinity, height: 250),
                     Positioned(right: 0, bottom: 0,
                         child: FloatingActionButton(
                             heroTag: 'btn1',
