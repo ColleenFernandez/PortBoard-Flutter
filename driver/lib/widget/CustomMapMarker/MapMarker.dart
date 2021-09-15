@@ -1,3 +1,4 @@
+import 'package:driver/assets/AppColors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -24,7 +25,7 @@ class _MapMarkerState extends State<MapMarker> {
         children: [
           Container(
             decoration: ShapeDecoration(
-              color: Colors.black87,
+              color: AppColors.darkBlue,
               shape: TooltipShapeBorder(arrowArc: 0.5),
               shadows: [
                 BoxShadow(
@@ -32,8 +33,8 @@ class _MapMarkerState extends State<MapMarker> {
               ],
             ),
             child: Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Text('\$${widget.location.name}', style: TextStyle(color: Colors.white)),
+              padding: EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
+              child: Text('\$${widget.location.name}', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18)),
             ),
           ),
         ],
