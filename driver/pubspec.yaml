@@ -29,6 +29,7 @@ dependencies:
   dio_cookie_manager: ^2.0.0 # dio cookie manager
   google_maps_flutter: ^2.0.8
   after_layout: ^1.1.0 # after layout
+  flutter_rating_bar: ^4.0.0 # rating bar
 
   # https
   dio: ^4.0.0
@@ -58,6 +59,8 @@ flutter:
     - assets/images/wait_approve.png
     - assets/images/company_logo.png
     - assets/images/bg_splash.gif
+    - assets/images/nelson.png
+    - assets/images/arrow_down.png
 
   fonts:
     - family: RobotoCondensed

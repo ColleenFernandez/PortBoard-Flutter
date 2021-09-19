@@ -1,5 +1,6 @@
 // @dart=2.9
 import 'package:driver/assets/AppColors.dart';
+import 'package:driver/pages/Job/JobDetailPage.dart';
 import 'package:driver/pages/MainPage.dart';
 import 'package:driver/pages/Splash.dart';
 import 'package:driver/pages/account/FirstPage.dart';
@@ -56,6 +57,7 @@ class _MyAppState extends State<MyApp> {
         '/SubmitDriverLicensePage' : (BuildContext context) => SubmitDriverLicensePage(),
         '/SubmitTwicCardPage' : (BuildContext context) => SubmitTwicCardPage(),
         '/SubmitSealinkCardPage' : (BuildContext context) => SubmitSealinkCardPage(),
+        '/JobDetailPage' : (BuildContext context) => JobDetailPage(),
       },
     );
   }

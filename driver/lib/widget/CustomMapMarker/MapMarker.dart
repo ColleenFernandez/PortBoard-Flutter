@@ -18,7 +18,6 @@ class _MapMarkerState extends State<MapMarker> {
   @override
   Widget build(BuildContext context) {
     return Container(
-
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,

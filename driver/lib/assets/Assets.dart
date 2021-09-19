@@ -9,4 +9,6 @@ class Assets{
   static const WAIT_APPROVE_IMG = AssetImage('assets/images/wait_approve.png');
   static const IMG_COMPANY_LOGO = AssetImage('assets/images/company_logo.png');
   static const IMG_SPLASH_BG = AssetImage('assets/images/bg_splash.gif');
+  static const NELSON_IMG = AssetImage('assets/images/nelson.png');
+  static const ICON_ARROW_DOWN = AssetImage('assets/images/arrow_down.png');
 }

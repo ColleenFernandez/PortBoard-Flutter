@@ -124,6 +124,9 @@ class JobModel {
 
     model.estimated_price_driver = res[APIConst.estimated_price_driver];
 
+    model.state_from = res[APIConst.state_from];
+    model.created_at = res[APIConst.created_at];
+
     return model;
   }
 }
