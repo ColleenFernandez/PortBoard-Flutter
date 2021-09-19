@@ -30,6 +30,8 @@ dependencies:
   google_maps_flutter: ^2.0.8
   after_layout: ^1.1.0 # after layout
   flutter_rating_bar: ^4.0.0 # rating bar
+  fdottedline: ^1.0.1 # dotted line
+  flutter_advanced_switch: ^2.1.0 # toggle switch
 
   # https
   dio: ^4.0.0

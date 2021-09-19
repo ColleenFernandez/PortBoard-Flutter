@@ -99,6 +99,7 @@ class JobModel {
   String last_updated_at = '';
   String last_updated_financial_by = '';
   String last_updated_financial_at = '';
+  bool isSelected = false;
 
 
   JobModel();

@@ -13,4 +13,6 @@ class Constants {
   static const String DRIVER_LICENSE = 'Driver License';
   static const String TWIC_CARD = 'Twic Card';
   static const LatLng initMapPosition = const LatLng(0.0, 0.0);
+
+  // broadcast consts
 }

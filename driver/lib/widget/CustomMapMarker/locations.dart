@@ -1,10 +1,12 @@
+import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class Location {
-  final LatLng coordinates;
-  final String name;
+  LatLng coordinates;
+  String name;
+  Color bgColor;
 
-  Location(this.coordinates, this.name);
+  Location(this.coordinates, this.name, this.bgColor);
 }
 
 /*

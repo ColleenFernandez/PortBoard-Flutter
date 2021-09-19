@@ -7,7 +7,7 @@ class TooltipShapeBorder extends ShapeBorder {
   final double radius;
 
   TooltipShapeBorder({
-    this.radius = 10.0,
+    this.radius = 5.0,
     this.arrowWidth = 20.0,
     this.arrowHeight = 20.0,
     this.arrowArc = 0.0,
