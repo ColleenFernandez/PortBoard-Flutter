@@ -44,6 +44,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
 
     return new MaterialApp(
+      theme: ThemeData(fontFamily: 'RobotoCondensed'),
       debugShowCheckedModeBanner: false,
       home: new SplashPage(),
       routes:  <String, WidgetBuilder> {

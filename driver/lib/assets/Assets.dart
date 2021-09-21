@@ -11,4 +11,6 @@ class Assets{
   static const IMG_SPLASH_BG = AssetImage('assets/images/bg_splash.gif');
   static const NELSON_IMG = AssetImage('assets/images/nelson.png');
   static const ICON_ARROW_DOWN = AssetImage('assets/images/arrow_down.png');
+
+  static const String ROBOTO_FONT = 'RobotoCondensed';
 }

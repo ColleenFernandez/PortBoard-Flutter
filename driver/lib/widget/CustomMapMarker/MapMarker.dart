@@ -37,12 +37,12 @@ class _MapMarkerState extends State<MapMarker> {
               Container(
                 decoration: ShapeDecoration(
                   color: widget.location.bgColor,
-                  shape: TooltipShapeBorder(arrowArc: 0.1),
-                  shadows: [BoxShadow(color: Colors.black26, blurRadius: 1.0, offset: Offset(1, 1))],
+                  shape: TooltipShapeBorder(arrowArc: 0.2),
+                  shadows: [BoxShadow(color: Colors.black26, blurRadius: 5, offset: Offset(2, 2))],
                 ),
                 child: Padding(
                   padding: EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
-                  child: Text('\$${widget.location.name}', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18)),
+                  child: Text('\$ ${widget.location.name}', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18)),
                 )),
             ]
           )],
