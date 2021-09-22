@@ -12,8 +12,8 @@ class WaterRipple extends StatefulWidget {
   _WaterRippleState createState() => _WaterRippleState();
 }
 
-class _WaterRippleState extends State<WaterRipple>
-    with SingleTickerProviderStateMixin {
+class _WaterRippleState extends State<WaterRipple> with SingleTickerProviderStateMixin {
+
   late AnimationController _controller;
 
   @override

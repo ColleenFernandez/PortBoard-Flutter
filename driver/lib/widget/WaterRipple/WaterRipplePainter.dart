@@ -10,7 +10,7 @@ class WaterRipplePainter extends CustomPainter {
   Paint _paint = Paint()..style = PaintingStyle.fill;
 
   WaterRipplePainter(this.progress,
-      {this.count = 3, this.color = const Color(0xFF0080ff)});
+      {this.count = 3, this.color = const Color(0xFF868fa4)});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -23,8 +23,7 @@ class WaterRipplePainter extends CustomPainter {
 
       double _radius = radius * ((i + progress) / (count + 1));
 
-      canvas.drawCircle(
-          Offset(size.width / 2, size.height / 2), _radius, _paint);
+      canvas.drawCircle(Offset(size.width / 2, size.height / 2), _radius, _paint);
     }
   }
 

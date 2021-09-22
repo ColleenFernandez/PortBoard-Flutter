@@ -123,11 +123,24 @@ class JobModel {
       model.longitude = 0.0;
     }
 
-    model.estimated_price_driver = res[APIConst.estimated_price_driver];
+    String price = res[APIConst.estimated_price_driver];
+    if (!price.contains('.')){
+      price += '.00';
+    }
+
+    model.estimated_price_driver = price;
 
     model.state_from = res[APIConst.state_from];
     model.created_at = res[APIConst.created_at];
 
     return model;
+  }
+
+  List<JobModel> getList(List<dynamic> data) {
+    List<JobModel> allData = [];
+    data.forEach((element) {
+      allData.add(JobModel.fromJSON(element));
+    });
+    return allData;
   }
 }

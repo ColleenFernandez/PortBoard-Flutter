@@ -1,20 +1,18 @@
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:driver/assets/AppColors.dart';
 import 'package:driver/assets/Assets.dart';
 import 'package:driver/common/API.dart';
 import 'package:driver/common/APIConst.dart';
-import 'package:driver/common/Common.dart';
 import 'package:driver/common/Constants.dart';
 import 'package:driver/model/JobModel.dart';
-import 'package:driver/utils/log_utils.dart';
 import 'package:driver/utils/utils.dart';
 import 'package:driver/widget/CustomMapMarker/MapMarker.dart';
 import 'package:driver/widget/CustomMapMarker/MarkerGenerator.dart';
 import 'package:driver/widget/CustomMapMarker/locations.dart';
 import 'package:driver/widget/StsImgView.dart';
 import 'package:driver/widget/WaterRipple/WaterRipple.dart';
-import 'package:fbroadcast/fbroadcast.dart';
 import 'package:fdottedline/fdottedline.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -48,6 +46,8 @@ class _MainPageState extends State<MainPage> {
   dynamic userPhoto = Assets.DEFAULT_IMG;
   bool isMarkerClicked = false, isBottomSheetShown = false;
 
+  final controller = Completer<GoogleMapController>();
+
   @override
   void initState() {
     super.initState();
@@ -71,9 +71,11 @@ class _MainPageState extends State<MainPage> {
 
             Future.delayed(Duration(seconds: 2), () {
               mapController.moveCamera(CameraUpdate.scrollBy(0, 150));
+              setState(() {
+                isBottomSheetShown = true;
+              });
             });
 
-            isBottomSheetShown = true;
             showModalBottomSheet(
                 barrierColor: Colors.transparent,
                 backgroundColor: Colors.transparent,
@@ -127,6 +129,7 @@ class _MainPageState extends State<MainPage> {
       showToast(APIConst.SERVER_ERROR);
     });
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -264,18 +267,84 @@ class _MainPageState extends State<MainPage> {
       ),
       body: Stack(
         children: [
-          GoogleMap(zoomGesturesEnabled: true, mapType: MapType.normal,
-            initialCameraPosition:  CameraPosition(
-                target: _center,
-                zoom: 20
-            ), //getCameraPosition(),
-            markers: customMarkers.toSet(),
-            onMapCreated: (controller) {
-              setState(() {
-                mapController = controller;
-                getAllJobs();
-              });
-            }),
+          Column(
+            children: [
+              Expanded(
+                child: GoogleMap(
+                  zoomGesturesEnabled: true, mapType: MapType.normal,
+                  initialCameraPosition:  CameraPosition(
+                      target: _center,
+                      zoom: 20), //getCameraPosition(),
+                  markers: customMarkers.toSet(),
+                  onMapCreated: (gcontroller) {
+                    controller.complete(gcontroller);
+                    setState(() {
+                      mapController = gcontroller;
+                      getAllJobs();
+                    });}),
+              ),
+              Container(
+                padding: EdgeInsets.only(top: 5, bottom: 5),
+                width: MediaQuery.of(context).size.width,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(color: Colors.black87, blurRadius: 4, offset: Offset(0, 1))
+                  ],
+                ),
+                child: DefaultTabController(
+                  length: 4,
+                  initialIndex: 0,
+                  child: TabBar(
+                    onTap: (index) {
+                      if (index == 0){
+                        Navigator.pushNamed(context, '/JobSearchPage');
+                      }
+                    },
+                    indicatorColor: Colors.transparent,
+                    labelColor: AppColors.green,
+                    unselectedLabelColor: Colors.black54,
+                    labelStyle: TextStyle(fontWeight: FontWeight.bold),
+                    unselectedLabelStyle: TextStyle(fontWeight: FontWeight.normal),
+                    tabs: <Widget>[
+                        Column(
+                          children: [
+                            SizedBox(height: 5),
+                            Icon(Icons.event_note),
+                            SizedBox(height: 5),
+                            Text('Calendar', style: TextStyle(fontSize: 10)),
+                          ],
+                        ),
+                      Column(
+                        children: [
+                          SizedBox(height: 5),
+                          Icon(Icons.local_shipping),
+                          SizedBox(height: 5),
+                          Text('Calendar', style: TextStyle(fontSize: 10)),
+                        ],
+                      ),
+                      Column(
+                        children: [
+                          SizedBox(height: 5),
+                          Icon(Icons.work),
+                          SizedBox(height: 5),
+                          Text('Calendar', style: TextStyle(fontSize: 10)),
+                        ],
+                      ),
+                      Column(
+                        children: [
+                          SizedBox(height: 5),
+                          Icon(Icons.yard_rounded),
+                          SizedBox(height: 5),
+                          Text('Calendar', style: TextStyle(fontSize: 10)),
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+              )
+            ],
+          ),
           Positioned(
             right: 10,
             child: Container(margin: EdgeInsets.only(left: 10, top: 10),
@@ -286,7 +355,7 @@ class _MainPageState extends State<MainPage> {
                   visible: isBottomSheetShown,
                   child: Container(
                     margin: EdgeInsets.only(bottom: 300),
-                      width: 150, height: 150,child: WaterRipple())))
+                      width: 150, height: 150,child: WaterRipple()))),
         ],
       ));
   }

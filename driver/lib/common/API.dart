@@ -41,13 +41,7 @@ class API {
     }
 
     final data = res.data[APIConst.jobList] as List;
-
-    List<JobModel> allData = [];
-    data.forEach((element) {
-      allData.add(JobModel.fromJSON(element));
-    });
-
-    return allData;
+    return JobModel().getList(data);
   }
 
   Future<dynamic> submitTwicCard(String frontPicPath, String backPicPath, String cardNumber, String expireDate, String driverId) async {
