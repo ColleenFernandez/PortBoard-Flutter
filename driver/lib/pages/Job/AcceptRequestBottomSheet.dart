@@ -11,7 +11,7 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 class AcceptRequestBottomSheet{
   Widget show(BuildContext context, JobModel model){
     return Container(
-        height: MediaQuery.of(context).size.height * 0.9,
+        height: MediaQuery.of(context).size.height * 0.85,
         margin: EdgeInsets.only(left: 15, right: 15),
         width: double.infinity,
         child: SingleChildScrollView(
@@ -33,8 +33,6 @@ class AcceptRequestBottomSheet{
                                       itemBuilder: (context, _) => Icon(Icons.star, color: Colors.white),
                                       onRatingUpdate: (rating) {}),
                                   SizedBox(height: 5),
-                                  Image(image: AssetImage('assets/images/wide_arrow_down.png'), height: 10,),
-                                  SizedBox(height: 5),
                                 ]
                             )),
                         Align(
@@ -53,7 +51,7 @@ class AcceptRequestBottomSheet{
                             children: [
                               Container(margin: EdgeInsets.only(top: 0.5), color: Colors.black12, width: double.infinity, height: 2),
                               Container(color: AppColors.green, width: 30, height: 3)]),
-                        SizedBox(height: 10),
+                        SizedBox(height: 5),
                         Row(
                           children: [
                             SizedBox(width: 5),
@@ -65,7 +63,7 @@ class AcceptRequestBottomSheet{
                                   Container(margin: EdgeInsets.only(left: 1, top: 1.5),
                                       child: FDottedLine(
                                           color: Colors.black38,
-                                          height: 42,
+                                          height: 35,
                                           strokeWidth: 2,
                                           dottedLength: 5,
                                           space: 2)),
@@ -81,9 +79,9 @@ class AcceptRequestBottomSheet{
                                 children: [
                                   SizedBox(height: 10),
                                   Text('[NJ] Red Hook New Jersey', style: TextStyle(color: AppColors.darkBlue, fontWeight: FontWeight.bold)),
-                                  SizedBox(height: 20),
+                                  SizedBox(height: 15),
                                   Container(width: MediaQuery.of(context).size.width - 120, height: 1, color: Colors.black12),
-                                  SizedBox(height: 20),
+                                  SizedBox(height: 15),
                                   Text('6701 Tonnelle Avenue, North Bergen NJm USA', style: TextStyle(color: AppColors.darkBlue, fontWeight: FontWeight.bold), maxLines: 1)
                                 ]),
                             SizedBox(width: 10)],
@@ -205,7 +203,12 @@ class AcceptRequestBottomSheet{
                             Text('\$1,348.21', style: TextStyle(color: AppColors.darkBlue, fontWeight: FontWeight.bold, fontSize: 25))
                           ],
                         ),
-                        Divider(height: 30),
+                        SizedBox(height: 10,),
+                        Stack(
+                            children: [
+                              Container(margin: EdgeInsets.only(top: 0.5), color: Colors.black12, width: double.infinity, height: 2),
+                              Container(color: AppColors.green, width: 70, height: 3)]),
+                        SizedBox(height: 20,),
                         Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -228,7 +231,7 @@ class AcceptRequestBottomSheet{
                                     style: ElevatedButton.styleFrom(
                                         primary: AppColors.green),
                                     onPressed: () {
-
+                                      Navigator.pop(context, true);
                                     },
                                     child: Text('ACCEPT'),
                                   ))]),

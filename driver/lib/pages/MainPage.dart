@@ -8,6 +8,7 @@ import 'package:driver/common/APIConst.dart';
 import 'package:driver/common/Constants.dart';
 import 'package:driver/model/JobModel.dart';
 import 'package:driver/pages/Job/AcceptRequestBottomSheet.dart';
+import 'package:driver/pages/Job/ConfirmBottomSheet.dart';
 import 'package:driver/utils/utils.dart';
 import 'package:driver/widget/CustomMapMarker/MapMarker.dart';
 import 'package:driver/widget/CustomMapMarker/MarkerGenerator.dart';
@@ -72,7 +73,7 @@ class _MainPageState extends State<MainPage> {
             customMarkers.clear();
             setState(() {});
 
-            Future.delayed(Duration(seconds: 2), () {
+            Future.delayed(Duration(seconds: 1), () {
               mapController.moveCamera(CameraUpdate.scrollBy(0, 150));
               setState(() {
                 isBottomSheetShown = true;
@@ -86,7 +87,7 @@ class _MainPageState extends State<MainPage> {
                 builder: (context) {
                   return ShowJobDetailBottomSheet().show(context, allData[i]);
                 }).then((value) {
-                  Future.delayed(Duration(seconds: 1), () {
+                  Future.delayed(Duration(milliseconds: 700), () {
                     setState(() {isBottomSheetShown = false;});
                     if (value) {
                       showModalBottomSheet(
@@ -100,7 +101,25 @@ class _MainPageState extends State<MainPage> {
                           isScrollControlled : true,
                           builder: (context) {
                             return AcceptRequestBottomSheet().show(context,  allData[i]);
-                          });
+                          }).then((value) {
+                            Future.delayed(Duration(milliseconds: 700), () {
+
+                              if (value){
+                                showModalBottomSheet(
+                                    constraints: BoxConstraints.loose(Size(
+                                        MediaQuery.of(context).size.width,
+                                        MediaQuery.of(context).size.height * 0.9)), // <= this is set to 3/4 of screen size.
+                                    useRootNavigator: true,
+                                    barrierColor: Colors.transparent,
+                                    backgroundColor: Colors.transparent,
+                                    context: context,
+                                    isScrollControlled : true,
+                                    builder: (context) {
+                                      return ConfirmBottomSheet().show(context,  allData[i]);
+                                    });
+                              }
+                            });
+                      });
                     }
                   });
             });

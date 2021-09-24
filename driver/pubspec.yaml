@@ -64,6 +64,7 @@ flutter:
     - assets/images/nelson.png
     - assets/images/arrow_down.png
     - assets/images/wide_arrow_down.png
+    - assets/images/two_hands.png
 
   fonts:
     - family: RobotoCondensed

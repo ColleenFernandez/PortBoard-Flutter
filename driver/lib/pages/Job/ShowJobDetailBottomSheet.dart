@@ -21,7 +21,7 @@ class ShowJobDetailBottomSheet{
                     children: [
                       Container(
                           margin: EdgeInsets.only(top: 40),
-                          padding: EdgeInsets.only(top: 50), width: double.infinity,
+                          padding: EdgeInsets.only(top: 45), width: double.infinity,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.only(topLeft: Radius.circular(3), topRight: Radius.circular(3)),
                             color: AppColors.green,),
@@ -41,7 +41,7 @@ class ShowJobDetailBottomSheet{
                   ),
                   Container(
                     color: Color(0xFFe5e5e3),
-                    padding: EdgeInsets.only(top: 10),
+                    padding: EdgeInsets.only(top: 5),
                     child: Card(
                       elevation: 5,
                       child: Column(
@@ -135,7 +135,7 @@ class ShowJobDetailBottomSheet{
                                   onPressed: () {
 
                                   },
-                                  child: Text('DETAILS'),
+                                  child: Text('DECLINE'),
                                 )
                             ),
                             Container(
