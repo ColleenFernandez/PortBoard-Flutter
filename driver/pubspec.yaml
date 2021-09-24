@@ -63,6 +63,7 @@ flutter:
     - assets/images/bg_splash.gif
     - assets/images/nelson.png
     - assets/images/arrow_down.png
+    - assets/images/wide_arrow_down.png
 
   fonts:
     - family: RobotoCondensed
