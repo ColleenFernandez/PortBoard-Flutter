@@ -65,6 +65,9 @@ flutter:
     - assets/images/arrow_down.png
     - assets/images/wide_arrow_down.png
     - assets/images/two_hands.png
+    - assets/images/double-arrow-down.png
+    - assets/images/double-arrow-up.png
+    - assets/images/container.png
 
   fonts:
     - family: RobotoCondensed

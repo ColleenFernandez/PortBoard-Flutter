@@ -12,6 +12,9 @@ class Assets{
   static const NELSON_IMG = AssetImage('assets/images/nelson.png');
   static const ICON_ARROW_DOWN = AssetImage('assets/images/arrow_down.png');
   static const TWO_HANDS_IGM = AssetImage('assets/images/two_hands.png');
+  static const IC_DOUBLE_ARROW_DOWN = AssetImage('assets/images/double-arrow-down.png');
+  static const IC_DOUBLE_ARROW_UP = AssetImage('assets/images/double-arrow-up.png');
+  static const IMG_CONTAINER = AssetImage('assets/images/container.png');
 
   static const String ROBOTO_FONT = 'RobotoCondensed';
 }

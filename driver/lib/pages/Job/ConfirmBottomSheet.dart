@@ -254,7 +254,7 @@ class ConfirmBottomSheet {
                                     style: ElevatedButton.styleFrom(
                                         primary: AppColors.green),
                                     onPressed: () {
-
+                                      Navigator.pop(context, true);
                                     },
                                     child: Text('ACCEPT'),
                                   ))]),

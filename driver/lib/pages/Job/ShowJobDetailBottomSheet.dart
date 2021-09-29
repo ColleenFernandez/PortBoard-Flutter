@@ -40,7 +40,7 @@ class ShowJobDetailBottomSheet{
                     ]
                   ),
                   Container(
-                    color: Color(0xFFe5e5e3),
+                    color: AppColors.grey_10,
                     padding: EdgeInsets.only(top: 5),
                     child: Card(
                       elevation: 5,
