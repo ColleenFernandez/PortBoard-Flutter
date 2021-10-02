@@ -11,7 +11,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 class ShowJobDetailBottomSheet{
   Widget show(BuildContext context, JobModel model){
     return Container(
-        height: 410,
+        height: MediaQuery.of(context).size.height * 0.85,
         margin: EdgeInsets.only(left: 15, right: 15),
         width: double.infinity,
         child: SingleChildScrollView(
@@ -150,7 +150,7 @@ class ShowJobDetailBottomSheet{
                   Container(
                     padding: EdgeInsets.all(10),
                     color: Colors.white,
-                    height: 250,
+                    height: 220,
                     child: GoogleMap(
                       zoomGesturesEnabled: true,
                       mapType: MapType.normal,

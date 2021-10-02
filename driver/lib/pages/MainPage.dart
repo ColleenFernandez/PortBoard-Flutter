@@ -10,6 +10,7 @@ import 'package:driver/model/JobModel.dart';
 import 'package:driver/pages/Job/AcceptRequestBottomSheet.dart';
 import 'package:driver/pages/Job/ConfirmBottomSheet.dart';
 import 'package:driver/pages/Job/SaveChassisInfoBottomSheet.dart';
+import 'package:driver/utils/Prefs.dart';
 import 'package:driver/utils/utils.dart';
 import 'package:driver/widget/CustomMapMarker/MapMarker.dart';
 import 'package:driver/widget/CustomMapMarker/MarkerGenerator.dart';
@@ -82,6 +83,11 @@ class _MainPageState extends State<MainPage> {
             });
 
             showModalBottomSheet(
+                constraints: BoxConstraints.loose(Size(
+                    MediaQuery.of(context).size.width,
+                    MediaQuery.of(context).size.height * 0.9)),
+                useRootNavigator: true,
+                isScrollControlled : true,
                 barrierColor: Colors.transparent,
                 backgroundColor: Colors.transparent,
                 context: context,
@@ -132,7 +138,7 @@ class _MainPageState extends State<MainPage> {
                                               context: context,
                                               isScrollControlled : true,
                                               builder: (context) {
-                                                return SaveChassisInfoBottomSheet();
+                                                return SaveChassisInfoBottomSheet().show(context);
                                               });
                                         }
                                       });
@@ -314,7 +320,7 @@ class _MainPageState extends State<MainPage> {
                 leading: Icon(Icons.logout, color:Colors.black87),
                 title: Text('Logout', style: TextStyle(color:Colors.black87)),
                 onTap: (){
-
+                  Prefs.clear();
                 },
               ),
             ],
