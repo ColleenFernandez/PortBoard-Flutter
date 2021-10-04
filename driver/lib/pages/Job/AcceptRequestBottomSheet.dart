@@ -54,7 +54,7 @@ class AcceptRequestBottomSheet{
                         SizedBox(height: 5),
                         Row(
                           children: [
-                            SizedBox(width: 5),
+
                             Column(
                                 children: [
                                   SizedBox(height: 12),
@@ -78,11 +78,11 @@ class AcceptRequestBottomSheet{
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   SizedBox(height: 10),
-                                  Text('[NJ] Red Hook New Jersey', style: TextStyle(color: AppColors.darkBlue, fontWeight: FontWeight.bold)),
+                                  Text('[NJ] Red Hook New Jersey', maxLines: 1 , style: TextStyle(color: AppColors.darkBlue, fontWeight: FontWeight.bold)),
                                   SizedBox(height: 15),
                                   Container(width: MediaQuery.of(context).size.width - 120, height: 1, color: Colors.black12),
                                   SizedBox(height: 15),
-                                  Text('6701 Tonnelle Avenue, North Bergen NJm USA', style: TextStyle(color: AppColors.darkBlue, fontWeight: FontWeight.bold), maxLines: 1)
+                                  Text('6701 Tonnelle Avenue, North Bergen NJm USA', maxLines: 1, style: TextStyle(color: AppColors.darkBlue, fontWeight: FontWeight.bold))
                                 ]),
                             SizedBox(width: 10)],
                         ),

@@ -101,7 +101,6 @@ class ConfirmBottomSheet {
                         SizedBox(height: 5),
                         Row(
                           children: [
-                            SizedBox(width: 5),
                             Column(
                                 children: [
                                   SizedBox(height: 12),
