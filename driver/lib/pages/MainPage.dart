@@ -8,8 +8,10 @@ import 'package:driver/common/APIConst.dart';
 import 'package:driver/common/Constants.dart';
 import 'package:driver/model/JobModel.dart';
 import 'package:driver/pages/Job/AcceptRequestBottomSheet.dart';
+import 'package:driver/pages/Job/CompleteService.dart';
 import 'package:driver/pages/Job/ConfirmBottomSheet.dart';
 import 'package:driver/pages/Job/SaveChassisInfoBottomSheet.dart';
+import 'package:driver/pages/Job/SignatureConfirm.dart';
 import 'package:driver/utils/Prefs.dart';
 import 'package:driver/utils/utils.dart';
 import 'package:driver/widget/CustomMapMarker/MapMarker.dart';
@@ -94,9 +96,10 @@ class _MainPageState extends State<MainPage> {
                 builder: (context) {
                   return ShowJobDetailBottomSheet().show(context, allData[i]);
                 }).then((value) {
-                  Future.delayed(Duration(milliseconds: 700), () {
-                    setState(() {isBottomSheetShown = false;});
-                    if (value) {
+                  if (value){
+                    Future.delayed(Duration(milliseconds: 700), () {
+
+                      setState(() {isBottomSheetShown = false;});
                       showModalBottomSheet(
                           constraints: BoxConstraints.loose(Size(
                               MediaQuery.of(context).size.width,
@@ -109,9 +112,8 @@ class _MainPageState extends State<MainPage> {
                           builder: (context) {
                             return AcceptRequestBottomSheet().show(context,  allData[i]);
                           }).then((value) {
-                            Future.delayed(Duration(milliseconds: 700), () {
-
-                              if (value){
+                            if (value){
+                              Future.delayed(Duration(milliseconds: 700), () {
                                 showModalBottomSheet(
                                     constraints: BoxConstraints.loose(Size(
                                         MediaQuery.of(context).size.width,
@@ -124,14 +126,12 @@ class _MainPageState extends State<MainPage> {
                                     builder: (context) {
                                       return ConfirmBottomSheet().show(context,  allData[i]);
                                     }).then((value) {
-
-                                      Future.delayed(Duration(milliseconds: 700), () {
-
-                                        if (value){
+                                      if (value ){
+                                        Future.delayed(Duration(milliseconds: 700), () {
                                           showModalBottomSheet(
                                               constraints: BoxConstraints.loose(Size(
-                                                  MediaQuery.of(context).size.width,
-                                                  MediaQuery.of(context).size.height * 0.9)), // <= this is set to 3/4 of screen size.
+                                              MediaQuery.of(context).size.width,
+                                              MediaQuery.of(context).size.height * 0.9)), // <= this is set to 3/4 of screen size.
                                               useRootNavigator: true,
                                               barrierColor: Colors.transparent,
                                               backgroundColor: Colors.transparent,
@@ -139,18 +139,47 @@ class _MainPageState extends State<MainPage> {
                                               isScrollControlled : true,
                                               builder: (context) {
                                                 return SaveChassisInfoBottomSheet().show(context);
+                                              }).then((value) {
+                                                if (value){
+                                                  Future.delayed(Duration(milliseconds: 700), () {
+                                                    showModalBottomSheet(
+                                                        constraints: BoxConstraints.loose(Size(
+                                                            MediaQuery.of(context).size.width,
+                                                            MediaQuery.of(context).size.height * 0.9)), // <= this is set to 3/4 of screen size.
+                                                        useRootNavigator: true,
+                                                        barrierColor: Colors.transparent,
+                                                        backgroundColor: Colors.transparent,
+                                                        context: context,
+                                                        isScrollControlled : true,
+                                                        builder: (context) {
+                                                          return CompleteService().show(context);
+                                                        }).then((value) {
+
+                                                          if (value){
+                                                            Future.delayed(Duration(milliseconds: 700), () {
+                                                              showModalBottomSheet(
+                                                                  constraints: BoxConstraints.loose(Size(
+                                                                      MediaQuery.of(context).size.width,
+                                                                      MediaQuery.of(context).size.height * 0.9)), // <= this is set to 3/4 of screen size.
+                                                                  useRootNavigator: true,
+                                                                  barrierColor: Colors.transparent,
+                                                                  backgroundColor: Colors.transparent,
+                                                                  context: context,
+                                                                  isScrollControlled : true,
+                                                                  builder: (context) {
+                                                                    return SignatureConfirm().show(context);                                                                  });
+                                                            });
+                                                          }
+                                                        });
+                                                  });}
                                               });
-                                        }
-                                      });
-                                });
-                              }
-                            });
-                      });
-                    }
-                  });
-            });
-          }
-        ));
+                                        });}
+                                    });
+                              });}
+                          });
+                    });}
+                });}
+          ));
       });
     }
 

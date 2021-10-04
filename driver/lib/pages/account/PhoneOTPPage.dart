@@ -38,10 +38,7 @@ class _PhoneOTPPageState extends State<PhoneOTPPage> {
   }
 
   void getUserModel() async{
-    progressDialog.show();
     api.login(phone).then((value) {
-      progressDialog.hide();
-
       if (value is String){
         showToast(value);
         setState(() {
@@ -52,7 +49,6 @@ class _PhoneOTPPageState extends State<PhoneOTPPage> {
         gotoMainPage();
       }
     }).onError((error, stackTrace) {
-      progressDialog.hide();
       showToast(error.toString());
     });
   }

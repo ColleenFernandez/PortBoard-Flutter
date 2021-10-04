@@ -79,7 +79,7 @@ class _InputPhoneNumberPageState extends State<InputPhoneNumberPage> {
                     Text('Select your country', style: TextStyle(fontSize: 18)),
                     CountryCodePicker(
                       onChanged: (countryCode) {
-                        this.countryCode = countryCode.code!;
+                        this.countryCode = countryCode.dialCode!;
                       },
                       initialSelection: 'US',
                       showCountryOnly: false,

@@ -15,6 +15,8 @@ class Assets{
   static const IC_DOUBLE_ARROW_DOWN = AssetImage('assets/images/double-arrow-down.png');
   static const IC_DOUBLE_ARROW_UP = AssetImage('assets/images/double-arrow-up.png');
   static const IMG_CONTAINER = AssetImage('assets/images/container.png');
+  static const IC_BAR_CODE = AssetImage('assets/images/bar-code.png');
+  static const IMG_BG_FOCUS = AssetImage('assets/images/bg_focus.png');
 
   static const String ROBOTO_FONT = 'RobotoCondensed';
 }
