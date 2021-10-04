@@ -32,6 +32,7 @@ class _InputPhoneNumberPageState extends State<InputPhoneNumberPage> {
         },
         verificationFailed: (FirebaseException e) {
           progressDialog.hide();
+          showToast(e.toString());
         }, codeSent: (String verificationID, int? resendToken) {
           this.verificationId = verificationID;
           progressDialog.hide();
