@@ -187,7 +187,7 @@ class SignatureConfirm {
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(primary: AppColors.darkBlue),
                             onPressed: () {
-
+                              Navigator.pop(context);
                             },
                             child: Text('Signature Confirm'),
                           ),

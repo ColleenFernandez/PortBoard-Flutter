@@ -242,7 +242,7 @@ class ConfirmBottomSheet {
                                     onPressed: () {
 
                                     },
-                                    child: Text('DECLINE'),
+                                    child: Text('CANCEL'),
                                   )
                               ),
                               Container(
@@ -256,9 +256,9 @@ class ConfirmBottomSheet {
                                     onPressed: () {
                                       Navigator.pop(context, true);
                                     },
-                                    child: Text('ACCEPT'),
+                                    child: Text('CONFIRM'),
                                   ))]),
-                        SizedBox(height: 20),
+                        SizedBox(height: 10),
                       ],
                     ),
                   ),

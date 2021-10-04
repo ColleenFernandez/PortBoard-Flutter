@@ -1,7 +1,15 @@
 import 'package:driver/adapter/JobAdapter.dart';
 import 'package:driver/assets/AppColors.dart';
+import 'package:driver/model/JobModel.dart';
+import 'package:driver/pages/Job/AcceptRequestBottomSheet.dart';
+import 'package:driver/pages/Job/CompleteService.dart';
+import 'package:driver/pages/Job/ConfirmBottomSheet.dart';
+import 'package:driver/pages/Job/SaveChassisInfoBottomSheet.dart';
+import 'package:driver/pages/Job/SignatureConfirm.dart';
 import 'package:fdottedline/fdottedline.dart';
 import 'package:flutter/material.dart';
+
+import 'ShowJobDetailBottomSheet.dart';
 
 class JobSearchPage extends StatefulWidget{
   @override
@@ -135,7 +143,104 @@ class _JobSearchPageState extends State<JobSearchPage> {
                     itemCount: 10,
                     shrinkWrap: true,
                     itemBuilder: (context, index) {
-                      return JobAdapter().item(context);
+                      return InkWell(
+                          onTap: () {
+                            showModalBottomSheet(
+                                constraints: BoxConstraints.loose(Size(
+                                    MediaQuery.of(context).size.width,
+                                    MediaQuery.of(context).size.height * 0.9)),
+                                useRootNavigator: true,
+                                isScrollControlled : true,
+                                barrierColor: Colors.transparent,
+                                backgroundColor: Colors.transparent,
+                                context: context,
+                                builder: (context) {
+                                  return ShowJobDetailBottomSheet().show(context, new JobModel());
+                                }).then((value) {
+                              if (value){
+                                Future.delayed(Duration(milliseconds: 700), () {
+
+                                  showModalBottomSheet(
+                                      constraints: BoxConstraints.loose(Size(
+                                          MediaQuery.of(context).size.width,
+                                          MediaQuery.of(context).size.height * 0.9)), // <= this is set to 3/4 of screen size.
+                                      useRootNavigator: true,
+                                      barrierColor: Colors.transparent,
+                                      backgroundColor: Colors.transparent,
+                                      context: context,
+                                      isScrollControlled : true,
+                                      builder: (context) {
+                                        return AcceptRequestBottomSheet().show(context,  new JobModel());
+                                      }).then((value) {
+                                    if (value){
+                                      Future.delayed(Duration(milliseconds: 700), () {
+                                        showModalBottomSheet(
+                                            constraints: BoxConstraints.loose(Size(
+                                                MediaQuery.of(context).size.width,
+                                                MediaQuery.of(context).size.height * 0.9)), // <= this is set to 3/4 of screen size.
+                                            useRootNavigator: true,
+                                            barrierColor: Colors.transparent,
+                                            backgroundColor: Colors.transparent,
+                                            context: context,
+                                            isScrollControlled : true,
+                                            builder: (context) {
+                                              return ConfirmBottomSheet().show(context,  new JobModel());
+                                            }).then((value) {
+                                          if (value ){
+                                            Future.delayed(Duration(milliseconds: 700), () {
+                                              showModalBottomSheet(
+                                                  constraints: BoxConstraints.loose(Size(
+                                                      MediaQuery.of(context).size.width,
+                                                      MediaQuery.of(context).size.height * 0.9)), // <= this is set to 3/4 of screen size.
+                                                  useRootNavigator: true,
+                                                  barrierColor: Colors.transparent,
+                                                  backgroundColor: Colors.transparent,
+                                                  context: context,
+                                                  isScrollControlled : true,
+                                                  builder: (context) {
+                                                    return SaveChassisInfoBottomSheet().show(context);
+                                                  }).then((value) {
+                                                if (value){
+                                                  Future.delayed(Duration(milliseconds: 700), () {
+                                                    showModalBottomSheet(
+                                                        constraints: BoxConstraints.loose(Size(
+                                                            MediaQuery.of(context).size.width,
+                                                            MediaQuery.of(context).size.height * 0.9)), // <= this is set to 3/4 of screen size.
+                                                        useRootNavigator: true,
+                                                        barrierColor: Colors.transparent,
+                                                        backgroundColor: Colors.transparent,
+                                                        context: context,
+                                                        isScrollControlled : true,
+                                                        builder: (context) {
+                                                          return CompleteService().show(context);
+                                                        }).then((value) {
+
+                                                      if (value){
+                                                        Future.delayed(Duration(milliseconds: 700), () {
+                                                          showModalBottomSheet(
+                                                              constraints: BoxConstraints.loose(Size(
+                                                                  MediaQuery.of(context).size.width,
+                                                                  MediaQuery.of(context).size.height * 0.9)), // <= this is set to 3/4 of screen size.
+                                                              useRootNavigator: true,
+                                                              barrierColor: Colors.transparent,
+                                                              backgroundColor: Colors.transparent,
+                                                              context: context,
+                                                              isScrollControlled : true,
+                                                              builder: (context) {
+                                                                return SignatureConfirm().show(context);                                                                  });
+                                                        });
+                                                      }
+                                                    });
+                                                  });}
+                                              });
+                                            });}
+                                        });
+                                      });}
+                                  });
+                                });}
+                            });
+                          },
+                          child: JobAdapter().item(context));
                     })
             ),
 

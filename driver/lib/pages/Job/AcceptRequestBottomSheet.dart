@@ -208,7 +208,7 @@ class AcceptRequestBottomSheet{
                             children: [
                               Container(margin: EdgeInsets.only(top: 0.5), color: Colors.black12, width: double.infinity, height: 2),
                               Container(color: AppColors.green, width: 70, height: 3)]),
-                        SizedBox(height: 20,),
+                        SizedBox(height: 10,),
                         Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -235,7 +235,7 @@ class AcceptRequestBottomSheet{
                                     },
                                     child: Text('ACCEPT'),
                                   ))]),
-                        SizedBox(height: 20),
+                        SizedBox(height: 10),
                       ],
                     ),
                   ),
