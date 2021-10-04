@@ -32,6 +32,7 @@ dependencies:
   flutter_rating_bar: ^4.0.0 # rating bar
   fdottedline: ^1.0.1 # dotted line
   flutter_advanced_switch: ^2.1.0 # toggle switch
+  signature: ^4.1.1 # signature
 
   # https
   dio: ^4.0.0
@@ -68,6 +69,8 @@ flutter:
     - assets/images/double-arrow-down.png
     - assets/images/double-arrow-up.png
     - assets/images/container.png
+    - assets/images/bar-code.png
+    - assets/images/bg_focus.png
 
   fonts:
     - family: RobotoCondensed

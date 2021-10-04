@@ -155,7 +155,7 @@ class SaveChassisInfoBottomSheet {
                                 child: ElevatedButton(
                                     style: ElevatedButton.styleFrom(primary: AppColors.darkBlue),
                                     onPressed: () {
-
+                                      Navigator.pop(context, true);
                                     },
                                     child: Text('PICK UP', style: TextStyle(fontSize: 20))),
                               ),

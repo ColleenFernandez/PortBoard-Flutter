@@ -32,6 +32,7 @@ class _InputPhoneNumberPageState extends State<InputPhoneNumberPage> {
         },
         verificationFailed: (FirebaseException e) {
           progressDialog.hide();
+          showToast(e.toString());
         }, codeSent: (String verificationID, int? resendToken) {
           this.verificationId = verificationID;
           progressDialog.hide();
@@ -78,7 +79,7 @@ class _InputPhoneNumberPageState extends State<InputPhoneNumberPage> {
                     Text('Select your country', style: TextStyle(fontSize: 18)),
                     CountryCodePicker(
                       onChanged: (countryCode) {
-                        this.countryCode = countryCode.code!;
+                        this.countryCode = countryCode.dialCode!;
                       },
                       initialSelection: 'US',
                       showCountryOnly: false,
