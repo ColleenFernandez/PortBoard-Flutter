@@ -4,7 +4,6 @@ import 'package:driver/assets/AppColors.dart';
 import 'package:driver/assets/Assets.dart';
 import 'package:driver/common/API.dart';
 import 'package:driver/common/Common.dart';
-import 'package:driver/model/DriverLicenseModel.dart';
 import 'package:driver/utils/utils.dart';
 import 'package:driver/widget/StsImgView.dart';
 import 'package:flutter/cupertino.dart';
@@ -39,21 +38,7 @@ class _SubmitDriverLicensePageState extends State<SubmitDriverLicensePage> {
   }
 
   void submitDriverLicense() async{
-    progressDialog.show();
-    final frontPicPath = await FlutterAbsolutePath.getAbsolutePath((frontPic as Asset).identifier);
-    final backPicPath  = await FlutterAbsolutePath.getAbsolutePath((backPic as Asset).identifier);
-    api.submitDriverLicense(frontPicPath, backPicPath, Common.userModel.state, edtDriverLicenseNumber.text, expiryDate.toString(), Common.userModel.id).then((value) {
-      progressDialog.hide();
-      if (value is String){
-        showToast(value);
-      }else {
-        Common.userModel.licenseModel = value;
-        showSubmitSuccessDialog();
-      }
-    }).onError((error, stackTrace) {
-      progressDialog.hide();
-      showToast(error.toString());
-    });
+
   }
 
   bool isValid(){

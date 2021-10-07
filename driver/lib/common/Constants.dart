@@ -14,5 +14,6 @@ class Constants {
   static const String TWIC_CARD = 'Twic Card';
   static const LatLng initMapPosition = const LatLng(0.0, 0.0);
 
-  // broadcast consts
+  // broadcast constant
+  static const String LOCATION_UPDATE = 'updateMapCameraPosition';
 }

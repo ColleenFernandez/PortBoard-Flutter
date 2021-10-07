@@ -33,6 +33,8 @@ dependencies:
   fdottedline: ^1.0.1 # dotted line
   flutter_advanced_switch: ^2.1.0 # toggle switch
   signature: ^4.1.1 # signature
+  geolocator: ^7.6.2 # geolocation
+  flutter_animarker: ^3.2.0 # ripple marker
 
   # https
   dio: ^4.0.0
@@ -42,6 +44,7 @@ dependencies:
   firebase_analytics: ^8.1.2
   firebase_auth: ^2.0.0
   firebase_messaging: ^10.0.4
+  cloud_firestore: ^2.5.3
 
 dev_dependencies:
   flutter_test:

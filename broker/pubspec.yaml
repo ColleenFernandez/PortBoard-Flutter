@@ -1,0 +1,82 @@
+name: driver
+description: A new Flutter project.
+
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.12.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.2
+  logger: ^1.0.0 # logger
+  shared_preferences: ^2.0.6 # shared preference
+  fluttertoast: ^8.0.7 # toast message
+  flutter_absolute_path: ^1.0.6
+  intl: ^0.17.0 # internationalization localization
+  pin_code_fields: ^7.2.0 # OTP code
+  multi_image_picker: ^4.8.1 # multi image picker  https://pub.dev/packages/multi_image_picker/versions/4.7.15
+  country_code_picker: ^2.0.2
+  modal_progress_hud: ^0.1.3 # progress view
+  fbroadcast: ^1.1.1 # broadcast
+  change_app_package_name: ^1.0.0 # change app package name
+  progress_dialog: ^1.2.4 # progress dialog
+  flutter_datetime_picker: ^1.5.1 # Date and Time picker
+  dio_cookie_manager: ^2.0.0 # dio cookie manager
+  google_maps_flutter: ^2.0.8
+  after_layout: ^1.1.0 # after layout
+  flutter_rating_bar: ^4.0.0 # rating bar
+  fdottedline: ^1.0.1 # dotted line
+  flutter_advanced_switch: ^2.1.0 # toggle switch
+  signature: ^4.1.1 # signature
+  geolocator: ^7.6.2 # geolocation
+  flutter_animarker: ^3.2.0 # ripple marker
+
+  # https
+  dio: ^4.0.0
+  http: ^0.13.3
+
+  firebase_core: ^1.3.0
+  firebase_analytics: ^8.1.2
+  firebase_auth: ^2.0.0
+  firebase_messaging: ^10.0.4
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+
+  uses-material-design: true
+  assets:
+    - assets/images/logo.png
+    - assets/images/female.png
+    - assets/images/ic_back.png
+    - assets/images/ic_drop_down.png
+    - assets/images/ic_small_right_triangle.png
+    - assets/images/male.png
+    - assets/images/check_in.png
+    - assets/images/default_img.png
+    - assets/images/wait_approve.png
+    - assets/images/company_logo.png
+    - assets/images/bg_splash.gif
+    - assets/images/nelson.png
+    - assets/images/arrow_down.png
+    - assets/images/wide_arrow_down.png
+    - assets/images/two_hands.png
+    - assets/images/double-arrow-down.png
+    - assets/images/double-arrow-up.png
+    - assets/images/container.png
+    - assets/images/bar-code.png
+    - assets/images/bg_focus.png
+
+  fonts:
+    - family: RobotoCondensed
+      fonts:
+        - asset: assets/fonts/RobotoCondensed-Bold.ttf
+        - asset: assets/fonts/RobotoCondensed-Light.ttf
+        - asset: assets/fonts/RobotoCondensed-Regular.ttf

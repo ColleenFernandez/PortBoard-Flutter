@@ -3,6 +3,7 @@ import 'package:driver/assets/Assets.dart';
 import 'package:driver/common/API.dart';
 import 'package:driver/common/Common.dart';
 import 'package:driver/common/Constants.dart';
+import 'package:driver/common/FirebaseAPI.dart';
 import 'package:driver/model/UserModel.dart';
 import 'package:driver/utils/Prefs.dart';
 import 'package:driver/utils/utils.dart';
@@ -54,6 +55,7 @@ class _SplashPageState extends State<SplashPage> {
         Navigator.pushNamed(context, '/FirstPage');
       }else {
         Common.userModel = value;
+        FirebaseAPI.registerUser(Common.userModel);
         gotoMainPage();
       }
     });

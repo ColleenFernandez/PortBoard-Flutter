@@ -35,18 +35,7 @@ class _SubmitTwicCardPageState extends State<SubmitTwicCardPage> {
   }
 
   void submitTwicCard() async{
-    progressDialog.show();
-    final frontPicPath = await FlutterAbsolutePath.getAbsolutePath((frontPic as Asset).identifier);
-    final backPicPath  = await FlutterAbsolutePath.getAbsolutePath((backPic as Asset).identifier);
-    api.submitTwicCard(frontPicPath, backPicPath, edtCardNumber.text, expiryDate.toString(), Common.userModel.id).then((value) {
-      progressDialog.hide();
-      if (value is String){
-        showToast(value);
-      }else {
-        Common.userModel.twicCardModel = value;
-        showSubmitSuccessDialog();
-      }
-    });
+
   }
 
   bool isValid(){

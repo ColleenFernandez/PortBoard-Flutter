@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "377795617593",
+    "project_id": "portboard-broker",
+    "storage_bucket": "portboard-broker.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:377795617593:android:611bd94b3a468e04afbee8",
+        "android_client_info": {
+          "package_name": "com.portboard.broker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "377795617593-3dhepe8dus3trl874melu1ebrjkq0po5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.portboard.broker",
+            "certificate_hash": "da8d9679a48fc671cfed10ffa188f1b709b3b79c"
+          }
+        },
+        {
+          "client_id": "377795617593-gio1gv1o4ivuvm5qe5iriqu97hhgm9ok.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA7HQE-zoaWE-Y5mTiptvto-etOgZWmbyE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "377795617593-gio1gv1o4ivuvm5qe5iriqu97hhgm9ok.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

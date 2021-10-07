@@ -5,13 +5,16 @@ import 'package:driver/assets/AppColors.dart';
 import 'package:driver/assets/Assets.dart';
 import 'package:driver/common/API.dart';
 import 'package:driver/common/APIConst.dart';
+import 'package:driver/common/Common.dart';
 import 'package:driver/common/Constants.dart';
+import 'package:driver/common/FirebaseAPI.dart';
 import 'package:driver/model/JobModel.dart';
 import 'package:driver/pages/Job/AcceptRequestBottomSheet.dart';
 import 'package:driver/pages/Job/CompleteService.dart';
 import 'package:driver/pages/Job/ConfirmBottomSheet.dart';
 import 'package:driver/pages/Job/SaveChassisInfoBottomSheet.dart';
 import 'package:driver/pages/Job/SignatureConfirm.dart';
+import 'package:driver/service/LocationService.dart';
 import 'package:driver/utils/Prefs.dart';
 import 'package:driver/utils/utils.dart';
 import 'package:driver/widget/CustomMapMarker/MapMarker.dart';
@@ -19,6 +22,7 @@ import 'package:driver/widget/CustomMapMarker/MarkerGenerator.dart';
 import 'package:driver/widget/CustomMapMarker/locations.dart';
 import 'package:driver/widget/StsImgView.dart';
 import 'package:driver/widget/WaterRipple/WaterRipple.dart';
+import 'package:fbroadcast/fbroadcast.dart';
 import 'package:fdottedline/fdottedline.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -26,7 +30,9 @@ import 'package:flutter/painting.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_advanced_switch/flutter_advanced_switch.dart';
+import 'package:flutter_animarker/flutter_map_marker_animation.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 
@@ -44,7 +50,7 @@ class _MainPageState extends State<MainPage> {
   int selectedDestination = 0;
   late final ProgressDialog progressDialog;
   API api = new API();
-  late GoogleMapController mapController;
+  GoogleMapController? mapController;
 
   List<JobModel> allData = [];
   GlobalKey iconKey = GlobalKey();
@@ -52,13 +58,32 @@ class _MainPageState extends State<MainPage> {
   final LatLng _center = const LatLng(13.1896, 80.3039);
   List<Marker> customMarkers = [];
   dynamic userPhoto = Assets.DEFAULT_IMG;
-  bool isMarkerClicked = false, isBottomSheetShown = false;
-
+  bool isMarkerClicked = false;
   final controller = Completer<GoogleMapController>();
 
   @override
   void initState() {
     super.initState();
+
+    LocationService.start();
+    switchController.addListener(() {
+      if (switchController.value){
+        LocationService.resume();
+      }else {
+        LocationService.pause();
+      }
+    });
+
+    FBroadcast.instance().register(Constants.LOCATION_UPDATE, (value, callback) {
+      if (switchController.value){
+        FirebaseAPI.updateLocation(Common.userModel.id, Common.myLat, Common.myLng).then((value) {
+          if (!value){
+            showToast('Firebase Error');
+          }
+        });
+      }
+    });
+
     progressDialog = ProgressDialog(context);
     progressDialog.style(progressWidget: Container(padding: EdgeInsets.all(13), child: CircularProgressIndicator(color: AppColors.green)));
   }
@@ -71,18 +96,17 @@ class _MainPageState extends State<MainPage> {
           position: LatLng(allData[i].latitude, allData[i].longitude),
           icon: BitmapDescriptor.fromBytes(bmp),
           onTap: () {
-
             allData[i].isSelected = !allData[i].isSelected;
             isMarkerClicked = true;
             customMarkers.clear();
             setState(() {});
 
-            Future.delayed(Duration(seconds: 1), () {
-              mapController.moveCamera(CameraUpdate.scrollBy(0, 150));
+            /*Future.delayed(Duration(seconds: 1), () {
+              mapController?.moveCamera(CameraUpdate.scrollBy(0, 150));
               setState(() {
                 isBottomSheetShown = true;
               });
-            });
+            });*/
 
             showModalBottomSheet(
                 constraints: BoxConstraints.loose(Size(
@@ -96,10 +120,9 @@ class _MainPageState extends State<MainPage> {
                 builder: (context) {
                   return ShowJobDetailBottomSheet().show(context, allData[i]);
                 }).then((value) {
+                  //setState(() {isBottomSheetShown = false;});
                   if (value){
                     Future.delayed(Duration(milliseconds: 700), () {
-
-                      setState(() {isBottomSheetShown = false;});
                       showModalBottomSheet(
                           constraints: BoxConstraints.loose(Size(
                               MediaQuery.of(context).size.width,
@@ -188,39 +211,20 @@ class _MainPageState extends State<MainPage> {
         mapBitmapsToMarkers(bitmaps);
       });
     }).generate(context);
-
   }
 
   List<Widget> markerWidgets() {
     return allData.map((element) => MapMarker(
         Location(
             LatLng(element.latitude, element.longitude),
-            element.estimated_price_driver,
+            element.estimatedPrice,
             element.isSelected ? AppColors.green_marker : AppColors.darkBlue)
     )).toList();
   }
 
   void getAllJobs() {
-    progressDialog.show();
-    api.getAllProjects().then((value) {
-      progressDialog.hide();
-      if (value is String){
-        showToast(value);
-      }else {
-        allData.addAll(value);
-        if (mapController != null){
-          mapController.moveCamera(CameraUpdate.newCameraPosition(CameraPosition(target: LatLng(allData[0].latitude, allData[0].longitude), zoom: 12)));
-        }
-        setState(() {
-          loadMarker();
-        });
-      }
-    }).onError((error, stackTrace) {
-      progressDialog.hide();
-      showToast(APIConst.SERVER_ERROR);
-    });
-  }
 
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -231,6 +235,13 @@ class _MainPageState extends State<MainPage> {
 
     return Scaffold(
       appBar: AppBar(
+          actions: [
+            Container(
+                margin: EdgeInsets.only(top: 13, bottom: 13, right: 15),
+                child: AdvancedSwitch(
+                  controller: switchController,
+                  activeColor: Colors.green, inactiveColor: Colors.grey)),
+          ],
           title: Text('Home', style: TextStyle(color: Colors.white)), backgroundColor: AppColors.darkBlue),
       drawer: Drawer(
         child: SingleChildScrollView(
@@ -362,17 +373,17 @@ class _MainPageState extends State<MainPage> {
             children: [
               Expanded(
                 child: GoogleMap(
-                  zoomGesturesEnabled: true, mapType: MapType.normal,
-                  initialCameraPosition:  CameraPosition(
-                      target: _center,
-                      zoom: 20), //getCameraPosition(),
-                  markers: customMarkers.toSet(),
-                  onMapCreated: (gcontroller) {
-                    controller.complete(gcontroller);
-                    setState(() {
-                      mapController = gcontroller;
-                      getAllJobs();
-                    });}),
+                    zoomControlsEnabled: false,
+                    zoomGesturesEnabled: true,
+                    mapType: MapType.normal,
+                    initialCameraPosition:  CameraPosition(target: _center, zoom: 20), //getCameraPosition(),
+                    markers: customMarkers.toSet(),
+                    onMapCreated: (gcontroller) {
+                      controller.complete(gcontroller);
+                      setState(() {
+                        mapController = gcontroller;
+                        getAllJobs();
+                      });}),
               ),
               Container(
                 padding: EdgeInsets.only(top: 5, bottom: 5),
@@ -433,20 +444,30 @@ class _MainPageState extends State<MainPage> {
                     ],
                   ),
                 ),
-              )
+              ),
             ],
           ),
+          /*Visibility(
+              visible: switchController.value,
+              child: Stack(
+                children: [
+                  Center(child: Container(width: 250, height: 250,child: WaterRipple())),
+                  Center(child: ClipOval(child: StsImgView(image: Assets.NELSON_IMG, width: 70, height: 70,),))
+                ],
+              )),*/
           Positioned(
+            bottom: 70,
             right: 10,
-            child: Container(margin: EdgeInsets.only(left: 10, top: 10),
-              child: AdvancedSwitch(controller: switchController, activeColor: Colors.green, inactiveColor: Colors.grey)),
-          ),
-          Center(
-              child: Visibility(
-                  visible: isBottomSheetShown,
-                  child: Container(
-                    margin: EdgeInsets.only(bottom: 350),
-                      width: 150, height: 150,child: WaterRipple()))),
+            child: FloatingActionButton.small(
+              backgroundColor: Colors.white,
+              onPressed: () {
+                if (Common.myLng != 0.0 || Common.myLat != 0.0){
+                  mapController?.moveCamera(CameraUpdate.newCameraPosition(CameraPosition(target: LatLng(Common.myLat, Common.myLng), zoom: 12)));
+                }
+              },
+              child: Icon(Icons.gps_fixed_outlined, color: AppColors.darkBlue,),
+            ),
+          )
         ],
       ));
   }

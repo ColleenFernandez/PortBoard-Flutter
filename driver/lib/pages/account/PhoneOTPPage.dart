@@ -2,6 +2,7 @@ import 'package:driver/assets/AppColors.dart';
 import 'package:driver/common/API.dart';
 import 'package:driver/common/Common.dart';
 import 'package:driver/common/Constants.dart';
+import 'package:driver/common/FirebaseAPI.dart';
 import 'package:driver/utils/Prefs.dart';
 import 'package:driver/utils/log_utils.dart';
 import 'package:driver/utils/utils.dart';
@@ -46,6 +47,7 @@ class _PhoneOTPPageState extends State<PhoneOTPPage> {
         });
       }else{
         Common.userModel = value;
+        FirebaseAPI.registerUser(Common.userModel);
         gotoMainPage();
       }
     }).onError((error, stackTrace) {

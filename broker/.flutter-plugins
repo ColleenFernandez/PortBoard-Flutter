@@ -1,0 +1,25 @@
+# This is a generated file; do not edit or check into version control.
+firebase_analytics=F:\\SDK\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\firebase_analytics-8.3.1\\
+firebase_analytics_web=F:\\SDK\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\firebase_analytics_web-0.3.0+1\\
+firebase_auth=F:\\SDK\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\firebase_auth-2.0.0\\
+firebase_auth_web=F:\\SDK\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\firebase_auth_web-2.0.0\\
+firebase_core=F:\\SDK\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\firebase_core-1.6.0\\
+firebase_core_web=F:\\SDK\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\firebase_core_web-1.1.0\\
+firebase_messaging=F:\\SDK\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\firebase_messaging-10.0.6\\
+firebase_messaging_web=F:\\SDK\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\firebase_messaging_web-2.0.5\\
+flutter_absolute_path=F:\\SDK\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\flutter_absolute_path-1.0.6\\
+flutter_plugin_android_lifecycle=F:\\SDK\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\flutter_plugin_android_lifecycle-2.0.3\\
+fluttertoast=F:\\SDK\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\fluttertoast-8.0.8\\
+geolocator=F:\\SDK\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\geolocator-7.6.2\\
+geolocator_android=F:\\SDK\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\geolocator_android-1.0.2\\
+geolocator_apple=F:\\SDK\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\geolocator_apple-1.2.1\\
+geolocator_web=F:\\SDK\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\geolocator_web-2.0.6\\
+google_maps_flutter=F:\\SDK\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\google_maps_flutter-2.0.8\\
+multi_image_picker=F:\\SDK\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\multi_image_picker-4.8.01\\
+path_provider_linux=F:\\SDK\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\path_provider_linux-2.0.2\\
+path_provider_windows=F:\\SDK\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\path_provider_windows-2.0.3\\
+shared_preferences=F:\\SDK\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\shared_preferences-2.0.7\\
+shared_preferences_linux=F:\\SDK\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\shared_preferences_linux-2.0.2\\
+shared_preferences_macos=F:\\SDK\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\shared_preferences_macos-2.0.2\\
+shared_preferences_web=F:\\SDK\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\shared_preferences_web-2.0.2\\
+shared_preferences_windows=F:\\SDK\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\shared_preferences_windows-2.0.2\\
