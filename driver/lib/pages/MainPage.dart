@@ -69,8 +69,12 @@ class _MainPageState extends State<MainPage> {
     switchController.addListener(() {
       if (switchController.value){
         LocationService.resume();
+        api.changeUserStatus(Common.userModel.id, true);
+        FirebaseAPI.changeUserStatus(Common.userModel.id, true);
       }else {
         LocationService.pause();
+        api.changeUserStatus(Common.userModel.id, false);
+        FirebaseAPI.changeUserStatus(Common.userModel.id, false);
       }
     });
 

@@ -12,6 +12,28 @@ class API {
     'Content-Type': 'application/x-www-form-urlencoded',
   };
 
+  Future<dynamic> changeUserStatus(String userId, bool status) async{
+
+    final url = baseURL + '/changeUserStatus';
+    final Map<String, dynamic> params = {
+      APIConst.id : userId,
+      APIConst.status: status
+    };
+
+    final res = await dio.post(url, data: params, options: Options(headers: header));
+
+    if (res.statusCode != 200){
+      return APIConst.SERVER_ERROR;
+    }
+
+    final msg = res.data[APIConst.MSG];
+    if (msg != APIConst.SUCCESS){
+      return msg;
+    }
+
+    return UserModel.fromJSON(res.data[APIConst.user]);
+  }
+
   Future<dynamic> login(String phone) async{
 
     final url = baseURL + '/login';

@@ -1,22 +1,14 @@
 // @dart=2.9
 import 'package:driver/assets/AppColors.dart';
-import 'package:driver/pages/Job/JobSearchPage.dart';
-import 'package:driver/pages/Job/SignaturePanel.dart';
 import 'package:driver/pages/MainPage.dart';
 import 'package:driver/pages/Splash.dart';
 import 'package:driver/pages/account/FirstPage.dart';
 import 'package:driver/pages/account/InputPhoneNumberPage.dart';
 import 'package:driver/pages/account/PhoneOTPPage.dart';
 import 'package:driver/pages/account/RegisterUserDetailPage.dart';
-import 'package:driver/pages/account/SubmitDriverLicensePage.dart';
-import 'package:driver/pages/account/SubmitSealinkCardPage.dart';
-import 'package:driver/pages/account/SubmitTwicCardPage.dart';
-import 'package:driver/pages/account/VerificationStatusPage.dart';
-import 'package:driver/service/LocationService.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:progress_dialog/progress_dialog.dart';
 
 void main() {
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
@@ -56,12 +48,6 @@ class _MyAppState extends State<MyApp> {
         '/PhoneOTPPage' : (BuildContext context) => new PhoneOTPPage(),
         '/RegisterUserDetailPage' : (BuildContext context) => new RegisterUserDetailPage(''),
         '/MainPage' : (BuildContext context) => MainPage(),
-        '/VerificationStatusPage' : (BuildContext context) => VerificationStatusPage(),
-        '/SubmitDriverLicensePage' : (BuildContext context) => SubmitDriverLicensePage(),
-        '/SubmitTwicCardPage' : (BuildContext context) => SubmitTwicCardPage(),
-        '/SubmitSealinkCardPage' : (BuildContext context) => SubmitSealinkCardPage(),
-        '/JobSearchPage' : (BuildContext context) => JobSearchPage(),
-        '/SignaturePanel' : (BuildContext context) => SignaturePanel(),
       },
     );
   }

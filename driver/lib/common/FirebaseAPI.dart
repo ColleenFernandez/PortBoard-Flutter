@@ -18,6 +18,21 @@ class FirebaseAPI {
     return result;
   }
 
+  static Future<bool> changeUserStatus(String userId, bool status) async {
+    bool result = false;
+
+    Map<String, dynamic> update = {
+      APIConst.status : status
+    };
+    await fbUser.doc(userId).update(update).then((value) => {
+      result = true
+    }).catchError((error) => {
+      result = false
+    });
+
+    return result;
+  }
+
   static Future<bool> updateLocation(String userId, double lat, double lng) async {
     bool result = false;
 
