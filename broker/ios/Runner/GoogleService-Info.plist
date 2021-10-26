@@ -3,34 +3,34 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>61035994730-0c2c3eqniu6sbj8miei3m4b7cirjufjf.apps.googleusercontent.com</string>
+	<string>61035994730-qlh9tsedtvg8lmhbpqvetv3i5qcug8vv.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.61035994730-0c2c3eqniu6sbj8miei3m4b7cirjufjf</string>
+	<string>com.googleusercontent.apps.61035994730-qlh9tsedtvg8lmhbpqvetv3i5qcug8vv</string>
 	<key>ANDROID_CLIENT_ID</key>
 	<string>61035994730-g0qp5bfc9gqkdoqd6t7a83iv4gp2b98k.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
-	<string>AIzaSyDTkB_n39atSG2z_c1HHXS8pCEHtEkBI7o</string>
+	<string>AIzaSyCMBR0rRmIT1bqLu1zNcYyKeo9atfao7ug</string>
 	<key>GCM_SENDER_ID</key>
 	<string>61035994730</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.portboard.driver</string>
+	<string>com.portboard.broker</string>
 	<key>PROJECT_ID</key>
 	<string>portboard-driver</string>
 	<key>STORAGE_BUCKET</key>
 	<string>portboard-driver.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
-	<false/>
+	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
-	<false/>
+	<false></false>
 	<key>IS_APPINVITE_ENABLED</key>
-	<true/>
+	<true></true>
 	<key>IS_GCM_ENABLED</key>
-	<true/>
+	<true></true>
 	<key>IS_SIGNIN_ENABLED</key>
-	<true/>
+	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:61035994730:ios:193b4d0f14ea14c6197413</string>
+	<string>1:61035994730:ios:b9da71d6b84262b4197413</string>
 </dict>
 </plist>

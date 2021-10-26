@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:driver/common/Common.dart';
 import 'package:driver/common/Constants.dart';
 import 'package:driver/utils/log_utils.dart';
 import 'package:fbroadcast/fbroadcast.dart';
@@ -16,7 +17,8 @@ class LocationService {
       positionStreamSubscription?.cancel();
       positionStreamSubscription = null;
     }).listen((position) {
-      FBroadcast.instance().broadcast(Constants.UPDATE_MAP_CAMERA_POSITION, value: position);
+      Common.myLat = position.latitude;
+      Common.myLng = position.longitude;
     });
   }
 

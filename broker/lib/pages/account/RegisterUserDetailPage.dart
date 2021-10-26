@@ -21,7 +21,6 @@ class RegisterUserDetailPage extends StatefulWidget {
 
 class _RegisterUserDetailPageState extends State<RegisterUserDetailPage> {
   late final ProgressDialog progressDialog;
-  final api = API();
 
   TextEditingController edtFirstName = new TextEditingController();
   TextEditingController edtLastName = new TextEditingController();
@@ -59,7 +58,7 @@ class _RegisterUserDetailPageState extends State<RegisterUserDetailPage> {
   }
   void registerUserDetail() {
     progressDialog.show();
-    api.register(widget.phone, edtFirstName.text, edtLastName.text, edtEmail.text, gender, Constants.ACCOUNT_STATUS).then((value) {
+    Common.api.register(widget.phone, edtFirstName.text, edtLastName.text, edtEmail.text, gender, Constants.BROKER).then((value) {
       progressDialog.hide();
       if (value is String){
         showToast(value);

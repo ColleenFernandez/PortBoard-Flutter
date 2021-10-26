@@ -32,7 +32,8 @@ class _InputPhoneNumberPageState extends State<InputPhoneNumberPage> {
         },
         verificationFailed: (FirebaseException e) {
           progressDialog.hide();
-          showToast(e.toString());
+          print(e);
+          showToast(e.message.toString());
         }, codeSent: (String verificationID, int? resendToken) {
           this.verificationId = verificationID;
           progressDialog.hide();
@@ -120,4 +121,15 @@ class _InputPhoneNumberPageState extends State<InputPhoneNumberPage> {
     );
   }
 
+  showProgress(){
+    if (!progressDialog.isShowing()){
+      progressDialog.show();
+    }
+  }
+
+  closeProgress(){
+    if (progressDialog.isShowing()){
+      progressDialog.hide();
+    }
+  }
 }
