@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:driver/common/APIConst.dart';
+import 'package:driver/common/Common.dart';
 import 'package:driver/common/Constants.dart';
 import 'package:driver/model/GoodsTypeModel.dart';
 import 'package:driver/model/JobModel.dart';
@@ -30,6 +31,7 @@ class API {
 
     final url = baseURL + '/postJob';
     final Map<String, dynamic> params = {
+      APIConst.brokerId : Common.userModel.id,
       APIConst.pickupLat : model.pickupLat,
       APIConst.pickupLng : model.pickupLng,
       APIConst.desLat : model.desLat,
@@ -197,7 +199,7 @@ class API {
   }
 
   Future<dynamic> register(String phone, String firstName, String lastName, String email, String gender, String userType) async {
-    final url = baseURL + '/registerUserDetail';
+    final url = baseURL + '/register';
     final params = {
       APIConst.phone : phone,
       APIConst.firstName : firstName,
