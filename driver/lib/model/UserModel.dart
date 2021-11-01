@@ -11,8 +11,9 @@ class UserModel {
   String phone = '';
   String status = '';
   String avatar = '';
-  double lat = 0.0;
-  double lng = 0.0;
+  String lat = '';
+  String lng = '';
+  String heading = '';
 
   UserModel();
 
@@ -26,6 +27,10 @@ class UserModel {
     model.phone = res[APIConst.phone];
     model.status = res[APIConst.status];
     model.avatar = res[APIConst.avatar];
+    model.userType = res[APIConst.userType];
+    model.lat = res[APIConst.lat];
+    model.lng = res[APIConst.lng];
+    model.heading = res[APIConst.heading];
 
     return model;
   }
@@ -41,6 +46,7 @@ class UserModel {
     APIConst.status : status,
     APIConst.avatar : avatar,
     APIConst.lat : lat,
-    APIConst.lng : lng
+    APIConst.lng : lng,
+    APIConst.heading : heading
   };
 }

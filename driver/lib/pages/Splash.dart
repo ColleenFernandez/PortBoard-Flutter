@@ -68,7 +68,7 @@ class _SplashPageState extends State<SplashPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Image(image: Assets.IMG_SPLASH_BG),
+      body: Image(image: Assets.IMG_SPLASH_BG, fit: BoxFit.cover, width: MediaQuery.of(context).size.width, height: MediaQuery.of(context).size.height,),
     );
   }
 }

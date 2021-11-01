@@ -3,6 +3,7 @@ import 'package:driver/assets/Assets.dart';
 import 'package:driver/common/API.dart';
 import 'package:driver/common/Common.dart';
 import 'package:driver/common/Constants.dart';
+import 'package:driver/common/FirebaseAPI.dart';
 import 'package:driver/pages/MainPage.dart';
 import 'package:driver/utils/Prefs.dart';
 import 'package:driver/utils/utils.dart';
@@ -58,12 +59,17 @@ class _RegisterUserDetailPageState extends State<RegisterUserDetailPage> {
   }
   void registerUserDetail() {
     progressDialog.show();
+<<<<<<< HEAD
     Common.api.register(widget.phone, edtFirstName.text, edtLastName.text, edtEmail.text, gender, Constants.ACCOUNT_STATUS).then((value) {
+=======
+    api.register(widget.phone, edtFirstName.text, edtLastName.text, edtEmail.text, gender, Constants.DRIVER).then((value) {
+>>>>>>> e0bbdfbb28040f64cda7eb3ca2e247f49eb6a13a
       progressDialog.hide();
       if (value is String){
         showToast(value);
       }else {
         Common.userModel = value;
+        FirebaseAPI.registerUser(Common.userModel);
         gotoMainPage();
       }
     });

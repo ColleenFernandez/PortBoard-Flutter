@@ -1,0 +1,4 @@
+io/flutter/plugins/GeneratedPluginRegistrant.java
+ io.flutter.plugins.GeneratedPluginRegistrant
+com/portboard/broker/BuildConfig.java
+ com.portboard.broker.BuildConfig

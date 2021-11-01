@@ -10,7 +10,14 @@ class FirebaseAPI {
 
   static Future<bool> registerUser(UserModel model) async {
     bool result = false;
-    await fbUser.doc(model.id).set(model.toJSON()).then((value) {
+    final data = {
+      APIConst.id : model.id,
+      APIConst.status : model.status,
+      APIConst.lat : model.lat,
+      APIConst.lng : model.lng,
+      APIConst.heading : model.heading
+    };
+    await fbUser.doc(model.id).set(data).then((value) {
       result = true;
     }).catchError((error) {
       result = false;
@@ -18,7 +25,7 @@ class FirebaseAPI {
     return result;
   }
 
-  static Future<bool> changeUserStatus(String userId, bool status) async {
+  static Future<bool> changeUserStatus(String userId, String status) async {
     bool result = false;
 
     Map<String, dynamic> update = {
@@ -33,13 +40,15 @@ class FirebaseAPI {
     return result;
   }
 
-  static Future<bool> updateLocation(String userId, double lat, double lng) async {
+  static Future<bool> updateLocation(String userId, String lat, String lng, String heading) async {
     bool result = false;
 
     Map<String, dynamic> update = {
       APIConst.lat : lat,
-      APIConst.lng : lng
+      APIConst.lng : lng,
+      APIConst.heading : heading
     };
+
     await fbUser.doc(userId).update(update).then((value) => {
       result = true
     }).catchError((error) => {
