@@ -17,7 +17,6 @@ class SubmitTwicCardPage extends StatefulWidget {
 
 class _SubmitTwicCardPageState extends State<SubmitTwicCardPage> {
 
-  final api = API();
   final int IS_FRONT_PIC = 100, IS_BACK_PIC = 101;
   late final ProgressDialog progressDialog;
 

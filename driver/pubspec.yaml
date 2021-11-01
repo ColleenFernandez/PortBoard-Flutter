@@ -34,6 +34,7 @@ dependencies:
   flutter_advanced_switch: ^2.1.0 # toggle switch
   signature: ^4.1.1 # signature
   geolocator: ^7.6.2 # geolocation
+  background_location: ^0.8.1
   flutter_animarker: ^3.2.0 # ripple marker
 
   # https

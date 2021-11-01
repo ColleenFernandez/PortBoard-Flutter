@@ -1,3 +1,4 @@
+/*
 import 'dart:async';
 
 import 'package:driver/common/Common.dart';
@@ -36,4 +37,4 @@ class LocationService {
       positionStreamSubscription?.resume();
     }
   }
-}
+}*/

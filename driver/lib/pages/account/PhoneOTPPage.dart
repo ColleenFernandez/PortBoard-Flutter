@@ -25,8 +25,6 @@ class PhoneOTPPage extends StatefulWidget{
 }
 
 class _PhoneOTPPageState extends State<PhoneOTPPage> {
-
-  final api = API();
   late final ProgressDialog progressDialog;
   String phone = '', verificationId = '', verifyCode = '';
   bool isUserExist = true;
@@ -39,7 +37,7 @@ class _PhoneOTPPageState extends State<PhoneOTPPage> {
   }
 
   void getUserModel() async{
-    api.login(phone).then((value) {
+    Common.api.login(phone).then((value) {
       if (value is String){
         showToast(value);
         setState(() {

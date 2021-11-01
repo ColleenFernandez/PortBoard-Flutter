@@ -46,7 +46,6 @@ class _MainPageState extends State<MainPage> {
 
   int selectedDestination = 0;
   late final ProgressDialog progressDialog;
-  API api = new API();
   GoogleMapController? mapController;
 
   List<JobModel> allData = [];
@@ -62,15 +61,15 @@ class _MainPageState extends State<MainPage> {
   void initState() {
     super.initState();
 
-    LocationService.start();
+    Common.locationService.init();
     switchController.addListener(() {
       if (switchController.value){
-        LocationService.resume();
-        api.changeUserStatus(Common.userModel.id, true);
+        Common.locationService.start();
+        Common.api.changeUserStatus(Common.userModel.id, true);
         FirebaseAPI.changeUserStatus(Common.userModel.id, true);
       }else {
-        LocationService.pause();
-        api.changeUserStatus(Common.userModel.id, false);
+        Common.locationService.stop();
+        Common.api.changeUserStatus(Common.userModel.id, false);
         FirebaseAPI.changeUserStatus(Common.userModel.id, false);
       }
     });
