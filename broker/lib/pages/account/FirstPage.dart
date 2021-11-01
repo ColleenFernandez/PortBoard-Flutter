@@ -1,8 +1,14 @@
 import 'package:driver/assets/AppColors.dart';
 import 'package:driver/assets/Assets.dart';
+import 'package:driver/common/API.dart';
 import 'package:driver/common/Common.dart';
+import 'package:driver/common/Constants.dart';
+import 'package:driver/pages/MainPage.dart';
+import 'package:driver/utils/Prefs.dart';
+import 'package:driver/utils/utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:progress_dialog/progress_dialog.dart';
 
 class FirstPage extends StatefulWidget {
   @override
@@ -11,10 +17,32 @@ class FirstPage extends StatefulWidget {
 
 class _FirstPageState extends State<FirstPage> {
 
+  late final ProgressDialog progressDialog;
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+    progressDialog = ProgressDialog(context);
+    progressDialog.style(progressWidget: Container(padding: EdgeInsets.all(13), child: CircularProgressIndicator(color: AppColors.lightBlue)));
+  }
+
+  void tempLoginProcess(){
+    showProgress();
+    Common.api.login('+11234567891').then((value) {
+      if (value is String){
+        showToast(value);
+      }else{
+        Common.userModel = value;
+        gotoMainPage();
+      }
+    }).onError((error, stackTrace) {
+      showToast(error.toString());
+    });
+  }
+
+  void gotoMainPage(){
+    Prefs.save(Constants.PHONE, '+11234567891');
+    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) => MainPage()), ModalRoute.withName('/MainPage'));
   }
 
   @override
@@ -32,6 +60,7 @@ class _FirstPageState extends State<FirstPage> {
             margin: EdgeInsets.only(left: 30, right: 30),
             child: ElevatedButton(onPressed: () {
               Navigator.pushNamed(context, '/InputPhoneNumberPage');
+              //tempLoginProcess();
             }, child: Text('Login'), style: ElevatedButton.styleFrom(primary: AppColors.lightBlue),),
           ),
           Container(
@@ -46,5 +75,17 @@ class _FirstPageState extends State<FirstPage> {
         ],
       ),
     );
+  }
+
+  showProgress(){
+    if (!progressDialog.isShowing()){
+      progressDialog.show();
+    }
+  }
+
+  closeProgress(){
+    if (progressDialog.isShowing()){
+      progressDialog.hide();
+    }
   }
 }

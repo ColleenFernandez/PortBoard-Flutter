@@ -4,6 +4,7 @@ import 'package:driver/common/API.dart';
 import 'package:driver/common/Common.dart';
 import 'package:driver/common/Constants.dart';
 import 'package:driver/model/UserModel.dart';
+import 'package:driver/service/LocationService.dart';
 import 'package:driver/utils/Prefs.dart';
 import 'package:driver/utils/utils.dart';
 import 'package:flutter/cupertino.dart';
@@ -22,12 +23,14 @@ class _SplashPageState extends State<SplashPage> {
 
   late final ProgressDialog progressDialog;
 
-  final api = API();
   String phone = '';
 
   @override
   void initState() {
     super.initState();
+
+    LocationService.start();
+
     progressDialog = ProgressDialog(context);
     progressDialog.style(progressWidget: Container(padding: EdgeInsets.all(13), child: CircularProgressIndicator(color: AppColors.lightBlue)));
 
@@ -47,7 +50,7 @@ class _SplashPageState extends State<SplashPage> {
 
   void login(){
     progressDialog.show();
-    api.login(phone).then((value) {
+    Common.api.login(phone).then((value) {
       progressDialog.hide();
       if (value is String){
         showToast(value);

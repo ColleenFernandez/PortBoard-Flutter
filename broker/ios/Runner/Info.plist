@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>PortBoard Driver</string>
+	<string>PortBoard Broker</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -13,7 +13,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>driver</string>
+	<string>broker</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -27,7 +27,7 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.googleusercontent.apps.61035994730-0c2c3eqniu6sbj8miei3m4b7cirjufjf</string>
+				<string>com.googleusercontent.apps.61035994730-qlh9tsedtvg8lmhbpqvetv3i5qcug8vv</string>
 			</array>
 		</dict>
 	</array>
@@ -37,8 +37,27 @@
 	<false/>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSExceptionDomains</key>
+		<dict/>
+		<key>https://portboard.app</key>
+		<dict>
+			<key>NSExceptionAllowsInsecureHTTPLoads</key>
+			<true/>
+			<key>NSIncludesSubdomains</key>
+			<true/>
+		</dict>
+	</dict>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>PortBoard Broker app needs access to location when in the background.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>PortBoard Broker app needs access to location when open.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Please allow this permission to upload photo</string>
 	<key>UIBackgroundModes</key>
 	<array>
+		<string>location</string>
 		<string>remote-notification</string>
 	</array>
 	<key>UILaunchStoryboardName</key>
@@ -58,19 +77,10 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-	<key>NSAppTransportSecurity</key>
+	<key>NSLocationTemporaryUsageDescriptionDictionary</key>
 	<dict>
-		<key>NSExceptionDomains</key>
-		<dict/>
-		<key>https://portboard.app</key>
-		<dict>
-			<key>NSExceptionAllowsInsecureHTTPLoads</key>
-			<true/>
-			<key>NSIncludesSubdomains</key>
-			<true/>
-		</dict>
+		<key>YourPurposeKey</key>
+		<string>The example App requires temporary access to the device&amp;apos;s precise location.</string>
 	</dict>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Please allow this permission to upload photo</string>
 </dict>
 </plist>

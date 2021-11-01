@@ -34,7 +34,10 @@ dependencies:
   flutter_advanced_switch: ^2.1.0 # toggle switch
   signature: ^4.1.1 # signature
   geolocator: ^7.6.2 # geolocation
-  flutter_animarker: ^3.2.0 # ripple marker
+  flutter_google_places: ^0.3.0 # autocomplete address
+  google_api_headers: ^1.1.1 # google API header
+  google_maps_webservice: ^0.0.19  # get location detail from lat & lat
+  flutter_polyline_points: ^1.0.0 # draw route
 
   # https
   dio: ^4.0.0
@@ -44,6 +47,7 @@ dependencies:
   firebase_analytics: ^8.1.2
   firebase_auth: ^2.0.0
   firebase_messaging: ^10.0.4
+  cloud_firestore: ^2.5.3
 
 dev_dependencies:
   flutter_test:
@@ -73,6 +77,17 @@ flutter:
     - assets/images/container.png
     - assets/images/bar-code.png
     - assets/images/bg_focus.png
+    - assets/images/ic_truck.png
+    - assets/images/ic_truck_small.png
+    - assets/images/marker_my_location.png
+    - assets/images/ic_port_crane.png
+    - assets/images/ic_blue_snow.png
+    - assets/images/ic_navy_blue_clean.png
+    - assets/images/ic_red_curve.png
+    - assets/images/ic_yellow_container.png
+    - assets/images/ic_greeen_clean.png
+    - assets/images/ic_truck_start.png
+    - assets/images/ic_warehouse_marker.png
 
   fonts:
     - family: RobotoCondensed
