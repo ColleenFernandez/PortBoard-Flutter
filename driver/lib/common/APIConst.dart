@@ -18,4 +18,5 @@ class APIConst{
   static const String avatar = 'avatar';
   static const String lat = 'lat';
   static const String lng = 'lng';
+  static const String heading = 'heading';
 }

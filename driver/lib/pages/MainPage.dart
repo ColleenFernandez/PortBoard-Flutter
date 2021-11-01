@@ -70,17 +70,17 @@ class _MainPageState extends State<MainPage> {
       if (switchController.value){
         LocationService.resume();
         api.changeUserStatus(Common.userModel.id, true);
-        FirebaseAPI.changeUserStatus(Common.userModel.id, true);
+        FirebaseAPI.changeUserStatus(Common.userModel.id, '1');
       }else {
         LocationService.pause();
         api.changeUserStatus(Common.userModel.id, false);
-        FirebaseAPI.changeUserStatus(Common.userModel.id, false);
+        FirebaseAPI.changeUserStatus(Common.userModel.id, '0');
       }
     });
 
     FBroadcast.instance().register(Constants.LOCATION_UPDATE, (value, callback) {
       if (switchController.value){
-        FirebaseAPI.updateLocation(Common.userModel.id, Common.myLat, Common.myLng).then((value) {
+        FirebaseAPI.updateLocation(Common.userModel.id, Common.myLat.toString(), Common.myLng.toString(), Common.heading.toString()).then((value) {
           if (!value){
             showToast('Firebase Error');
           }
@@ -380,7 +380,7 @@ class _MainPageState extends State<MainPage> {
                     zoomControlsEnabled: false,
                     zoomGesturesEnabled: true,
                     mapType: MapType.normal,
-                    initialCameraPosition:  CameraPosition(target: _center, zoom: 20), //getCameraPosition(),
+                    initialCameraPosition:  CameraPosition(target: _center, zoom: 17), //getCameraPosition(),
                     markers: customMarkers.toSet(),
                     onMapCreated: (gcontroller) {
                       controller.complete(gcontroller);

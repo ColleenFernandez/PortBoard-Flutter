@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="default_web_client_id" translatable="false">377795617593-gio1gv1o4ivuvm5qe5iriqu97hhgm9ok.apps.googleusercontent.com</string>
+    <string name="gcm_defaultSenderId" translatable="false">377795617593</string>
+    <string name="google_api_key" translatable="false">AIzaSyA7HQE-zoaWE-Y5mTiptvto-etOgZWmbyE</string>
+    <string name="google_app_id" translatable="false">1:377795617593:android:611bd94b3a468e04afbee8</string>
+    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyA7HQE-zoaWE-Y5mTiptvto-etOgZWmbyE</string>
+    <string name="google_storage_bucket" translatable="false">portboard-broker.appspot.com</string>
+    <string name="project_id" translatable="false">portboard-broker</string>
+</resources>
