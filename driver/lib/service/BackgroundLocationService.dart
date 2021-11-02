@@ -12,15 +12,16 @@ class BackgroundLocationService {
       icon: "assets/images/logo.png",
     );
 
-    BackgroundLocation.setAndroidConfiguration(5000);
+    BackgroundLocation.setAndroidConfiguration(1000);
   }
 
   void start(){
-    BackgroundLocation.startLocationService();
+    BackgroundLocation.startLocationService(distanceFilter: 5);
 
     BackgroundLocation.getLocationUpdates((p0) {
       Common.myLat = p0.latitude!;
       Common.myLng = p0.longitude!;
+      Common.heading = p0.bearing!;
       FBroadcast.instance().broadcast(Constants.LOCATION_UPDATE, value: p0);
     });
   }

@@ -1,2 +1,0 @@
-com/kasem/flutter_absolute_path/BuildConfig.java
- com.kasem.flutter_absolute_path.BuildConfig

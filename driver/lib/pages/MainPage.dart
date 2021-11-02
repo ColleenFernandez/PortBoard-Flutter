@@ -64,7 +64,6 @@ class _MainPageState extends State<MainPage> {
     Common.locationService.init();
     switchController.addListener(() {
       if (switchController.value){
-<<<<<<< HEAD
         Common.locationService.start();
         Common.api.changeUserStatus(Common.userModel.id, true);
         FirebaseAPI.changeUserStatus(Common.userModel.id, true);
@@ -72,15 +71,6 @@ class _MainPageState extends State<MainPage> {
         Common.locationService.stop();
         Common.api.changeUserStatus(Common.userModel.id, false);
         FirebaseAPI.changeUserStatus(Common.userModel.id, false);
-=======
-        LocationService.resume();
-        api.changeUserStatus(Common.userModel.id, true);
-        FirebaseAPI.changeUserStatus(Common.userModel.id, '1');
-      }else {
-        LocationService.pause();
-        api.changeUserStatus(Common.userModel.id, false);
-        FirebaseAPI.changeUserStatus(Common.userModel.id, '0');
->>>>>>> e0bbdfbb28040f64cda7eb3ca2e247f49eb6a13a
       }
     });
 

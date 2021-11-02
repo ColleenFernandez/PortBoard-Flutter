@@ -25,7 +25,7 @@ class FirebaseAPI {
     return result;
   }
 
-  static Future<bool> changeUserStatus(String userId, String status) async {
+  static Future<bool> changeUserStatus(String userId, bool status) async {
     bool result = false;
 
     Map<String, dynamic> update = {

@@ -59,11 +59,7 @@ class _RegisterUserDetailPageState extends State<RegisterUserDetailPage> {
   }
   void registerUserDetail() {
     progressDialog.show();
-<<<<<<< HEAD
-    Common.api.register(widget.phone, edtFirstName.text, edtLastName.text, edtEmail.text, gender, Constants.ACCOUNT_STATUS).then((value) {
-=======
-    api.register(widget.phone, edtFirstName.text, edtLastName.text, edtEmail.text, gender, Constants.DRIVER).then((value) {
->>>>>>> e0bbdfbb28040f64cda7eb3ca2e247f49eb6a13a
+    Common.api.register(widget.phone, edtFirstName.text, edtLastName.text, edtEmail.text, gender, Constants.USER_TYPE).then((value) {
       progressDialog.hide();
       if (value is String){
         showToast(value);
