@@ -18,4 +18,5 @@ class Constants {
 
   // broadcast constant
   static const String LOCATION_UPDATE = 'updateMapCameraPosition';
+  static const String JOB_DETAIL = 'jobDetail';
 }

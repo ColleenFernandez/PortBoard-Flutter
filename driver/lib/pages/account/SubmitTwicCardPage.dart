@@ -173,7 +173,7 @@ class _SubmitTwicCardPageState extends State<SubmitTwicCardPage> {
                     Positioned(right: 0, bottom: 0,
                         child: FloatingActionButton(
                             mini: true,
-                            heroTag: 'btn3',
+                            heroTag: 'FAB-12',
                             backgroundColor: Colors.white,
                             onPressed: () {
                               loadPicture(IS_FRONT_PIC);
@@ -192,7 +192,7 @@ class _SubmitTwicCardPageState extends State<SubmitTwicCardPage> {
                     StsImgView(image: backPic, width: double.infinity, height: 250),
                     Positioned(right: 0, bottom: 0,
                         child: FloatingActionButton(
-                            heroTag: 'btn1',
+                            heroTag: 'FAB-13',
                             backgroundColor: Colors.white,
                             mini: true,
                             onPressed: () {

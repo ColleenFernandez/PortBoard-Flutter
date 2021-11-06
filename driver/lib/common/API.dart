@@ -12,6 +12,48 @@ class API {
     'Content-Type': 'application/x-www-form-urlencoded',
   };
 
+  Future<String> declineJob(String driverId, String jobId) async {
+    final url = baseURL + '/declineJob';
+    final Map<String, dynamic> params = {
+      APIConst.driverId : driverId,
+      APIConst.jobId : jobId
+    };
+
+    final res = await dio.post(url, data: params, options: Options(headers: header));
+
+    if (res.statusCode != 200){
+      return APIConst.SERVER_ERROR;
+    }
+
+    final msg = res.data[APIConst.MSG];
+    if (msg != APIConst.SUCCESS){
+      return msg;
+    }
+
+    return APIConst.SUCCESS;
+  }
+
+  Future<String> updateToken(String userId, String token) async {
+    final url = baseURL + '/updateToken';
+    final Map<String, dynamic> params = {
+      APIConst.id : userId,
+      APIConst.fcmToken : token
+    };
+
+    final res = await dio.post(url, data: params, options: Options(headers: header));
+
+    if (res.statusCode != 200){
+      return APIConst.SERVER_ERROR;
+    }
+
+    final msg = res.data[APIConst.MSG];
+    if (msg != APIConst.SUCCESS){
+      return msg;
+    }
+
+    return APIConst.SUCCESS;
+  }
+
   Future<bool> changeUserStatus(String userId, bool status) async{
 
     final url = baseURL + '/changeUserStatus';

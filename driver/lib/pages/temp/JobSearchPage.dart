@@ -1,15 +1,15 @@
 import 'package:driver/adapter/JobAdapter.dart';
 import 'package:driver/assets/AppColors.dart';
 import 'package:driver/model/JobModel.dart';
-import 'package:driver/pages/Job/AcceptRequestBottomSheet.dart';
-import 'package:driver/pages/Job/CompleteService.dart';
-import 'package:driver/pages/Job/ConfirmBottomSheet.dart';
-import 'package:driver/pages/Job/SaveChassisInfoBottomSheet.dart';
-import 'package:driver/pages/Job/SignatureConfirm.dart';
+import 'package:driver/pages/temp/AcceptRequestBottomSheet.dart';
+import 'package:driver/pages/temp/CompleteService.dart';
+import 'package:driver/pages/temp/ConfirmBottomSheet.dart';
+import 'package:driver/pages/temp/SaveChassisInfoBottomSheet.dart';
 import 'package:fdottedline/fdottedline.dart';
 import 'package:flutter/material.dart';
 
 import 'ShowJobDetailBottomSheet.dart';
+import 'SignatureConfirm.dart';
 
 class JobSearchPage extends StatefulWidget{
   @override

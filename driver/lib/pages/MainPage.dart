@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:driver/assets/AppColors.dart';
@@ -9,13 +10,15 @@ import 'package:driver/common/Common.dart';
 import 'package:driver/common/Constants.dart';
 import 'package:driver/common/FirebaseAPI.dart';
 import 'package:driver/model/JobModel.dart';
-import 'package:driver/pages/Job/AcceptRequestBottomSheet.dart';
-import 'package:driver/pages/Job/CompleteService.dart';
-import 'package:driver/pages/Job/ConfirmBottomSheet.dart';
-import 'package:driver/pages/Job/SaveChassisInfoBottomSheet.dart';
-import 'package:driver/pages/Job/SignatureConfirm.dart';
-import 'package:driver/service/LocationService.dart';
+import 'package:driver/pages/Job/JobRequestPage.dart';
+import 'package:driver/pages/temp/AcceptRequestBottomSheet.dart';
+import 'package:driver/pages/temp/CompleteService.dart';
+import 'package:driver/pages/temp/ConfirmBottomSheet.dart';
+import 'package:driver/pages/temp/SaveChassisInfoBottomSheet.dart';
+import 'package:driver/pages/temp/SignatureConfirm.dart';
+import 'package:driver/service/FCMService.dart';
 import 'package:driver/utils/Prefs.dart';
+import 'package:driver/utils/log_utils.dart';
 import 'package:driver/utils/utils.dart';
 import 'package:driver/widget/CustomMapMarker/MapMarker.dart';
 import 'package:driver/widget/CustomMapMarker/MarkerGenerator.dart';
@@ -32,15 +35,17 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_advanced_switch/flutter_advanced_switch.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:progress_dialog/progress_dialog.dart';
+import 'package:visibility_aware_state/visibility_aware_state.dart';
 
-import 'Job/ShowJobDetailBottomSheet.dart';
+import 'temp/ShowJobDetailBottomSheet.dart';
 
 class MainPage extends StatefulWidget{
+
   @override
   _MainPageState createState() => _MainPageState();
 }
 
-class _MainPageState extends State<MainPage> {
+class _MainPageState extends VisibilityAwareState<MainPage>{
 
   final switchController = AdvancedSwitchController();
 
@@ -52,16 +57,33 @@ class _MainPageState extends State<MainPage> {
   GlobalKey iconKey = GlobalKey();
 
   final LatLng _center = const LatLng(13.1896, 80.3039);
-  List<Marker> customMarkers = [];
+  List<Marker> markerList = [];
   dynamic userPhoto = Assets.DEFAULT_IMG;
   bool isMarkerClicked = false;
   final controller = Completer<GoogleMapController>();
+
+  late BitmapDescriptor markerMyLocation;
+  late Marker myLocationMarker;
 
   @override
   void initState() {
     super.initState();
 
-    Common.locationService.init();
+    FBroadcast.instance().register(Constants.JOB_DETAIL, (value, callback) {
+
+      try {
+        final Map<String, dynamic> temp = jsonDecode(value[APIConst.jobDetail]);
+        final JobModel model = JobModel.fromJSON(temp);
+        Navigator.push(context, MaterialPageRoute(builder: (context) => JobRequestPage(model)));
+      }catch (error) {
+        LogUtils.log(error.toString());
+      }
+    });
+
+    Utils.customMarker(Assets.MARKER_MY_POSITION_PATH).then((value) {
+      markerMyLocation = value;
+    });
+
     switchController.addListener(() {
       if (switchController.value){
         Common.locationService.start();
@@ -86,152 +108,32 @@ class _MainPageState extends State<MainPage> {
 
     progressDialog = ProgressDialog(context);
     progressDialog.style(progressWidget: Container(padding: EdgeInsets.all(13), child: CircularProgressIndicator(color: AppColors.green)));
+
+    updateToken();
   }
 
-  loadMarker(){
-    List<Marker>? mapBitmapsToMarkers (List<Uint8List> bitmaps) {
-      bitmaps.asMap().forEach((i, bmp) {
-        customMarkers.add(Marker(
-          markerId: MarkerId('$i'),
-          position: LatLng(allData[i].latitude, allData[i].longitude),
-          icon: BitmapDescriptor.fromBytes(bmp),
-          onTap: () {
-            allData[i].isSelected = !allData[i].isSelected;
-            isMarkerClicked = true;
-            customMarkers.clear();
-            setState(() {});
+  void updateToken(){
+    Common.api.updateToken(Common.userModel.id, Common.fcmToken).then((value) {
+      if (value != APIConst.SUCCESS){
+        showToast(value);
+      }
+    }).onError((error, stackTrace) {
+      LogUtils.log(error.toString());
+      showToast('Token update failed');
+    });
+  }
 
-            /*Future.delayed(Duration(seconds: 1), () {
-              mapController?.moveCamera(CameraUpdate.scrollBy(0, 150));
-              setState(() {
-                isBottomSheetShown = true;
-              });
-            });*/
-
-            showModalBottomSheet(
-                constraints: BoxConstraints.loose(Size(
-                    MediaQuery.of(context).size.width,
-                    MediaQuery.of(context).size.height * 0.9)),
-                useRootNavigator: true,
-                isScrollControlled : true,
-                barrierColor: Colors.transparent,
-                backgroundColor: Colors.transparent,
-                context: context,
-                builder: (context) {
-                  return ShowJobDetailBottomSheet().show(context, allData[i]);
-                }).then((value) {
-                  //setState(() {isBottomSheetShown = false;});
-                  if (value){
-                    Future.delayed(Duration(milliseconds: 700), () {
-                      showModalBottomSheet(
-                          constraints: BoxConstraints.loose(Size(
-                              MediaQuery.of(context).size.width,
-                              MediaQuery.of(context).size.height * 0.9)), // <= this is set to 3/4 of screen size.
-                          useRootNavigator: true,
-                          barrierColor: Colors.transparent,
-                          backgroundColor: Colors.transparent,
-                          context: context,
-                          isScrollControlled : true,
-                          builder: (context) {
-                            return AcceptRequestBottomSheet().show(context,  allData[i]);
-                          }).then((value) {
-                            if (value){
-                              Future.delayed(Duration(milliseconds: 700), () {
-                                showModalBottomSheet(
-                                    constraints: BoxConstraints.loose(Size(
-                                        MediaQuery.of(context).size.width,
-                                        MediaQuery.of(context).size.height * 0.9)), // <= this is set to 3/4 of screen size.
-                                    useRootNavigator: true,
-                                    barrierColor: Colors.transparent,
-                                    backgroundColor: Colors.transparent,
-                                    context: context,
-                                    isScrollControlled : true,
-                                    builder: (context) {
-                                      return ConfirmBottomSheet().show(context,  allData[i]);
-                                    }).then((value) {
-                                      if (value ){
-                                        Future.delayed(Duration(milliseconds: 700), () {
-                                          showModalBottomSheet(
-                                              constraints: BoxConstraints.loose(Size(
-                                              MediaQuery.of(context).size.width,
-                                              MediaQuery.of(context).size.height * 0.9)), // <= this is set to 3/4 of screen size.
-                                              useRootNavigator: true,
-                                              barrierColor: Colors.transparent,
-                                              backgroundColor: Colors.transparent,
-                                              context: context,
-                                              isScrollControlled : true,
-                                              builder: (context) {
-                                                return SaveChassisInfoBottomSheet().show(context);
-                                              }).then((value) {
-                                                if (value){
-                                                  Future.delayed(Duration(milliseconds: 700), () {
-                                                    showModalBottomSheet(
-                                                        constraints: BoxConstraints.loose(Size(
-                                                            MediaQuery.of(context).size.width,
-                                                            MediaQuery.of(context).size.height * 0.9)), // <= this is set to 3/4 of screen size.
-                                                        useRootNavigator: true,
-                                                        barrierColor: Colors.transparent,
-                                                        backgroundColor: Colors.transparent,
-                                                        context: context,
-                                                        isScrollControlled : true,
-                                                        builder: (context) {
-                                                          return CompleteService().show(context);
-                                                        }).then((value) {
-
-                                                          if (value){
-                                                            Future.delayed(Duration(milliseconds: 700), () {
-                                                              showModalBottomSheet(
-                                                                  constraints: BoxConstraints.loose(Size(
-                                                                      MediaQuery.of(context).size.width,
-                                                                      MediaQuery.of(context).size.height * 0.9)), // <= this is set to 3/4 of screen size.
-                                                                  useRootNavigator: true,
-                                                                  barrierColor: Colors.transparent,
-                                                                  backgroundColor: Colors.transparent,
-                                                                  context: context,
-                                                                  isScrollControlled : true,
-                                                                  builder: (context) {
-                                                                    return SignatureConfirm().show(context);                                                                  });
-                                                            });
-                                                          }
-                                                        });
-                                                  });}
-                                              });
-                                        });}
-                                    });
-                              });}
-                          });
-                    });}
-                });}
-          ));
-      });
+  @override
+  void onVisibilityChanged(WidgetVisibility visibility) async{
+    switch (visibility){
+      case WidgetVisibility.VISIBLE:
+        break;
     }
-
-    MarkerGenerator(markerWidgets(), (bitmaps) {
-      setState(() {
-        mapBitmapsToMarkers(bitmaps);
-      });
-    }).generate(context);
-  }
-
-  List<Widget> markerWidgets() {
-    return allData.map((element) => MapMarker(
-        Location(
-            LatLng(element.latitude, element.longitude),
-            element.estimatedPrice,
-            element.isSelected ? AppColors.green_marker : AppColors.darkBlue)
-    )).toList();
-  }
-
-  void getAllJobs() {
-
+    super.onVisibilityChanged(visibility);
   }
 
   @override
   Widget build(BuildContext context) {
-    if (isMarkerClicked){
-      isMarkerClicked = false;
-      loadMarker();
-    }
 
     return Scaffold(
       appBar: AppBar(
@@ -360,7 +262,7 @@ class _MainPageState extends State<MainPage> {
                 leading: Icon(Icons.logout, color:Colors.black87),
                 title: Text('Logout', style: TextStyle(color:Colors.black87)),
                 onTap: (){
-                  Prefs.clear();
+                  Prefs.clearAll();
                 },
               ),
             ],
@@ -377,12 +279,11 @@ class _MainPageState extends State<MainPage> {
                     zoomGesturesEnabled: true,
                     mapType: MapType.normal,
                     initialCameraPosition:  CameraPosition(target: _center, zoom: 17), //getCameraPosition(),
-                    markers: customMarkers.toSet(),
+                    markers: markerList.toSet(),
                     onMapCreated: (gcontroller) {
                       controller.complete(gcontroller);
                       setState(() {
                         mapController = gcontroller;
-                        getAllJobs();
                       });}),
               ),
               Container(
@@ -459,24 +360,58 @@ class _MainPageState extends State<MainPage> {
             bottom: 70,
             right: 10,
             child: FloatingActionButton.small(
+              heroTag: 'FAB-8',
               backgroundColor: Colors.white,
               onPressed: () {
                 if (Common.myLng != 0.0 || Common.myLat != 0.0){
-                  mapController?.moveCamera(CameraUpdate.newCameraPosition(CameraPosition(target: LatLng(Common.myLat, Common.myLng), zoom: 12)));
+                  showMyLocation();
                 }
               },
               child: Icon(Icons.gps_fixed_outlined, color: AppColors.darkBlue,),
             ),
+          ),
+          Positioned(
+              child: FloatingActionButton.small(
+                heroTag: 'FAB-9',
+                onPressed: () {
+                final JobModel model = JobModel();
+
+              }, child: Icon(Icons.play_circle_fill),)
           )
         ],
       ));
+  }
+
+  void showMyLocation() {
+
+    mapController?.moveCamera(CameraUpdate.newCameraPosition(CameraPosition(target: LatLng(Common.myLat, Common.myLng), zoom: 12)));
+
+    myLocationMarker = new Marker(
+        markerId: MarkerId(Common.userModel.id),
+      position: LatLng(Common.myLat, Common.myLng),
+      draggable: false,
+      zIndex: 2,
+      flat: true,
+      anchor: Offset(0.5, 0.5),
+      icon: markerMyLocation
+    );
+
+    final index = markerList.indexWhere((element) => element.markerId.value == Common.userModel.id);
+    if (index >= 0){
+      markerList.remove(index);
+      markerList.add(myLocationMarker);
+    }else {
+      markerList.add(myLocationMarker);
+    }
+
+    setState(() {});
   }
 
   CameraPosition getCameraPosition(){
     if (allData.length == 0){
       return CameraPosition(target: Constants.initMapPosition, zoom: 15);
     }
-    return CameraPosition(target: LatLng(allData[0].latitude, allData[0].longitude), zoom: 15);
+    return CameraPosition(target: LatLng(allData[0].pickupLat, allData[0].pickupLng), zoom: 15);
   }
 }
 

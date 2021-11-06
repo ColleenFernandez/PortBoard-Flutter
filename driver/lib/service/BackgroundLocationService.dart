@@ -5,18 +5,18 @@ import 'package:driver/utils/log_utils.dart';
 import 'package:fbroadcast/fbroadcast.dart';
 
 class BackgroundLocationService {
-  void init(){
+
+  void start(){
+
     BackgroundLocation.setAndroidNotification(
       title: "PortBoard-Driver",
       message: "You are online",
-      icon: "assets/images/logo.png",
+      icon: '@drawable/noti_icon',
     );
 
     BackgroundLocation.setAndroidConfiguration(1000);
-  }
 
-  void start(){
-    BackgroundLocation.startLocationService(distanceFilter: 5);
+    BackgroundLocation.startLocationService();
 
     BackgroundLocation.getLocationUpdates((p0) {
       Common.myLat = p0.latitude!;

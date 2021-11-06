@@ -2,7 +2,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class Prefs {
 
-  static Future clear() async {
+  static Future clear(String key) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.remove(key);
+  }
+
+  static Future clearAll() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.clear();
   }

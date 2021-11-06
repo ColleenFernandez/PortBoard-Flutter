@@ -16,8 +16,7 @@ class AcceptRequestBottomSheet{
         width: double.infinity,
         child: SingleChildScrollView(
             child: Column(
-                children: [
-                  Stack(
+                children: [                  Stack(
                       children: [
                         Container(
                             margin: EdgeInsets.only(top: 35),

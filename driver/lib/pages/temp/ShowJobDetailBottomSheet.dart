@@ -1,7 +1,7 @@
 import 'package:driver/assets/AppColors.dart';
 import 'package:driver/assets/Assets.dart';
 import 'package:driver/model/JobModel.dart';
-import 'package:driver/pages/Job/AcceptRequestBottomSheet.dart';
+import 'package:driver/pages/temp/AcceptRequestBottomSheet.dart';
 import 'package:driver/widget/StsImgView.dart';
 import 'package:fdottedline/fdottedline.dart';
 import 'package:flutter/material.dart';

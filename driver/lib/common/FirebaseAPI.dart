@@ -12,7 +12,7 @@ class FirebaseAPI {
     bool result = false;
     final data = {
       APIConst.id : model.id,
-      APIConst.status : model.status,
+      APIConst.status : false,
       APIConst.lat : model.lat,
       APIConst.lng : model.lng,
       APIConst.heading : model.heading

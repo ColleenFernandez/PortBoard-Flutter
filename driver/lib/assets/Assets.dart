@@ -19,4 +19,6 @@ class Assets{
   static const IMG_BG_FOCUS = AssetImage('assets/images/bg_focus.png');
 
   static const String ROBOTO_FONT = 'RobotoCondensed';
+  static const String NOTI_ICON_PATH = 'assets/images/noti_icon.png';
+  static const String MARKER_MY_POSITION_PATH = 'assets/images/marker_my_position.png';
 }

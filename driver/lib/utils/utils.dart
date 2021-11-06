@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 
 class Utils {
+
+  static Future <BitmapDescriptor> customMarker(String iconPath) async {
+    ImageConfiguration configuration = ImageConfiguration();
+    final bitmapImage = await BitmapDescriptor.fromAssetImage(configuration, iconPath);
+    return bitmapImage;
+  }
 
   static String getAgoFromNow(String createdAt){
     DateTime to = new DateTime.now();
