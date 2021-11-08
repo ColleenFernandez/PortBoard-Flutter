@@ -26,6 +26,8 @@ import 'package:progress_dialog/progress_dialog.dart';
 
 void main() {
 
+  WidgetsFlutterBinding.ensureInitialized();
+
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
       statusBarColor: AppColors.darkBlue
   ));
