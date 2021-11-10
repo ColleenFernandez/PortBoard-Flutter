@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:driver/assets/AppColors.dart';
@@ -62,7 +63,7 @@ class _MainPageState extends VisibilityAwareState<MainPage>{
   bool isMarkerClicked = false;
   final controller = Completer<GoogleMapController>();
 
-  late BitmapDescriptor markerMyLocation;
+  late BitmapDescriptor markerMyLocation, markerMyLocationIos;
   late Marker myLocationMarker;
 
   @override
@@ -84,6 +85,10 @@ class _MainPageState extends VisibilityAwareState<MainPage>{
       markerMyLocation = value;
     });
 
+    Utils.customMarker(Assets.MARKER_MY_POSITION_IOS_PATH).then((value) {
+      markerMyLocationIos = value;
+    });
+
     switchController.addListener(() {
       if (switchController.value){
         Common.locationService.start();
@@ -98,7 +103,13 @@ class _MainPageState extends VisibilityAwareState<MainPage>{
 
     FBroadcast.instance().register(Constants.LOCATION_UPDATE, (value, callback) {
       if (switchController.value){
-        FirebaseAPI.updateLocation(Common.userModel.id, Common.myLat.toString(), Common.myLng.toString(), Common.heading.toString()).then((value) {
+        FirebaseAPI.updateLocation(
+            Common.userModel.id,
+            '40.64438479651119',
+            /*Common.myLat.toString(),*/
+            /*Common.myLng.toString(),*/
+            '-74.23772356275205',
+            Common.heading.toString()).then((value) {
           if (!value){
             showToast('Firebase Error');
           }
@@ -393,7 +404,7 @@ class _MainPageState extends VisibilityAwareState<MainPage>{
       zIndex: 2,
       flat: true,
       anchor: Offset(0.5, 0.5),
-      icon: markerMyLocation
+      icon: Platform.isAndroid ? markerMyLocation : markerMyLocationIos
     );
 
     final index = markerList.indexWhere((element) => element.markerId.value == Common.userModel.id);

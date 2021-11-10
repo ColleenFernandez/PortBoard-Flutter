@@ -1,14 +1,19 @@
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:driver/assets/AppColors.dart';
 import 'package:driver/common/API.dart';
+import 'package:driver/common/Common.dart';
 import 'package:driver/common/Constants.dart';
+import 'package:driver/common/FirebaseAPI.dart';
 import 'package:driver/main.dart';
+import 'package:driver/utils/Prefs.dart';
 import 'package:driver/utils/log_utils.dart';
 import 'package:driver/utils/utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:progress_dialog/progress_dialog.dart';
+
+import '../MainPage.dart';
 
 class InputPhoneNumberPage extends StatefulWidget {
   @override
@@ -48,6 +53,23 @@ class _InputPhoneNumberPageState extends State<InputPhoneNumberPage> {
           Constants.PHONE : countryCode + edtPhone.text,
           Constants.VERIFICATION_ID : verificationId
         });
+  }
+
+  void login() {
+    Common.api.login(countryCode + edtPhone.text).then((value) {
+      if (value is String){
+        showToast(value);
+      }else{
+        Common.userModel = value;
+        FirebaseAPI.registerUser(Common.userModel);
+        gotoMainPage();
+      }
+    });
+  }
+
+  void gotoMainPage(){
+    Prefs.save(Constants.PHONE, edtPhone.text);
+    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) => MainPage()), ModalRoute.withName('/MainPage'));
   }
 
   @override
@@ -106,7 +128,8 @@ class _InputPhoneNumberPageState extends State<InputPhoneNumberPage> {
                   height: 50,
                   child: ElevatedButton(onPressed: () {
                     if (edtPhone.text.isNotEmpty){
-                      sendOTP();
+                      //sendOTP();
+                      login();
                     }else {
                       showToast('Please input phone number');
                     }

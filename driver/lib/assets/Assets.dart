@@ -21,4 +21,5 @@ class Assets{
   static const String ROBOTO_FONT = 'RobotoCondensed';
   static const String NOTI_ICON_PATH = 'assets/images/noti_icon.png';
   static const String MARKER_MY_POSITION_PATH = 'assets/images/marker_my_position.png';
+  static const String MARKER_MY_POSITION_IOS_PATH = 'assets/images/marker_my_position_ios.png';
 }

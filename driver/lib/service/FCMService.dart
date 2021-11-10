@@ -18,9 +18,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:volume_control/volume_control.dart';
 
 Future<void> fcmBackgroundHandler(RemoteMessage remoteMessage) async {
   await Firebase.initializeApp();
+
+  LogUtils.log('backgroundNotiData ===> ${remoteMessage.data}');
 
   // show local notification
   RemoteNotification? notification = remoteMessage.notification;
@@ -45,9 +48,10 @@ Future<void> fcmBackgroundHandler(RemoteMessage remoteMessage) async {
       platformChannelSpecifics);
 
   // play custom sound
+
+  VolumeControl.setVolume(0.95);
   AudioCache audioCache = AudioCache();
   AudioPlayer audioPlayer = AudioPlayer();
-
   final filename = 'noti_sound.mp3';
   var bytes = await rootBundle.load("assets/sound/noti_sound.mp3");
   String dir = (await getApplicationDocumentsDirectory()).path;
@@ -78,10 +82,28 @@ FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin  = FlutterLocalN
 class FCMService {
 
   Future<void> init() async{
+
     await Firebase.initializeApp();
     Common.fcmToken = (await FirebaseMessaging.instance.getToken())!;
-
     LogUtils.log(Common.fcmToken);
+
+    NotificationSettings settings = await FirebaseMessaging.instance.requestPermission(
+      alert: true,
+      announcement: false,
+      badge: true,
+      carPlay: false,
+      criticalAlert: false,
+      provisional: false,
+      sound: true
+    );
+
+    if (settings.authorizationStatus == AuthorizationStatus.authorized){
+      LogUtils.log('User granted permission');
+    }else if (settings.authorizationStatus == AuthorizationStatus.provisional){
+      LogUtils.log('User granted provisional permission');
+    }else  {
+      LogUtils.log('User declined or has not accepted permission');
+    }
 
     FirebaseMessaging.onBackgroundMessage(fcmBackgroundHandler);
 
@@ -99,15 +121,14 @@ class FCMService {
     }
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) async{
+
+      LogUtils.log('foregroundNoti ===> ${message.data}');
+
       RemoteNotification? notification = message.notification;
-
       AndroidNotification? android = message.notification!.android;
-      if(notification != null && android != null && !kIsWeb) {
 
-        LogUtils.log('fgNotifiation ===> ${message.notification!.android!.priority.toString()}');
-        //FBroadcast.instance().broadcast(Constants.JOB_DETAIL, value: message.data);
-
-        AndroidNotificationDetails androidPlatformChannelSpecifics = AndroidNotificationDetails(
+      if (Platform.isAndroid){
+        AndroidNotificationDetails androidNotiDetail = AndroidNotificationDetails(
             channel.id,
             channel.name,
             icon: 'noti_icon',
@@ -117,15 +138,57 @@ class FCMService {
         );
 
         NotificationDetails platformChannelSpecifics = NotificationDetails(
-          android: androidPlatformChannelSpecifics
+            android: androidNotiDetail,
         );
 
         await flutterLocalNotificationsPlugin.show(
             0,
-            notification.title,
+            notification!.title,
             notification.body,
             platformChannelSpecifics);
+
+        // play custom sound
+        VolumeControl.setVolume(0.95);
+        AudioCache audioCache = AudioCache();
+        AudioPlayer audioPlayer = AudioPlayer();
+        final filename = 'noti_sound.mp3';
+        var bytes = await rootBundle.load("assets/sound/noti_sound.mp3");
+        String dir = (await getApplicationDocumentsDirectory()).path;
+        final  notiSoundFile = await writeToFile(bytes,'$dir/$filename');
+        final notiSoundPath = notiSoundFile.path;
+
+        if (notiSoundPath != null && File(notiSoundPath).existsSync()){
+          audioPlayer.play(notiSoundPath, isLocal: true);
+          audioPlayer.onPlayerCompletion.listen((event) {
+          });
+        }
       }
+
+      if (Platform.isIOS){
+        /*final IOSInitializationSettings initializationSettingsIOS = IOSInitializationSettings(
+            requestAlertPermission: false,
+            requestBadgePermission: false,
+            requestSoundPermission: false,
+            onDidReceiveLocalNotification: (int id, String? title, String? body, String? payload) async{}
+        );
+
+        IOSNotificationDetails iosNotiDetal = IOSNotificationDetails(
+            sound: 'noti_sound.aiff'
+        );
+
+        NotificationDetails platformChannelSpecifics = NotificationDetails(
+          iOS: iosNotiDetal
+        );
+
+        await flutterLocalNotificationsPlugin.show(
+            0,
+            notification!.title,
+            notification.body,
+            platformChannelSpecifics);*/
+
+      }
+
+      //FBroadcast.instance().broadcast(Constants.JOB_DETAIL, value: message.data);
     });
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
