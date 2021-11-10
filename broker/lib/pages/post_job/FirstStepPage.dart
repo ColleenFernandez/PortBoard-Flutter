@@ -122,6 +122,7 @@ class _FirstStepPageState extends State<FirstStepPage> {
     model.loadDescription = loadDescription;
     model.sealNumber = edtSealNumber.text;
     model.booking = edtBooking.text;
+    model.portName = portName;
 
     showProgress();
     Common.api.postJob(model).then((value) {

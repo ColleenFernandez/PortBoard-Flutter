@@ -28,7 +28,6 @@ class JobModel {
   String refNumber = '';
   String billOfLoading = '';
   String purchaseOrder = '';
-
   String containerNumber = '';
   String containerType = '';
   String grossWeight = '';
@@ -37,6 +36,7 @@ class JobModel {
   String loadDescription = '';
   String sealNumber = '';
   String booking = '';
+  String portName = '';
 
   JobModel();
 
@@ -76,6 +76,7 @@ class JobModel {
     model.loadDescription = res[APIConst.loadDescription];
     model.sealNumber = res[APIConst.sealNumber];
     model.booking = res[APIConst.booking];
+    model.portName = res[APIConst.portName];
 
     return model;
   }

@@ -77,6 +77,8 @@ class APIConst{
   static const String loadDescriptionList = 'loadDescriptionList';
   static const String pickupLat = 'pickupLat';
   static const String brokerId = 'brokerId';
+  static const String portName = 'portName';
+  static const String updateTime = 'updateTime';
   static const String pickupLng = 'pickupLng';
   static const String desLat = 'desLat';
   static const String desLng = 'desLng';

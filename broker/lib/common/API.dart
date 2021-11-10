@@ -64,7 +64,8 @@ class API {
       APIConst.quantity : model.quantity,
       APIConst.loadDescription : model.loadDescription,
       APIConst.sealNumber : model.sealNumber,
-      APIConst.booking : model.booking
+      APIConst.booking : model.booking,
+      APIConst.portName : model.portName
     };
 
     final res = await dio.post(url, data: params, options: Options(headers: header));
