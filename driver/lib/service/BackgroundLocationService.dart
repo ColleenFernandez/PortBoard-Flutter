@@ -6,8 +6,7 @@ import 'package:fbroadcast/fbroadcast.dart';
 
 class BackgroundLocationService {
 
-  void start(){
-
+  void init() {
     BackgroundLocation.setAndroidNotification(
       title: "PortBoard-Driver",
       message: "You are online",
@@ -15,6 +14,9 @@ class BackgroundLocationService {
     );
 
     BackgroundLocation.setAndroidConfiguration(1000);
+  }
+
+  void start(){
 
     BackgroundLocation.startLocationService();
 

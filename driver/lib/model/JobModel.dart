@@ -26,6 +26,7 @@ class JobModel {
   String dropOffDate = '';
   String pickupTime = '';
   String dropOffTime = '';
+  int status = 0;
   String steamshipLine = '';
   String portLoading = '';
   String vesselName = '';
@@ -61,6 +62,7 @@ class JobModel {
     model.desLocation = res[APIConst.desLocation];
     model.toState = res[APIConst.toState];
     model.distance = res[APIConst.distance];
+    model.pickupTime = res[APIConst.pickupTime];
     model.duration = res[APIConst.duration];
     model.fuelGallons = res[APIConst.fuelGallons];
     model.tollsRates = res[APIConst.tollsRates];
@@ -83,6 +85,7 @@ class JobModel {
     model.sealNumber = res[APIConst.sealNumber];
     model.booking = res[APIConst.booking];
     model.finalPrice = res[APIConst.finalPrice];
+    model.status = int.parse(res[APIConst.status]);
 
     return model;
   }

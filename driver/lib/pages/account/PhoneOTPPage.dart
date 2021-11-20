@@ -1,5 +1,6 @@
 import 'package:driver/assets/AppColors.dart';
 import 'package:driver/common/API.dart';
+import 'package:driver/common/APIConst.dart';
 import 'package:driver/common/Common.dart';
 import 'package:driver/common/Constants.dart';
 import 'package:driver/common/FirebaseAPI.dart';
@@ -37,14 +38,14 @@ class _PhoneOTPPageState extends State<PhoneOTPPage> {
   }
 
   void getUserModel() async{
+    await progressDialog.show();
     Common.api.login(phone).then((value) {
-      if (value is String){
+      if (value != APIConst.SUCCESS){
         showToast(value);
         setState(() {
           isUserExist = false;
         });
       }else{
-        Common.userModel = value;
         FirebaseAPI.registerUser(Common.userModel);
         gotoMainPage();
       }
@@ -54,7 +55,7 @@ class _PhoneOTPPageState extends State<PhoneOTPPage> {
   }
 
   void sendOTP() async{
-    progressDialog.show();
+    await progressDialog.show();
     await FirebaseAuth.instance.verifyPhoneNumber(
         phoneNumber: phone,
         verificationCompleted: (PhoneAuthCredential credential) {
@@ -72,7 +73,7 @@ class _PhoneOTPPageState extends State<PhoneOTPPage> {
   }
 
   void verifyPhone(String verifyCode) async {
-    progressDialog.show();
+    await progressDialog.show();
     PhoneAuthCredential credential = await PhoneAuthProvider.credential(
         verificationId: verificationId, smsCode: verifyCode);
     FirebaseAuth.instance.signInWithCredential(credential).then((value) {

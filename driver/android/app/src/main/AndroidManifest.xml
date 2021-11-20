@@ -1,6 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.portboard.driver">
 
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -10,12 +12,18 @@
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
+
     <application
         android:label="Port Board Driver"
         android:icon="@mipmap/ic_launcher">
 
        <meta-data android:name="com.google.android.geo.API_KEY"
            android:value="AIzaSyAShD1faRbCgSR33gCCLKYJdnMsXmwo92g"/>
+
+        <activity
+            android:name="com.yalantis.ucrop.UCropActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
 
         <activity
             android:name=".MainActivity"

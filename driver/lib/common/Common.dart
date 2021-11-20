@@ -12,4 +12,7 @@ class Common {
   static double myLng = 0.0;
   static double heading = 0.0;
   static String fcmToken = '';
+  static JobModel jobRequest = new JobModel();
+  static JobModel myJob = new JobModel();
+  static bool isMainPageLoaded = false;
 }

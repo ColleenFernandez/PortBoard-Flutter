@@ -6,6 +6,7 @@ import 'package:driver/common/Constants.dart';
 import 'package:driver/common/FirebaseAPI.dart';
 import 'package:driver/pages/MainPage.dart';
 import 'package:driver/utils/Prefs.dart';
+import 'package:driver/utils/log_utils.dart';
 import 'package:driver/utils/utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -34,7 +35,7 @@ class _RegisterUserDetailPageState extends State<RegisterUserDetailPage> {
   @override
   void initState() {
     super.initState();
-    progressDialog = ProgressDialog(context);
+    progressDialog = ProgressDialog(context, isDismissible: false);
     progressDialog.style(progressWidget: Container(padding: EdgeInsets.all(13), child: CircularProgressIndicator(color: AppColors.green)));
   }
 
@@ -57,8 +58,8 @@ class _RegisterUserDetailPageState extends State<RegisterUserDetailPage> {
 
     return true;
   }
-  void registerUserDetail() {
-    progressDialog.show();
+  void registerUserDetail() async {
+    await progressDialog.show();
     Common.api.register(widget.phone, edtFirstName.text, edtLastName.text, edtEmail.text, gender, Constants.USER_TYPE).then((value) {
       progressDialog.hide();
       if (value is String){
@@ -68,6 +69,9 @@ class _RegisterUserDetailPageState extends State<RegisterUserDetailPage> {
         FirebaseAPI.registerUser(Common.userModel);
         gotoMainPage();
       }
+    }).onError((error, stackTrace) {
+      progressDialog.hide();
+      LogUtils.log('error ===> ${error.toString()}');
     });
   }
 

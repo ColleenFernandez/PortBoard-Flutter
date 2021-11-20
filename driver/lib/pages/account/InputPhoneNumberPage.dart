@@ -1,6 +1,7 @@
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:driver/assets/AppColors.dart';
 import 'package:driver/common/API.dart';
+import 'package:driver/common/APIConst.dart';
 import 'package:driver/common/Common.dart';
 import 'package:driver/common/Constants.dart';
 import 'package:driver/common/FirebaseAPI.dart';
@@ -27,6 +28,13 @@ class _InputPhoneNumberPageState extends State<InputPhoneNumberPage> {
   late final ProgressDialog progressDialog;
 
   String countryCode = '+1', verificationId = '';
+
+  @override
+  void initState() {
+    super.initState();
+    progressDialog = ProgressDialog(context, isDismissible: false);
+    progressDialog.style(progressWidget: Container(padding: EdgeInsets.all(13), child: CircularProgressIndicator(color: AppColors.green)));
+  }
 
   void sendOTP() async{
     progressDialog.show();
@@ -55,28 +63,25 @@ class _InputPhoneNumberPageState extends State<InputPhoneNumberPage> {
         });
   }
 
-  void login() {
+  void login() async{
+    await progressDialog.show();
     Common.api.login(countryCode + edtPhone.text).then((value) {
-      if (value is String){
+      progressDialog.hide();
+      if (value != APIConst.SUCCESS){
         showToast(value);
       }else{
-        Common.userModel = value;
         FirebaseAPI.registerUser(Common.userModel);
         gotoMainPage();
       }
+    }).onError((error, stackTrace) {
+      LogUtils.log('error ===> ${error.toString()}');
+      progressDialog.hide();
     });
   }
 
   void gotoMainPage(){
-    Prefs.save(Constants.PHONE, edtPhone.text);
+    Prefs.save(Constants.PHONE, countryCode + edtPhone.text);
     Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) => MainPage()), ModalRoute.withName('/MainPage'));
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    progressDialog = ProgressDialog(context);
-    progressDialog.style(progressWidget: Container(padding: EdgeInsets.all(13), child: CircularProgressIndicator(color: AppColors.green)));
   }
 
   @override
@@ -142,5 +147,4 @@ class _InputPhoneNumberPageState extends State<InputPhoneNumberPage> {
       ),
     );
   }
-
 }

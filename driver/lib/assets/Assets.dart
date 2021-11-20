@@ -17,9 +17,9 @@ class Assets{
   static const IMG_CONTAINER = AssetImage('assets/images/container.png');
   static const IC_BAR_CODE = AssetImage('assets/images/bar-code.png');
   static const IMG_BG_FOCUS = AssetImage('assets/images/bg_focus.png');
+  static const IMG_CRANE_ARM = AssetImage('assets/images/crane_arm.png');
 
   static const String ROBOTO_FONT = 'RobotoCondensed';
   static const String NOTI_ICON_PATH = 'assets/images/noti_icon.png';
-  static const String MARKER_MY_POSITION_PATH = 'assets/images/marker_my_position.png';
-  static const String MARKER_MY_POSITION_IOS_PATH = 'assets/images/marker_my_position_ios.png';
+  static const String LOADING_GIF_PATH = 'assets/images/loading_gif.gif';
 }

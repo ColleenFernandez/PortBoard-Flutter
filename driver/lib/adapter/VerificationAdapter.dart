@@ -2,6 +2,7 @@ import 'package:driver/assets/AppColors.dart';
 import 'package:driver/common/Common.dart';
 import 'package:driver/common/Constants.dart';
 import 'package:driver/model/VerificationModel.dart';
+import 'package:driver/utils/utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -10,12 +11,10 @@ class VerificationAdapter {
   Widget verificationItem(BuildContext context, VerificationModel model){
 
     final bottomColor;
-    if (model.status == Constants.APPROVED){
-      bottomColor = AppColors.green_20;
-    }else if (model.status == Constants.REJECTED){
-      bottomColor = AppColors.red_10;
+    if (model.status == Constants.ACCEPT){
+      bottomColor = AppColors.green;
     }else {
-      bottomColor = AppColors.red_90;
+      bottomColor = AppColors.darkBlue;
     }
 
     return Card(
@@ -40,7 +39,7 @@ class VerificationAdapter {
                   Text(model.documentName),
                   Spacer(),
                   Visibility(
-                    visible: model.status == Constants.APPROVED,
+                    visible: model.status == Constants.ACCEPT,
                       child: Icon(Icons.check_circle, color: AppColors.green))
                 ],
               ),
@@ -55,21 +54,21 @@ class VerificationAdapter {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Visibility(
-                      visible: model.status != Constants.REJECTED,
+                      visible: model.status != Constants.REJECT,
                       child: Spacer()),
                   Visibility(
-                    visible: model.status == Constants.REJECTED,
+                    visible: model.status == Constants.REJECT,
                     child: Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Reject Reason', style: TextStyle(color: Colors.black87, fontStyle: FontStyle.italic, fontWeight: FontWeight.bold)),
-                          Text(model.reason, style: TextStyle(color: Colors.black87, fontStyle: FontStyle.italic))
+                          Text('Reject Reason', style: TextStyle(color: Colors.white, fontStyle: FontStyle.italic, fontWeight: FontWeight.bold)),
+                          Text(model.reason, style: TextStyle(color: Colors.white, fontStyle: FontStyle.italic))
                         ],
                       ),
                     ),
                   ),
-                  Text(model.status, style: TextStyle(color: model.status == Constants.NOT_SUBMITTED ? Colors.white : Colors.black87))
+                  Text(Utils.getStatus(model.status), style: TextStyle(color: model.status == Constants.NOT_SUBMITTED ? Colors.white : Colors.white))
                 ],
               ),
             )

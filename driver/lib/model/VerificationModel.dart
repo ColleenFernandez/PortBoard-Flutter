@@ -1,8 +1,8 @@
 class VerificationModel {
   String documentName = '';
-  String status = '';
+  int status = 0;
   String reason = '';
-  int expireDate = 0;
+  String expireDate = '';
 
   VerificationModel();
 }

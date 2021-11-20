@@ -1,4 +1,8 @@
+import 'dart:io';
+
+import 'package:driver/assets/Assets.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 
 class StsImgView extends StatefulWidget{
@@ -23,9 +27,30 @@ class _StsImgViewState extends State<StsImgView> {
     double width = widget.width;
     double height = widget.height;
 
+    if (widget.image is XFile){
+
+      final XFile imgFile = widget.image as XFile;
+
+      return ClipRRect(
+          borderRadius: BorderRadius.all(Radius.circular(5)),
+          child: Image.file(File(imgFile.path), width: width, height: height, fit: BoxFit.cover,)
+      );
+    }
+
+    if (widget.image is File) {
+
+      final imgFile = widget.image as File;
+
+      return ClipRRect(
+          borderRadius: BorderRadius.all(Radius.circular(5)),
+          child: Image.file(File(imgFile.path), width: width, height: height, fit: BoxFit.cover,)
+      );
+    }
+
+
     if (widget.image is AssetImage){
 
-      AssetImage image = widget.image as AssetImage;
+      final AssetImage image = widget.image as AssetImage;
 
       return ClipRRect(
           borderRadius: BorderRadius.all(Radius.circular(5)),
@@ -35,7 +60,21 @@ class _StsImgViewState extends State<StsImgView> {
               height: height, fit: BoxFit.cover));
     }
 
-    Asset image = widget.image as Asset;
+    if (widget.image is String) {
+
+      final imgPath = widget.image as String;
+      if (imgPath.isNotEmpty){
+        return FadeInImage.assetNetwork(
+            placeholder: Assets.LOADING_GIF_PATH,
+            width: width, height: height,
+            image: widget.image, fit: BoxFit.cover);
+      }
+
+      return ClipRRect(borderRadius: BorderRadius.all(Radius.circular(5)), child: Image(
+          image: Assets.DEFAULT_IMG, width: width, height: height, fit: BoxFit.cover));
+    }
+
+    final Asset image = widget.image as Asset;
     return ClipRRect(
       borderRadius: BorderRadius.all(Radius.circular(5)),
       child: AssetThumb(

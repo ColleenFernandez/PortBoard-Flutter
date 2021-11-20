@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:driver/assets/AppColors.dart';
 import 'package:driver/assets/Assets.dart';
-import 'package:driver/common/API.dart';
 import 'package:driver/common/APIConst.dart';
 import 'package:driver/common/Common.dart';
 import 'package:driver/common/Constants.dart';
@@ -15,20 +14,20 @@ import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 
-class SubmitTwicCardPage extends StatefulWidget {
+class SubmitMedicalCardPage extends StatefulWidget {
   @override
-  _SubmitTwicCardPageState createState() => _SubmitTwicCardPageState();
+  State<SubmitMedicalCardPage> createState() => _SubmitMedicalCardPageState();
 }
 
-class _SubmitTwicCardPageState extends State<SubmitTwicCardPage> {
+class _SubmitMedicalCardPageState extends State<SubmitMedicalCardPage> {
 
-  final int IS_FRONT_PIC = 100, IS_BACK_PIC = 101;
+  final int IS_FRONT_PIC = 100, IS_BACK_PIC = 101, IS_EXPIRY_DATE = 102, IS_ISSUED_DATE = 103;
   late final ProgressDialog progressDialog;
 
-  TextEditingController edtCardNumber =  new TextEditingController();
   TextEditingController edtExpiryDate = new TextEditingController();
+  TextEditingController edtIssuedDate = new TextEditingController();
 
-  int expiryDate = 0, imgType = 0;
+  int expiryDate = 0, issuedDate = 0, type = 0;
   late dynamic frontPic = Assets.DEFAULT_IMG, backPic = Assets.DEFAULT_IMG;
 
   @override
@@ -38,7 +37,7 @@ class _SubmitTwicCardPageState extends State<SubmitTwicCardPage> {
     progressDialog.style(progressWidget: Container(padding: EdgeInsets.all(13), child: CircularProgressIndicator(color: AppColors.green)));
   }
 
-  void submitTwicCard() async{
+  void submitMedicalCard() async{
     final frontPicFile = frontPic as File;
     final String frontPicPath = await FlutterAbsolutePath.getAbsolutePath(frontPicFile.path);
 
@@ -46,13 +45,13 @@ class _SubmitTwicCardPageState extends State<SubmitTwicCardPage> {
     final String backPicPath = await FlutterAbsolutePath.getAbsolutePath(backPicFile.path);
 
     await progressDialog.show();
-    Common.api.submitTwicCard(Common.userModel.id, edtCardNumber.text, expiryDate.toString(), frontPicPath, backPicPath).then((value) {
+    Common.api.submitMedicalDard(Common.userModel.id, expiryDate.toString(), issuedDate.toString(), frontPicPath, backPicPath).then((value) {
       progressDialog.hide();
       if (value == APIConst.SUCCESS) {
         showSingleButtonDialog(
             context,
-            'Twic Card Submitted!',
-            'Your Twic card submitted successfully!\nAdministrator will check it and reply you as soon as possible.',
+            'Medical Card Submitted!',
+            'Your Medical card submitted successfully!\nAdministrator will check it and reply you as soon as possible.',
             Constants.Okay, () {
           Navigator.pop(context);
           Navigator.pop(context);
@@ -69,8 +68,8 @@ class _SubmitTwicCardPageState extends State<SubmitTwicCardPage> {
 
   bool isValid(){
 
-    if (edtCardNumber.text.isEmpty){
-      showToast('Input Twic card number');
+    if (edtIssuedDate.text.isEmpty){
+      showToast('Input card number');
       return false;
     }
 
@@ -80,19 +79,19 @@ class _SubmitTwicCardPageState extends State<SubmitTwicCardPage> {
     }
 
     if (frontPic is AssetImage){
-      showToast('Please upload front  picture of Twic card');
+      showToast('Please upload front  picture of Sealink card');
       return false;
     }
 
     if (backPic is AssetImage){
-      showToast('Please upload back picture of Twic card');
+      showToast('Please upload back picture of Sealink card');
       return false;
     }
 
     return true;
   }
 
-  void showCalendar(){
+  void showCalendar(int type){
     DatePicker.showDatePicker(context,
         showTitleActions: true,
         minTime: DateTime.now(),
@@ -100,10 +99,19 @@ class _SubmitTwicCardPageState extends State<SubmitTwicCardPage> {
           print('change $date');
         }, onConfirm: (date) {
           print('confirm $date');
-          expiryDate = date.millisecondsSinceEpoch;
-          setState(() {
+
+          if (type == IS_EXPIRY_DATE){
+            expiryDate = date.millisecondsSinceEpoch;
             edtExpiryDate.text = Utils.getDate(expiryDate);
-          });
+          }
+
+          if (type == IS_ISSUED_DATE){
+            issuedDate = date.millisecondsSinceEpoch;
+            edtIssuedDate.text = Utils.getDate(issuedDate);
+          }
+
+          setState(() {});
+
         }, currentTime: DateTime.now());
   }
 
@@ -144,31 +152,14 @@ class _SubmitTwicCardPageState extends State<SubmitTwicCardPage> {
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
         appBar: AppBar(
-          elevation: 1,
           backgroundColor: AppColors.darkBlue,
-          title: Text('Submit twic card'),
+          elevation: 1,
+          title: Text('Submit Medical Card'),
         ),
         body: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                margin: EdgeInsets.only(left: 30, top: 20),
-                child: Text('Twic card number'),
-              ),
-              Container(
-                margin: EdgeInsets.only(left: 30, top: 5, right: 30),
-                child: TextField(
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                      focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: AppColors.green, width: 2)
-                      )
-                  ),
-                  controller: edtCardNumber,
-                  style: TextStyle(fontSize: 20),
-                ),
-              ),
               Container(
                 margin: EdgeInsets.only(left: 30, top: 20),
                 child: Text('Expiration date'),
@@ -191,13 +182,39 @@ class _SubmitTwicCardPageState extends State<SubmitTwicCardPage> {
                       right: 20,
                       bottom: 0,
                       child: IconButton(onPressed: () {
-                        showCalendar();
+                        showCalendar(IS_EXPIRY_DATE);
                       }, icon: Icon(Icons.calendar_today_rounded, color: AppColors.green)))
                 ],
               ),
               Container(
                 margin: EdgeInsets.only(left: 30, top: 20),
-                child: Text('Twic card - front picture'),
+                child: Text('Issued date'),
+              ),
+              Stack(
+                children: [
+                  Container(
+                    margin: EdgeInsets.only(left: 30, top: 5, right: 30),
+                    child: TextField(
+                      enabled: false,
+                      decoration: InputDecoration(
+                          focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: AppColors.green, width: 2)),
+                          disabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey))
+                      ),
+                      controller: edtIssuedDate,
+                      style: TextStyle(fontSize: 20),
+                    ),
+                  ),
+                  Positioned(
+                      right: 20,
+                      bottom: 0,
+                      child: IconButton(onPressed: () {
+                        showCalendar(IS_ISSUED_DATE);
+                      }, icon: Icon(Icons.calendar_today_rounded, color: AppColors.green)))
+                ],
+              ),
+              Container(
+                margin: EdgeInsets.only(left: 30, top: 20),
+                child: Text('Sealink card - front picture'),
               ),
               Container(
                 margin: EdgeInsets.only(left: 30, right: 30, top: 5),
@@ -217,7 +234,7 @@ class _SubmitTwicCardPageState extends State<SubmitTwicCardPage> {
               ),
               Container(
                 margin: EdgeInsets.only(left: 30, top: 20),
-                child: Text('Twic card - back picture'),
+                child: Text('Sealink card - back picture'),
               ),
               Container(
                 margin: EdgeInsets.only(left: 30, right: 30, top: 5),
@@ -243,7 +260,7 @@ class _SubmitTwicCardPageState extends State<SubmitTwicCardPage> {
                   style: ElevatedButton.styleFrom(primary: AppColors.green),
                   onPressed: () {
                     if (isValid()){
-                      submitTwicCard();
+                      submitMedicalCard();
                     }
                   }, child: Text('Submit'),
                 ),

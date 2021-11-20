@@ -12,12 +12,14 @@ import 'package:driver/common/Constants.dart';
 import 'package:driver/common/FirebaseAPI.dart';
 import 'package:driver/model/JobModel.dart';
 import 'package:driver/pages/Job/JobRequestPage.dart';
+import 'package:driver/pages/Job/TrackingPage.dart';
 import 'package:driver/pages/temp/AcceptRequestBottomSheet.dart';
 import 'package:driver/pages/temp/CompleteService.dart';
 import 'package:driver/pages/temp/ConfirmBottomSheet.dart';
 import 'package:driver/pages/temp/SaveChassisInfoBottomSheet.dart';
 import 'package:driver/pages/temp/SignatureConfirm.dart';
 import 'package:driver/service/FCMService.dart';
+import 'package:driver/utils/PermissionHelper.dart';
 import 'package:driver/utils/Prefs.dart';
 import 'package:driver/utils/log_utils.dart';
 import 'package:driver/utils/utils.dart';
@@ -35,6 +37,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_advanced_switch/flutter_advanced_switch.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:visibility_aware_state/visibility_aware_state.dart';
 
@@ -57,58 +60,51 @@ class _MainPageState extends VisibilityAwareState<MainPage>{
   List<JobModel> allData = [];
   GlobalKey iconKey = GlobalKey();
 
-  final LatLng _center = const LatLng(13.1896, 80.3039);
+  LatLng _center = const LatLng(13.1896, 80.3039);
   List<Marker> markerList = [];
   dynamic userPhoto = Assets.DEFAULT_IMG;
   bool isMarkerClicked = false;
   final controller = Completer<GoogleMapController>();
 
-  late BitmapDescriptor markerMyLocation, markerMyLocationIos;
   late Marker myLocationMarker;
+  var loadMap = false;
 
   @override
   void initState() {
     super.initState();
 
-    FBroadcast.instance().register(Constants.JOB_DETAIL, (value, callback) {
+    loadData();
 
-      try {
-        final Map<String, dynamic> temp = jsonDecode(value[APIConst.jobDetail]);
-        final JobModel model = JobModel.fromJSON(temp);
-        Navigator.push(context, MaterialPageRoute(builder: (context) => JobRequestPage(model)));
-      }catch (error) {
-        LogUtils.log(error.toString());
-      }
+    checkLocationPermission();
+
+    progressDialog = ProgressDialog(context, isDismissible: false);
+    progressDialog.style(progressWidget: Container(padding: EdgeInsets.all(13), child: CircularProgressIndicator(color: AppColors.green)),);
+
+    FBroadcast.instance().register(Constants.JOB_REQUEST, (value, callback) {
+      Navigator.push(context, MaterialPageRoute(builder: (context) => JobRequestPage(Common.jobRequest)));
     });
 
-    Utils.customMarker(Assets.MARKER_MY_POSITION_PATH).then((value) {
-      markerMyLocation = value;
-    });
-
-    Utils.customMarker(Assets.MARKER_MY_POSITION_IOS_PATH).then((value) {
-      markerMyLocationIos = value;
-    });
-
-    switchController.addListener(() {
-      if (switchController.value){
-        Common.locationService.start();
-        Common.api.changeUserStatus(Common.userModel.id, true);
-        FirebaseAPI.changeUserStatus(Common.userModel.id, true);
-      }else {
-        Common.locationService.stop();
-        Common.api.changeUserStatus(Common.userModel.id, false);
-        FirebaseAPI.changeUserStatus(Common.userModel.id, false);
-      }
+    FBroadcast.instance().register(Constants.DRIVER_PHOTO_APPROVED, (value, callback) {
+      Common.userModel.driverPhotoModel.status = Constants.ACCEPT;
+      userPhoto = Constants.DOCUMENT_DIRECTORY_URL + Common.userModel.driverPhotoModel.photo;
+      setState(() {});
     });
 
     FBroadcast.instance().register(Constants.LOCATION_UPDATE, (value, callback) {
+
+      if (!loadMap){
+        loadMap = true;
+        _center = LatLng(Common.myLat, Common.myLng);
+        changeOnOffline(Constants.ONLINE);
+        FirebaseAPI.changeUserStatus(Common.userModel.id, true);
+        setState(() {});
+      }
+
       if (switchController.value){
         FirebaseAPI.updateLocation(
             Common.userModel.id,
-            '40.64438479651119',
-            /*Common.myLat.toString(),*/
-            /*Common.myLng.toString(),*/
-            '-74.23772356275205',
+            Common.myLat.toString(),
+            Common.myLng.toString(),
             Common.heading.toString()).then((value) {
           if (!value){
             showToast('Firebase Error');
@@ -117,10 +113,64 @@ class _MainPageState extends VisibilityAwareState<MainPage>{
       }
     });
 
-    progressDialog = ProgressDialog(context);
-    progressDialog.style(progressWidget: Container(padding: EdgeInsets.all(13), child: CircularProgressIndicator(color: AppColors.green)));
-
     updateToken();
+    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+      checkJobRequest();
+      checkMyJob();
+    });
+  }
+
+  void loadData(){
+    if (Common.userModel.driverPhotoModel.status == Constants.ACCEPT){
+      userPhoto = Constants.DOCUMENT_DIRECTORY_URL +  Common.userModel.driverPhotoModel.photo;
+    }
+  }
+
+  void changeOnOffline(String status) async{
+    await progressDialog.show();
+    Common.api.changeOnOffline(Common.userModel.id, status).then((value) {
+      LogUtils.log('changeOnOffline  ===> ');
+      progressDialog.hide();
+      if (value != APIConst.SUCCESS){
+        showToast(value);
+      }
+    }).onError((error, stackTrace) {
+      progressDialog.hide();
+    });
+  }
+
+  void checkLocationPermission() async{
+    final isGranted = await askLocationPermission(context);
+    if (isGranted) {
+      switchController.value = true;
+      Common.locationService.init();
+      Common.locationService.start();
+      switchController.addListener(() {
+        if (switchController.value){
+          Common.locationService.start();
+          Common.api.changeUserStatus(Common.userModel.id, true);
+          FirebaseAPI.changeUserStatus(Common.userModel.id, true);
+          changeOnOffline(Constants.ONLINE);
+        }else {
+          Common.locationService.stop();
+          Common.api.changeUserStatus(Common.userModel.id, false);
+          FirebaseAPI.changeUserStatus(Common.userModel.id, false);
+          changeOnOffline(Constants.OFFLINE);
+        }
+      });
+    }
+  }
+
+  void checkMyJob(){
+    if (Common.myJob.id > 0){
+      Navigator.push(context, MaterialPageRoute(builder: (context) => TrackingPage(Common.myJob)));
+    }
+  }
+
+  void checkJobRequest(){
+    if (Common.jobRequest.id > 0){
+      Navigator.push(context, MaterialPageRoute(builder: (context) => JobRequestPage(Common.jobRequest)));
+    }
   }
 
   void updateToken(){
@@ -134,13 +184,34 @@ class _MainPageState extends VisibilityAwareState<MainPage>{
     });
   }
 
+  void getJobRequest(){
+    Common.api.getJobRequest(Common.userModel.id).then((value) {
+      if (value is JobModel){
+        Common.jobRequest = value;
+        Navigator.push(context, MaterialPageRoute(builder: (context) => JobRequestPage(Common.jobRequest)));
+      }
+    });
+  }
+
   @override
   void onVisibilityChanged(WidgetVisibility visibility) async{
     switch (visibility){
       case WidgetVisibility.VISIBLE:
+        Common.isMainPageLoaded = true;
+        getJobRequest();
+        break;
+      case WidgetVisibility.INVISIBLE:
+        break;
+      case WidgetVisibility.GONE:
         break;
     }
     super.onVisibilityChanged(visibility);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    FBroadcast.instance().unregister(context);
   }
 
   @override
@@ -169,7 +240,7 @@ class _MainPageState extends VisibilityAwareState<MainPage>{
                         SizedBox(width: 10),
                         Column(crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Nelson Buldier', style: TextStyle(color: Colors.white, fontSize: 18)),
+                            Text(Common.userModel.phone, style: TextStyle(color: Colors.white, fontSize: 18)),
                             SizedBox(height: 10),
                             Row(
                               children: [
@@ -285,7 +356,9 @@ class _MainPageState extends VisibilityAwareState<MainPage>{
           Column(
             children: [
               Expanded(
-                child: GoogleMap(
+                child: loadMap ? GoogleMap(
+                    myLocationEnabled: true,
+                    myLocationButtonEnabled: true,
                     zoomControlsEnabled: false,
                     zoomGesturesEnabled: true,
                     mapType: MapType.normal,
@@ -295,7 +368,7 @@ class _MainPageState extends VisibilityAwareState<MainPage>{
                       controller.complete(gcontroller);
                       setState(() {
                         mapController = gcontroller;
-                      });}),
+                      });}) : Center(child: Text('Locating...'),)
               ),
               Container(
                 padding: EdgeInsets.only(top: 5, bottom: 5),
@@ -368,54 +441,16 @@ class _MainPageState extends VisibilityAwareState<MainPage>{
                 ],
               )),*/
           Positioned(
-            bottom: 70,
-            right: 10,
-            child: FloatingActionButton.small(
-              heroTag: 'FAB-8',
-              backgroundColor: Colors.white,
-              onPressed: () {
-                if (Common.myLng != 0.0 || Common.myLat != 0.0){
-                  showMyLocation();
-                }
-              },
-              child: Icon(Icons.gps_fixed_outlined, color: AppColors.darkBlue,),
-            ),
-          ),
-          Positioned(
               child: FloatingActionButton.small(
                 heroTag: 'FAB-9',
                 onPressed: () {
-                final JobModel model = JobModel();
-
+                  showSingleButtonDialog(context, 'title', 'msg', 'Okay', () {
+                    Navigator.pop(context);
+                  });
               }, child: Icon(Icons.play_circle_fill),)
           )
         ],
       ));
-  }
-
-  void showMyLocation() {
-
-    mapController?.moveCamera(CameraUpdate.newCameraPosition(CameraPosition(target: LatLng(Common.myLat, Common.myLng), zoom: 12)));
-
-    myLocationMarker = new Marker(
-        markerId: MarkerId(Common.userModel.id),
-      position: LatLng(Common.myLat, Common.myLng),
-      draggable: false,
-      zIndex: 2,
-      flat: true,
-      anchor: Offset(0.5, 0.5),
-      icon: Platform.isAndroid ? markerMyLocation : markerMyLocationIos
-    );
-
-    final index = markerList.indexWhere((element) => element.markerId.value == Common.userModel.id);
-    if (index >= 0){
-      markerList.remove(index);
-      markerList.add(myLocationMarker);
-    }else {
-      markerList.add(myLocationMarker);
-    }
-
-    setState(() {});
   }
 
   CameraPosition getCameraPosition(){

@@ -1,8 +1,12 @@
 import 'package:driver/assets/AppColors.dart';
 import 'package:driver/assets/Assets.dart';
 import 'package:driver/common/Common.dart';
+import 'package:driver/common/Constants.dart';
+import 'package:driver/utils/log_utils.dart';
+import 'package:driver/utils/utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class FirstPage extends StatefulWidget {
   @override
@@ -15,6 +19,54 @@ class _FirstPageState extends State<FirstPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
+
+    //permissionCheck();
+  }
+
+  void permissionCheck() async{
+    var cameraPermission = await Permission.camera.status;
+    if ( cameraPermission.isDenied){
+      await Permission.camera.request().then((value) {
+        if (value.isDenied){
+          showSingleButtonDialog(
+              context,
+              Constants.PERMISSION_ALERT,
+              'You have to enable the camera permission to upload some pictures',
+              Constants.Okay, () {
+                Navigator.pop(context);
+                permissionCheck();
+          });
+        }
+      });
+    }
+
+    var storagePermission = await Permission.storage.status;
+    if (storagePermission.isDenied){
+      await Permission.storage.request().then((value) {
+        showSingleButtonDialog(
+            context,
+            Constants.PERMISSION_ALERT,
+            'You have to enable storage permission to upload picture from your phone',
+            Constants.Okay, () {
+              Navigator.pop(context);
+              permissionCheck();
+        });
+      });
+    }
+
+    var locationPermission = await Permission.location.status;
+    if (locationPermission.isDenied){
+      await Permission.location.request().then((value) {
+        showSingleButtonDialog(
+            context,
+            Constants.PERMISSION_ALERT,
+            'You have to enable location permission to tracking your location in real-time',
+            Constants.Okay,() {
+              Navigator.pop(context);
+              permissionCheck();
+        });
+      });
+    }
   }
 
   @override

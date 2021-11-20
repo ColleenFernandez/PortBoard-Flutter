@@ -1,4 +1,13 @@
 import 'package:driver/common/APIConst.dart';
+import 'package:driver/model/AlcoholDrugTestModel.dart';
+import 'package:driver/model/BusinessCertificateModel.dart';
+import 'package:driver/model/BusinessEINModel.dart';
+import 'package:driver/model/DriverLicenseModel.dart';
+import 'package:driver/model/DriverPhotoModel.dart';
+import 'package:driver/model/MedicalCardModel.dart';
+import 'package:driver/model/PaymentDetailModel.dart';
+import 'package:driver/model/SeaLinkCardModel.dart';
+import 'package:driver/model/TwicCardModel.dart';
 import 'package:flutter/material.dart';
 
 class UserModel {
@@ -14,6 +23,15 @@ class UserModel {
   String lat = '';
   String lng = '';
   String heading = '';
+  DriverLicenseModel driverLicenseModel = new DriverLicenseModel();
+  TwicCardModel twicCardModel = new TwicCardModel();
+  SeaLinkCardModel seaLinkCardModel = new SeaLinkCardModel();
+  MedicalCardModel medicalCardModel = new MedicalCardModel();
+  BusinessCertificateModel businessCertificateModel = new BusinessCertificateModel();
+  BusinessEINModel businessEINModel = new BusinessEINModel();
+  PaymentDetailModel paymentDetailModel = new PaymentDetailModel();
+  AlcoholDrugTestModel alcoholDrugTestModel = new AlcoholDrugTestModel();
+  DriverPhotoModel driverPhotoModel = new DriverPhotoModel();
 
   UserModel();
 

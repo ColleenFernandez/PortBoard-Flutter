@@ -10,6 +10,7 @@ import 'package:driver/model/JobModel.dart';
 import 'package:driver/pages/MainPage.dart';
 import 'package:driver/utils/Prefs.dart';
 import 'package:driver/utils/log_utils.dart';
+import 'package:driver/utils/utils.dart';
 import 'package:fbroadcast/fbroadcast.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -27,41 +28,45 @@ Future<void> fcmBackgroundHandler(RemoteMessage remoteMessage) async {
 
   // show local notification
   RemoteNotification? notification = remoteMessage.notification;
-  AndroidNotification? android = remoteMessage.notification!.android;
-  AndroidNotificationDetails androidPlatformChannelSpecifics = AndroidNotificationDetails(
-      channel.id,
-      channel.name,
-      icon: 'noti_icon',
-      importance: Importance.high,
-      playSound: true,
-      sound: RawResourceAndroidNotificationSound('noti_sound')
-  );
 
-  NotificationDetails platformChannelSpecifics = NotificationDetails(
-      android: androidPlatformChannelSpecifics
-  );
+  if (Platform.isAndroid){
+    AndroidNotification? android = remoteMessage.notification!.android;
+    AndroidNotificationDetails androidPlatformChannelSpecifics = AndroidNotificationDetails(
+        channel.id,
+        channel.name,
+        icon: 'noti_icon',
+        importance: Importance.high,
+        playSound: true,
+        sound: RawResourceAndroidNotificationSound('noti_sound')
+    );
 
-  await flutterLocalNotificationsPlugin.show(
-      0,
-      notification!.title,
-      notification.body,
-      platformChannelSpecifics);
+    NotificationDetails platformChannelSpecifics = NotificationDetails(
+        android: androidPlatformChannelSpecifics
+    );
 
-  // play custom sound
+    await flutterLocalNotificationsPlugin.show(
+        0,
+        notification!.title,
+        notification.body,
+        platformChannelSpecifics);
 
-  VolumeControl.setVolume(0.95);
-  AudioCache audioCache = AudioCache();
-  AudioPlayer audioPlayer = AudioPlayer();
-  final filename = 'noti_sound.mp3';
-  var bytes = await rootBundle.load("assets/sound/noti_sound.mp3");
-  String dir = (await getApplicationDocumentsDirectory()).path;
-  final  notiSoundFile = await writeToFile(bytes,'$dir/$filename');
-  final notiSoundPath = notiSoundFile.path;
+    // play custom sound
+    if (notification.title == Constants.NOTI_NEW_JOB_REQUEST_TITLE){
+      VolumeControl.setVolume(Constants.SOUND_VOL);
+      AudioCache audioCache = AudioCache();
+      AudioPlayer audioPlayer = AudioPlayer();
+      final filename = 'noti_sound.mp3';
+      var bytes = await rootBundle.load("assets/sound/noti_sound.mp3");
+      String dir = (await getApplicationDocumentsDirectory()).path;
+      final  notiSoundFile = await writeToFile(bytes,'$dir/$filename');
+      final notiSoundPath = notiSoundFile.path;
 
-  if (notiSoundPath != null && File(notiSoundPath).existsSync()){
-    audioPlayer.play(notiSoundPath, isLocal: true);
-    audioPlayer.onPlayerCompletion.listen((event) {
-    });
+      if (notiSoundPath != null && File(notiSoundPath).existsSync()){
+        audioPlayer.play(notiSoundPath, isLocal: true);
+        audioPlayer.onPlayerCompletion.listen((event) {
+        });
+      }
+    }
   }
 }
 
@@ -133,8 +138,6 @@ class FCMService {
             channel.name,
             icon: 'noti_icon',
             importance: Importance.high,
-            playSound: true,
-            sound: RawResourceAndroidNotificationSound('noti_sound')
         );
 
         NotificationDetails platformChannelSpecifics = NotificationDetails(
@@ -148,19 +151,21 @@ class FCMService {
             platformChannelSpecifics);
 
         // play custom sound
-        VolumeControl.setVolume(0.95);
-        AudioCache audioCache = AudioCache();
-        AudioPlayer audioPlayer = AudioPlayer();
-        final filename = 'noti_sound.mp3';
-        var bytes = await rootBundle.load("assets/sound/noti_sound.mp3");
-        String dir = (await getApplicationDocumentsDirectory()).path;
-        final  notiSoundFile = await writeToFile(bytes,'$dir/$filename');
-        final notiSoundPath = notiSoundFile.path;
+        if (notification.title ==  Constants.NOTI_NEW_JOB_REQUEST_TITLE){
+          VolumeControl.setVolume(Constants.SOUND_VOL);
+          AudioCache audioCache = AudioCache();
+          AudioPlayer audioPlayer = AudioPlayer();
+          final filename = 'noti_sound.mp3';
+          var bytes = await rootBundle.load("assets/sound/noti_sound.mp3");
+          String dir = (await getApplicationDocumentsDirectory()).path;
+          final  notiSoundFile = await writeToFile(bytes,'$dir/$filename');
+          final notiSoundPath = notiSoundFile.path;
 
-        if (notiSoundPath != null && File(notiSoundPath).existsSync()){
-          audioPlayer.play(notiSoundPath, isLocal: true);
-          audioPlayer.onPlayerCompletion.listen((event) {
-          });
+          if (notiSoundPath != null && File(notiSoundPath).existsSync()){
+            audioPlayer.play(notiSoundPath, isLocal: true);
+            audioPlayer.onPlayerCompletion.listen((event) {
+            });
+          }
         }
       }
 
@@ -185,10 +190,48 @@ class FCMService {
             notification!.title,
             notification.body,
             platformChannelSpecifics);*/
-
       }
 
-      //FBroadcast.instance().broadcast(Constants.JOB_DETAIL, value: message.data);
+      if (notification!.title == Constants.NOTI_NEW_JOB_REQUEST_TITLE){
+        getJobRequest();
+      }
+
+      if (notification.title == Constants.NOTI_DRIVER_LICENSE_APPROVED_TITLE) {
+        FBroadcast.instance().broadcast(Constants.DRIVER_LICENSE_APPROVED);
+      }
+
+      if (notification.title == Constants.NOTI_ALCOHOL_DRUG_TEST_APPROVED_TITLE) {
+        FBroadcast.instance().broadcast(Constants.ALCOHOL_DRUG_TEST_APPROVED);
+      }
+
+      if (notification.title == Constants.NOTI_BUSINESS_CERTIFICATION_APPROVED_TITLE) {
+        FBroadcast.instance().broadcast(Constants.BUSINESS_CERTIFICATE_APPROVED);
+      }
+
+      if (notification.title == Constants.NOTI_BUSINESS_EIN_NUMBER_APPROVED_TITLE) {
+        FBroadcast.instance().broadcast(Constants.BUSINESS_EIN_APPROVED);
+      }
+
+      if (notification.title == Constants.NOTI_DRIVER_PHOTO_APPROVED_TITLE) {
+        FBroadcast.instance().broadcast(Constants.DRIVER_PHOTO_APPROVED);
+      }
+
+      if (notification.title == Constants.NOTI_MEDICAL_CARD_APPROVED_TITLE) {
+        FBroadcast.instance().broadcast(Constants.MEDICAL_CARD_APPROVED);
+      }
+
+      if (notification.title == Constants.NOTI_SEALINK_CARD_APPROVED_TITLE) {
+        FBroadcast.instance().broadcast(Constants.SEALINK_CARD_APPROVED);
+      }
+
+      if (notification.title == Constants.NOTI_TWIC_CARD_APPROVED_TITLE) {
+        FBroadcast.instance().broadcast(Constants.TWIC_CARD_APPROVED);
+      }
+
+      if (notification.title == Constants.NOTI_PAYMENT_DETAIL_APPROVED_TITLE) {
+        FBroadcast.instance().broadcast(Constants.PAYMENT_DETAIL_APPROVED);
+      }
+
     });
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
@@ -196,4 +239,14 @@ class FCMService {
     });
   }
 
+  void getJobRequest(){
+    Common.api.getJobRequest(Common.userModel.id).then((value) {
+      if (value is String){
+        showToast(value);
+      }else {
+        Common.jobRequest = value as JobModel;
+        FBroadcast.instance().broadcast(Constants.JOB_REQUEST);
+      }
+    });
+  }
 }

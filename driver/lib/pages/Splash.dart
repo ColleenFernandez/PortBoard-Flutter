@@ -1,10 +1,14 @@
+import 'package:driver/adapter/JobAdapter.dart';
 import 'package:driver/assets/AppColors.dart';
 import 'package:driver/assets/Assets.dart';
 import 'package:driver/common/API.dart';
+import 'package:driver/common/APIConst.dart';
 import 'package:driver/common/Common.dart';
 import 'package:driver/common/Constants.dart';
 import 'package:driver/common/FirebaseAPI.dart';
 import 'package:driver/model/UserModel.dart';
+import 'package:driver/pages/Job/JobRequestPage.dart';
+import 'package:driver/pages/temp/JobSearchPage.dart';
 import 'package:driver/service/FCMService.dart';
 import 'package:driver/utils/Prefs.dart';
 import 'package:driver/utils/utils.dart';
@@ -31,7 +35,7 @@ class _SplashPageState extends State<SplashPage> {
   void initState() {
     super.initState();
 
-    progressDialog = ProgressDialog(context);
+    progressDialog = ProgressDialog(context, isDismissible: false);
     progressDialog.style(progressWidget: Container(padding: EdgeInsets.all(13), child: CircularProgressIndicator(color: AppColors.green)));
 
     Future.delayed(const Duration(milliseconds: 5000), () {
@@ -52,19 +56,22 @@ class _SplashPageState extends State<SplashPage> {
     progressDialog.show();
     api.login(phone).then((value) {
       progressDialog.hide();
-      if (value is String){
+      if (value != APIConst.SUCCESS){
         showToast(value);
         Navigator.pushNamed(context, '/FirstPage');
       }else {
-        Common.userModel = value;
         FirebaseAPI.registerUser(Common.userModel);
-        gotoMainPage();
+        startApp();
       }
     });
   }
 
-  void gotoMainPage(){
-    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) => MainPage()), ModalRoute.withName('/MainPage'));
+  void startApp(){
+    if (Common.jobRequest.id > 0){
+      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => JobRequestPage(Common.jobRequest)), (route) => false);
+    }else {
+      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) => MainPage()), ModalRoute.withName('/MainPage'));
+    }
   }
 
   @override

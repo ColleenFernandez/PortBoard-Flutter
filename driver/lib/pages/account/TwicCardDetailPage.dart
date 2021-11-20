@@ -2,31 +2,32 @@ import 'dart:io';
 
 import 'package:driver/assets/AppColors.dart';
 import 'package:driver/assets/Assets.dart';
-import 'package:driver/common/API.dart';
 import 'package:driver/common/APIConst.dart';
 import 'package:driver/common/Common.dart';
 import 'package:driver/common/Constants.dart';
 import 'package:driver/utils/log_utils.dart';
 import 'package:driver/utils/utils.dart';
 import 'package:driver/widget/StsImgView.dart';
+import 'package:fbroadcast/fbroadcast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_absolute_path/flutter_absolute_path.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 
-class SubmitTwicCardPage extends StatefulWidget {
+class TwicCardDetailPage extends StatefulWidget{
   @override
-  _SubmitTwicCardPageState createState() => _SubmitTwicCardPageState();
+  State<TwicCardDetailPage> createState() => _TwicCardDetailPageState();
 }
 
-class _SubmitTwicCardPageState extends State<SubmitTwicCardPage> {
+class _TwicCardDetailPageState extends State<TwicCardDetailPage> {
 
   final int IS_FRONT_PIC = 100, IS_BACK_PIC = 101;
   late final ProgressDialog progressDialog;
 
   TextEditingController edtCardNumber =  new TextEditingController();
   TextEditingController edtExpiryDate = new TextEditingController();
+  bool isEditable = false;
 
   int expiryDate = 0, imgType = 0;
   late dynamic frontPic = Assets.DEFAULT_IMG, backPic = Assets.DEFAULT_IMG;
@@ -34,8 +35,30 @@ class _SubmitTwicCardPageState extends State<SubmitTwicCardPage> {
   @override
   void initState() {
     super.initState();
+
+    FBroadcast.instance().register(Constants.TWIC_CARD_APPROVED, (value, callback) {
+      Common.userModel.twicCardModel.status = Constants.ACCEPT;
+      setState(() {});
+    });
+
     progressDialog = ProgressDialog(context, isDismissible: false);
     progressDialog.style(progressWidget: Container(padding: EdgeInsets.all(13), child: CircularProgressIndicator(color: AppColors.green)));
+
+    loadData();
+  }
+
+  void loadData(){
+
+    if (Common.userModel.twicCardModel.status == Constants.PENDING || Common.userModel.twicCardModel.status == Constants.ACCEPT){
+      isEditable = false;
+    }else {
+      isEditable = true;
+    }
+
+    edtCardNumber.text = Common.userModel.twicCardModel.cardNumber;
+    edtExpiryDate.text = Utils.getDate(Common.userModel.twicCardModel.expirationDate);
+    frontPic = Constants.DOCUMENT_DIRECTORY_URL + Common.userModel.twicCardModel.frontPic;
+    backPic = Constants.DOCUMENT_DIRECTORY_URL + Common.userModel.twicCardModel.backPic;
   }
 
   void submitTwicCard() async{
@@ -139,6 +162,12 @@ class _SubmitTwicCardPageState extends State<SubmitTwicCardPage> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+    FBroadcast.instance().unregister(context);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
@@ -146,12 +175,34 @@ class _SubmitTwicCardPageState extends State<SubmitTwicCardPage> {
         appBar: AppBar(
           elevation: 1,
           backgroundColor: AppColors.darkBlue,
-          title: Text('Submit twic card'),
+          title: Row(
+            children: [
+              Text('Submit twic card'),
+              Spacer(),
+              Container(
+                  padding: EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(5)),
+                      color: Colors.white
+                  ), child: Text(Utils.getStatus(Common.userModel.twicCardModel.status), style: TextStyle(color: AppColors.darkBlue),))
+            ],
+          ),
         ),
         body: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Visibility(
+                visible: Common.userModel.twicCardModel.status == Constants.REJECT,
+                child: Container(
+                    margin: EdgeInsets.only(left: 30, right: 30, top: 20),
+                    padding: EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(5)),
+                        color: Colors.black12
+                    ),
+                    child: Text('here is the reject reason', style: TextStyle(color: Colors.red),)),
+              ),
               Container(
                 margin: EdgeInsets.only(left: 30, top: 20),
                 child: Text('Twic card number'),
@@ -159,6 +210,7 @@ class _SubmitTwicCardPageState extends State<SubmitTwicCardPage> {
               Container(
                 margin: EdgeInsets.only(left: 30, top: 5, right: 30),
                 child: TextField(
+                  enabled: isEditable,
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
                       focusedBorder: UnderlineInputBorder(
@@ -191,7 +243,9 @@ class _SubmitTwicCardPageState extends State<SubmitTwicCardPage> {
                       right: 20,
                       bottom: 0,
                       child: IconButton(onPressed: () {
-                        showCalendar();
+                        if (isEditable){
+                          showCalendar();
+                        }
                       }, icon: Icon(Icons.calendar_today_rounded, color: AppColors.green)))
                 ],
               ),
@@ -210,7 +264,9 @@ class _SubmitTwicCardPageState extends State<SubmitTwicCardPage> {
                             heroTag: 'FAB-12',
                             backgroundColor: Colors.white,
                             onPressed: () {
-                              loadPicture(IS_FRONT_PIC);
+                              if (isEditable){
+                                loadPicture(IS_FRONT_PIC);
+                              }
                             }, child: Icon(Icons.camera_alt, color: AppColors.green)))
                   ],
                 ),
@@ -220,7 +276,7 @@ class _SubmitTwicCardPageState extends State<SubmitTwicCardPage> {
                 child: Text('Twic card - back picture'),
               ),
               Container(
-                margin: EdgeInsets.only(left: 30, right: 30, top: 5),
+                margin: EdgeInsets.only(left: 30, right: 30, top: 5, bottom: 30),
                 child: Stack(
                   children: [
                     StsImgView(image: backPic, width: double.infinity, height: 250),
@@ -230,22 +286,29 @@ class _SubmitTwicCardPageState extends State<SubmitTwicCardPage> {
                             backgroundColor: Colors.white,
                             mini: true,
                             onPressed: () {
-                              loadPicture(IS_BACK_PIC);
+                              if (isEditable){
+                                loadPicture(IS_BACK_PIC);
+                              }
                             }, child: Icon(Icons.camera_alt, color: AppColors.green)))
                   ],
                 ),
               ),
-              Container(
-                margin: EdgeInsets.all(30),
-                width: double.infinity,
-                height: 48,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(primary: AppColors.green),
-                  onPressed: () {
-                    if (isValid()){
-                      submitTwicCard();
-                    }
-                  }, child: Text('Submit'),
+              Visibility(
+                visible: Common.userModel.twicCardModel.status != Constants.ACCEPT,
+                child: Container(
+                  margin: EdgeInsets.only(left: 30, right: 30, bottom: 30),
+                  width: double.infinity,
+                  height: 48,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(primary: isEditable ? AppColors.green : Colors.black26),
+                    onPressed: () {
+                      if (isEditable){
+                        if (isValid()){
+                          submitTwicCard();
+                        }
+                      }
+                    }, child: Text('Submit'),
+                  ),
                 ),
               )
             ],

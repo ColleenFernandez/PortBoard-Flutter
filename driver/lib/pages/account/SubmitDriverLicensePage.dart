@@ -1,15 +1,19 @@
-import 'dart:math';
+import 'dart:io';
 import 'dart:ui';
 import 'package:driver/assets/AppColors.dart';
 import 'package:driver/assets/Assets.dart';
-import 'package:driver/common/API.dart';
+import 'package:driver/common/APIConst.dart';
 import 'package:driver/common/Common.dart';
+import 'package:driver/common/Constants.dart';
+import 'package:driver/utils/log_utils.dart';
 import 'package:driver/utils/utils.dart';
 import 'package:driver/widget/StsImgView.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_absolute_path/flutter_absolute_path.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 
@@ -31,12 +35,38 @@ class _SubmitDriverLicensePageState extends State<SubmitDriverLicensePage> {
   @override
   void initState() {
     super.initState();
-    progressDialog = ProgressDialog(context);
+    progressDialog = ProgressDialog(context, isDismissible: false);
     progressDialog.style(progressWidget: Container(padding: EdgeInsets.all(13), child: CircularProgressIndicator(color: AppColors.green)));
   }
 
   void submitDriverLicense() async{
 
+    final frontPicFile = frontPic as File;
+    final String frontPicPath = await FlutterAbsolutePath.getAbsolutePath(frontPicFile.path);
+
+    final backPicFile = backPic as File;
+    final String backPicPath = await FlutterAbsolutePath.getAbsolutePath(backPicFile.path);
+
+    await progressDialog.show();
+    Common.api.submitDriverLicense(Common.userModel.id, edtDriverLicenseNumber.text, expiryDate.toString(), frontPicPath, backPicPath).then((value) {
+      progressDialog.hide();
+      if (value == APIConst.SUCCESS) {
+        showSingleButtonDialog(
+            context,
+            'Driver License Submitted!',
+            'Your driver license submitted successfully!\nAdministrator will check it and reply you as soon as possible.',
+            Constants.Okay, () {
+              Navigator.pop(context);
+              Navigator.pop(context);
+        });
+      }else {
+        showToast(value);
+      }
+    }).onError((error, stackTrace) {
+      progressDialog.hide();
+      LogUtils.log('Submit Driver License API Error ====>  ${error.toString()}');
+      showToast(APIConst.SERVER_ERROR);
+    });
   }
 
   bool isValid(){
@@ -81,11 +111,14 @@ class _SubmitDriverLicensePageState extends State<SubmitDriverLicensePage> {
     if (resultList == null) return;
     if (resultList.isEmpty) return;
 
+    final croppedFile = await cropImage(resultList[0]);
+    if (croppedFile == null) return;
+
     setState(() {
       if (type == IS_FRONT_PIC){
-        frontPic = resultList[0];
+        frontPic = croppedFile; //resultList[0];
       }else if (type == IS_BACK_PIC){
-        backPic = resultList[0];
+        backPic = croppedFile; //resultList[0];
       }
     });
   }
@@ -113,7 +146,7 @@ class _SubmitDriverLicensePageState extends State<SubmitDriverLicensePage> {
         appBar: AppBar(
           backgroundColor: AppColors.darkBlue,
           title: Text('Submit driver license', style: TextStyle(color: Colors.white, fontSize: 16)),
-          elevation: 2,
+          elevation: 1,
           iconTheme: IconThemeData(color: Colors.white)),
         body: SingleChildScrollView(
           child: Column(
@@ -170,7 +203,7 @@ class _SubmitDriverLicensePageState extends State<SubmitDriverLicensePage> {
                 margin: EdgeInsets.only(left: 30, right: 30, top: 5),
                 child: Stack(
                   children: [
-                    StsImgView(image: frontPic, width: double.infinity, height: 250,),
+                    StsImgView(image: frontPic, width: MediaQuery.of(context).size.width, height: 250,),
                     Positioned(right: 0, bottom: 0,
                         child: FloatingActionButton(
                             mini: true,
@@ -218,49 +251,6 @@ class _SubmitDriverLicensePageState extends State<SubmitDriverLicensePage> {
             ],
           ),
         )
-      ),
-    );
-  }
-
-  void showSubmitSuccessDialog(){
-    showModalBottomSheet(
-        isDismissible: false,
-        isScrollControlled: true,
-        backgroundColor: Colors.transparent,
-        context: context, builder: (context) {
-      return showBottomSheet();
-    });
-  }
-
-  Widget showBottomSheet(){
-    return Container(
-      height: MediaQuery.of(context).size.height * 0.7,
-      padding: EdgeInsets.only(top: 30, left: 30, right: 30, bottom: 30),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),
-      ),
-      child: Column(
-        children: [
-          Image(image: Assets.IMG_COMPANY_LOGO, width: 250),
-          SizedBox(height: 40),
-          Text('Thank you for your submit', style: TextStyle(fontSize: 20, color: AppColors.green)),
-          SizedBox(height: 20),
-          Text('We will check your driver license as soon as possible.', style: TextStyle(color: Colors.black87, fontSize: 14), textAlign: TextAlign.center),
-          Spacer(),
-          Container(
-            width: double.infinity,
-            height: 48,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(primary: AppColors.green),
-              onPressed: () {
-                Navigator.pop(context);
-                Navigator.pop(context);
-              },
-              child: Text('Close'),
-            ),
-          )
-        ],
       ),
     );
   }
