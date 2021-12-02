@@ -1,3 +1,4 @@
+import 'package:driver/widget/StsProgressHUD.dart';
 import 'package:fbroadcast/fbroadcast.dart';
 import 'package:flutter/material.dart';
 import 'package:driver/assets/AppColors.dart';
@@ -6,8 +7,7 @@ import 'package:driver/common/Common.dart';
 import 'package:driver/common/Constants.dart';
 import 'package:driver/pages/account/SelectStatePage.dart';
 import 'package:driver/utils/log_utils.dart';
-import 'package:driver/utils/utils.dart';
-import 'package:progress_dialog/progress_dialog.dart';
+import 'package:driver/utils/Utils.dart';
 class PaymentDetailPage extends StatefulWidget {
   @override
   State<PaymentDetailPage> createState() => _PaymentDetailPageState();
@@ -25,7 +25,7 @@ class _PaymentDetailPageState extends State<PaymentDetailPage> {
   String state = '';
   bool isEditable = false;
 
-  late final ProgressDialog progressDialog;
+  bool loading = false;
 
   @override
   void initState() {
@@ -35,10 +35,6 @@ class _PaymentDetailPageState extends State<PaymentDetailPage> {
       Common.userModel.paymentDetailModel.status = Constants.ACCEPT;
       setState(() {});
     });
-
-    progressDialog = ProgressDialog(context, isDismissible: false);
-    progressDialog.style(progressWidget: Container(padding: EdgeInsets.all(13), child: CircularProgressIndicator(color: AppColors.green)));
-
     loadData();
   }
 
@@ -58,8 +54,8 @@ class _PaymentDetailPageState extends State<PaymentDetailPage> {
     edtZipCode.text = Common.userModel.paymentDetailModel.zipCode;
   }
 
-  void submitPaymentDetails() async{
-    await progressDialog.show();
+  void submitPaymentDetails() {
+    showProgress();
     Common.api.submitPaymentDetails(
         Common.userModel.id,
         edtBankName.text,
@@ -71,7 +67,7 @@ class _PaymentDetailPageState extends State<PaymentDetailPage> {
         state,
         edtZipCode.text).then((value) {
 
-      progressDialog.hide();
+      closeProgress();
       if (value == APIConst.SUCCESS) {
         showSingleButtonDialog(
             context,
@@ -85,7 +81,7 @@ class _PaymentDetailPageState extends State<PaymentDetailPage> {
         showToast(value);
       }
     }).onError((error, stackTrace) {
-      progressDialog.hide();
+      closeProgress();
       LogUtils.log('Submit Driver License API Error ====>  ${error.toString()}');
       showToast(APIConst.SERVER_ERROR);
     });
@@ -143,6 +139,11 @@ class _PaymentDetailPageState extends State<PaymentDetailPage> {
 
   @override
   Widget build(BuildContext context) {
+    return new Scaffold(body: StsProgressHUD(context, _buildWidget(context), loading));
+  }
+
+  @override
+  Widget _buildWidget(BuildContext context) {
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
@@ -171,13 +172,13 @@ class _PaymentDetailPageState extends State<PaymentDetailPage> {
                 Visibility(
                   visible: Common.userModel.paymentDetailModel.status == Constants.REJECT,
                   child: Container(
-                      margin: EdgeInsets.only(left: 30, right: 30, top: 20),
+                      margin: EdgeInsets.only(top: 5, bottom: 10),
                       padding: EdgeInsets.all(10),
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.all(Radius.circular(5)),
                           color: Colors.black12
                       ),
-                      child: Text('here is the reject reason', style: TextStyle(color: Colors.red),)),
+                      child: Text(Common.userModel.paymentDetailModel.reason, style: TextStyle(color: Colors.red),)),
                 ),
                 Text('Bank Name', style: TextStyle(color: AppColors.darkBlue)),
                 TextField(
@@ -316,5 +317,16 @@ class _PaymentDetailPageState extends State<PaymentDetailPage> {
         ),
       ),
     );
+  }
+  void showProgress() {
+    setState(() {
+      loading = true;
+    });
+  }
+
+  void closeProgress(){
+    setState(() {
+      loading = false;
+    });
   }
 }

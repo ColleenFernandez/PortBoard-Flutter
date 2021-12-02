@@ -14,15 +14,9 @@ import 'package:driver/pages/account/SubmitSealinkCardPage.dart';
 import 'package:driver/pages/account/SubmitTwicCardPage.dart';
 import 'package:driver/pages/account/VerificationStatusPage.dart';
 import 'package:driver/service/FCMService.dart';
-import 'package:driver/service/LocationService.dart';
-import 'package:driver/utils/log_utils.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:progress_dialog/progress_dialog.dart';
 
 void main() {
 

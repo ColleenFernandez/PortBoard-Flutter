@@ -5,11 +5,9 @@ import 'package:driver/common/Common.dart';
 import 'package:driver/common/Constants.dart';
 import 'package:driver/pages/account/SelectStatePage.dart';
 import 'package:driver/utils/log_utils.dart';
-import 'package:driver/utils/utils.dart';
-import 'package:driver/widget/StsImgView.dart';
+import 'package:driver/utils/Utils.dart';
+import 'package:driver/widget/StsProgressHUD.dart';
 import 'package:flutter/material.dart';
-import 'package:multi_image_picker/multi_image_picker.dart';
-import 'package:progress_dialog/progress_dialog.dart';
 
 class SubmitPaymentDetailPage extends StatefulWidget {
   @override
@@ -28,17 +26,15 @@ class _SubmitPaymentDetailPageState extends State<SubmitPaymentDetailPage> {
 
   String state = '';
 
-  late final ProgressDialog progressDialog;
+  bool loading = false;
 
   @override
   void initState() {
     super.initState();
-    progressDialog = ProgressDialog(context, isDismissible: false);
-    progressDialog.style(progressWidget: Container(padding: EdgeInsets.all(13), child: CircularProgressIndicator(color: AppColors.green)));
   }
 
-  void submitPaymentDetails() async{
-    await progressDialog.show();
+  void submitPaymentDetails() {
+    showProgress();
     Common.api.submitPaymentDetails(
         Common.userModel.id,
         edtBankName.text,
@@ -50,7 +46,7 @@ class _SubmitPaymentDetailPageState extends State<SubmitPaymentDetailPage> {
         state,
         edtZipCode.text).then((value) {
 
-      progressDialog.hide();
+      closeProgress();
       if (value == APIConst.SUCCESS) {
         showSingleButtonDialog(
             context,
@@ -64,7 +60,7 @@ class _SubmitPaymentDetailPageState extends State<SubmitPaymentDetailPage> {
         showToast(value);
       }
     }).onError((error, stackTrace) {
-      progressDialog.hide();
+      closeProgress();
       LogUtils.log('Submit Driver License API Error ====>  ${error.toString()}');
       showToast(APIConst.SERVER_ERROR);
     });
@@ -116,6 +112,11 @@ class _SubmitPaymentDetailPageState extends State<SubmitPaymentDetailPage> {
 
   @override
   Widget build(BuildContext context) {
+    return new Scaffold(body: StsProgressHUD(context, _buildWidget(context), loading));
+  }
+
+  @override
+  Widget _buildWidget(BuildContext context) {
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
@@ -255,5 +256,17 @@ class _SubmitPaymentDetailPageState extends State<SubmitPaymentDetailPage> {
         ),
       ),
     );
+  }
+
+  void showProgress() {
+    setState(() {
+      loading = true;
+    });
+  }
+
+  void closeProgress(){
+    setState(() {
+      loading = false;
+    });
   }
 }

@@ -7,13 +7,13 @@ import 'package:driver/common/Common.dart';
 import 'package:driver/common/Constants.dart';
 import 'package:driver/pages/account/SelectStatePage.dart';
 import 'package:driver/utils/log_utils.dart';
-import 'package:driver/utils/utils.dart';
+import 'package:driver/utils/Utils.dart';
 import 'package:driver/widget/StsImgView.dart';
+import 'package:driver/widget/StsProgressHUD.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_absolute_path/flutter_absolute_path.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
-import 'package:progress_dialog/progress_dialog.dart';
 
 class SubmitBusinessCertificatePage extends StatefulWidget {
   @override
@@ -29,7 +29,7 @@ class _SubmitBusinessCertificatePageState extends State<SubmitBusinessCertificat
   TextEditingController edtZipCode = new TextEditingController();
   TextEditingController edtRegisteredName = new TextEditingController();
 
-  late final ProgressDialog progressDialog;
+  bool loading = false;
   late dynamic frontPic = Assets.DEFAULT_IMG;
   String state = '';
   int issuedDate = 0;
@@ -37,15 +37,13 @@ class _SubmitBusinessCertificatePageState extends State<SubmitBusinessCertificat
   @override
   void initState() {
     super.initState();
-    progressDialog = ProgressDialog(context, isDismissible: false);
-    progressDialog.style(progressWidget: Container(padding: EdgeInsets.all(13), child: CircularProgressIndicator(color: AppColors.green)));
   }
 
   void submitBusinessCertificate() async{
     final frontPicFile = frontPic as File;
     final String frontPicPath = await FlutterAbsolutePath.getAbsolutePath(frontPicFile.path);
 
-    await progressDialog.show();
+    showProgress();
     Common.api.submitBusinessCertificate(
         Common.userModel.id,
         edtLegalName.text,
@@ -56,7 +54,7 @@ class _SubmitBusinessCertificatePageState extends State<SubmitBusinessCertificat
         state,
         edtZipCode.text,
         frontPicPath).then((value) {
-      progressDialog.hide();
+      closeProgress();
       if (value == APIConst.SUCCESS) {
         showSingleButtonDialog(
             context,
@@ -70,7 +68,7 @@ class _SubmitBusinessCertificatePageState extends State<SubmitBusinessCertificat
         showToast(value);
       }
     }).onError((error, stackTrace) {
-      progressDialog.hide();
+      closeProgress();
       LogUtils.log('Submit Driver License API Error ====>  ${error.toString()}');
       showToast(APIConst.SERVER_ERROR);
     });
@@ -164,6 +162,11 @@ class _SubmitBusinessCertificatePageState extends State<SubmitBusinessCertificat
 
   @override
   Widget build(BuildContext context) {
+    return new Scaffold(body: StsProgressHUD(context, _buildWidget(context), loading));
+  }
+
+  @override
+  Widget _buildWidget(BuildContext context) {
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
@@ -313,5 +316,17 @@ class _SubmitBusinessCertificatePageState extends State<SubmitBusinessCertificat
         ),
       ),
     );
+  }
+
+  void showProgress() {
+    setState(() {
+      loading = true;
+    });
+  }
+
+  void closeProgress(){
+    setState(() {
+      loading = false;
+    });
   }
 }

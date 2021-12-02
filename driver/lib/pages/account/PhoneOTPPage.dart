@@ -6,12 +6,12 @@ import 'package:driver/common/Constants.dart';
 import 'package:driver/common/FirebaseAPI.dart';
 import 'package:driver/utils/Prefs.dart';
 import 'package:driver/utils/log_utils.dart';
-import 'package:driver/utils/utils.dart';
+import 'package:driver/utils/Utils.dart';
+import 'package:driver/widget/StsProgressHUD.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
-import 'package:progress_dialog/progress_dialog.dart';
 
 import '../MainPage.dart';
 import 'RegisterUserDetailPage.dart';
@@ -26,19 +26,17 @@ class PhoneOTPPage extends StatefulWidget{
 }
 
 class _PhoneOTPPageState extends State<PhoneOTPPage> {
-  late final ProgressDialog progressDialog;
+  bool loading = false;
   String phone = '', verificationId = '', verifyCode = '';
   bool isUserExist = true;
 
   @override
   void initState() {
     super.initState();
-    progressDialog = ProgressDialog(context);
-    progressDialog.style(progressWidget: Container(padding: EdgeInsets.all(13), child: CircularProgressIndicator(color: AppColors.green)));
   }
 
-  void getUserModel() async{
-    await progressDialog.show();
+  void getUserModel(){
+    showProgress();
     Common.api.login(phone).then((value) {
       if (value != APIConst.SUCCESS){
         showToast(value);
@@ -55,30 +53,30 @@ class _PhoneOTPPageState extends State<PhoneOTPPage> {
   }
 
   void sendOTP() async{
-    await progressDialog.show();
+    showProgress();
     await FirebaseAuth.instance.verifyPhoneNumber(
         phoneNumber: phone,
         verificationCompleted: (PhoneAuthCredential credential) {
-          progressDialog.hide();
+          closeProgress();
         },
         verificationFailed: (FirebaseException e) {
 
         }, codeSent: (String verificationID, int? resendToken) {
       this.verificationId = verificationID;
-      progressDialog.hide();
+      closeProgress();
       showToast('Verification Code Sent Again!');
     }, codeAutoRetrievalTimeout: (String verificationID) {
-      progressDialog.hide();
+      closeProgress();
     });
   }
 
   void verifyPhone(String verifyCode) async {
-    await progressDialog.show();
+    showProgress();
     PhoneAuthCredential credential = await PhoneAuthProvider.credential(
         verificationId: verificationId, smsCode: verifyCode);
     FirebaseAuth.instance.signInWithCredential(credential).then((value) {
       if (value.user != null){
-        progressDialog.hide();
+        closeProgress();
         showToast('Phone verification succeed');
         getUserModel();
       }
@@ -87,6 +85,11 @@ class _PhoneOTPPageState extends State<PhoneOTPPage> {
 
   @override
   Widget build(BuildContext context) {
+    return new Scaffold(body: StsProgressHUD(context, _buildWidget(context), loading));
+  }
+
+  @override
+  Widget _buildWidget(BuildContext context) {
 
     var args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
     phone = args[Constants.PHONE];
@@ -189,5 +192,17 @@ class _PhoneOTPPageState extends State<PhoneOTPPage> {
 
   void gotoRegisterUserDetailPage(){
     Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) => RegisterUserDetailPage(phone)), ModalRoute.withName('/RegisterUserDetailPage'));
+  }
+
+  void showProgress() {
+    setState(() {
+      loading = true;
+    });
+  }
+
+  void closeProgress(){
+    setState(() {
+      loading = false;
+    });
   }
 }

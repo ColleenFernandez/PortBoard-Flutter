@@ -6,14 +6,14 @@ import 'package:driver/common/APIConst.dart';
 import 'package:driver/common/Common.dart';
 import 'package:driver/common/Constants.dart';
 import 'package:driver/utils/log_utils.dart';
-import 'package:driver/utils/utils.dart';
+import 'package:driver/utils/Utils.dart';
 import 'package:driver/widget/StsImgView.dart';
+import 'package:driver/widget/StsProgressHUD.dart';
 import 'package:fbroadcast/fbroadcast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_absolute_path/flutter_absolute_path.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
-import 'package:progress_dialog/progress_dialog.dart';
 
 class SealinkCaradDetailPage extends StatefulWidget{
   @override
@@ -23,7 +23,7 @@ class SealinkCaradDetailPage extends StatefulWidget{
 class _SealinkCaradDetailPageState extends State<SealinkCaradDetailPage> {
 
   final int IS_FRONT_PIC = 100, IS_BACK_PIC = 101;
-  late final ProgressDialog progressDialog;
+  bool loading = false;
 
   TextEditingController edtCardNumber =  new TextEditingController();
   TextEditingController edtExpiryDate = new TextEditingController();
@@ -40,10 +40,6 @@ class _SealinkCaradDetailPageState extends State<SealinkCaradDetailPage> {
       Common.userModel.seaLinkCardModel.status = Constants.ACCEPT;
       setState(() {});
     });
-
-    progressDialog = ProgressDialog(context, isDismissible: false);
-    progressDialog.style(progressWidget: Container(padding: EdgeInsets.all(13), child: CircularProgressIndicator(color: AppColors.green)));
-
     loadData();
   }
 
@@ -67,9 +63,9 @@ class _SealinkCaradDetailPageState extends State<SealinkCaradDetailPage> {
     final backPicFile = backPic as File;
     final String backPicPath = await FlutterAbsolutePath.getAbsolutePath(backPicFile.path);
 
-    await progressDialog.show();
+    showProgress();
     Common.api.submitSealinkCard(Common.userModel.id, edtCardNumber.text, expiryDate.toString(), frontPicPath, backPicPath).then((value) {
-      progressDialog.hide();
+      closeProgress();
       if (value == APIConst.SUCCESS) {
         showSingleButtonDialog(
             context,
@@ -83,7 +79,7 @@ class _SealinkCaradDetailPageState extends State<SealinkCaradDetailPage> {
         showToast(value);
       }
     }).onError((error, stackTrace) {
-      progressDialog.hide();
+      closeProgress();
       LogUtils.log('error ====>  ${error.toString()}');
       showToast(APIConst.SERVER_ERROR);
     });
@@ -168,6 +164,11 @@ class _SealinkCaradDetailPageState extends State<SealinkCaradDetailPage> {
 
   @override
   Widget build(BuildContext context) {
+    return new Scaffold(body: StsProgressHUD(context, _buildWidget(context), loading));
+  }
+
+  @override
+  Widget _buildWidget(BuildContext context) {
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
@@ -200,7 +201,7 @@ class _SealinkCaradDetailPageState extends State<SealinkCaradDetailPage> {
                         borderRadius: BorderRadius.all(Radius.circular(5)),
                         color: Colors.black12
                     ),
-                    child: Text('here is the reject reason', style: TextStyle(color: Colors.red),)),
+                    child: Text(Common.userModel.seaLinkCardModel.reason, style: TextStyle(color: Colors.red),)),
               ),
               Container(
                 margin: EdgeInsets.only(left: 30, top: 20),
@@ -316,5 +317,17 @@ class _SealinkCaradDetailPageState extends State<SealinkCaradDetailPage> {
         ),
       ),
     );
+  }
+
+  void showProgress() {
+    setState(() {
+      loading = true;
+    });
+  }
+
+  void closeProgress(){
+    setState(() {
+      loading = false;
+    });
   }
 }

@@ -7,13 +7,13 @@ import 'package:driver/common/Common.dart';
 import 'package:driver/common/Constants.dart';
 import 'package:driver/pages/account/SelectStatePage.dart';
 import 'package:driver/utils/log_utils.dart';
-import 'package:driver/utils/utils.dart';
+import 'package:driver/utils/Utils.dart';
 import 'package:driver/widget/StsImgView.dart';
+import 'package:driver/widget/StsProgressHUD.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_absolute_path/flutter_absolute_path.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
-import 'package:progress_dialog/progress_dialog.dart';
 
 class SubmitBusinessEINPage extends StatefulWidget {
   @override
@@ -29,7 +29,7 @@ class _SubmitBusinessEINPageState extends State<SubmitBusinessEINPage> {
   TextEditingController edtCity = new TextEditingController();
   TextEditingController edtZipCode = new TextEditingController();
 
-  late final ProgressDialog progressDialog;
+  bool loading = false;
   late dynamic frontPic = Assets.DEFAULT_IMG;
   int issuedDate = 0;
   String state = '';
@@ -37,15 +37,13 @@ class _SubmitBusinessEINPageState extends State<SubmitBusinessEINPage> {
   @override
   void initState() {
     super.initState();
-    progressDialog = ProgressDialog(context, isDismissible: false);
-    progressDialog.style(progressWidget: Container(padding: EdgeInsets.all(13), child: CircularProgressIndicator(color: AppColors.green)));
   }
 
   void submitBusinessEINNumber() async{
     final frontPicFile = frontPic as File;
     final String frontPicPath = await FlutterAbsolutePath.getAbsolutePath(frontPicFile.path);
 
-    await progressDialog.show();
+    showProgress();
 
     Common.api.submitBusinessEINNumber(
         Common.userModel.id,
@@ -58,7 +56,7 @@ class _SubmitBusinessEINPageState extends State<SubmitBusinessEINPage> {
         edtZipCode.text,
         frontPicPath).then((value) {
 
-      progressDialog.hide();
+      closeProgress();
       if (value == APIConst.SUCCESS) {
         showSingleButtonDialog(
             context,
@@ -72,7 +70,7 @@ class _SubmitBusinessEINPageState extends State<SubmitBusinessEINPage> {
         showToast(value);
       }
     }).onError((error, stackTrace) {
-      progressDialog.hide();
+      closeProgress();
       LogUtils.log('Error ====>  ${error.toString()}');
       showToast(APIConst.SERVER_ERROR);
     });;
@@ -164,9 +162,13 @@ class _SubmitBusinessEINPageState extends State<SubmitBusinessEINPage> {
     });
   }
 
-
   @override
   Widget build(BuildContext context) {
+    return new Scaffold(body: StsProgressHUD(context, _buildWidget(context), loading));
+  }
+
+  @override
+  Widget _buildWidget(BuildContext context) {
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
@@ -317,5 +319,17 @@ class _SubmitBusinessEINPageState extends State<SubmitBusinessEINPage> {
         ),
       ),
     );
+  }
+
+  void showProgress() {
+    setState(() {
+      loading = true;
+    });
+  }
+
+  void closeProgress(){
+    setState(() {
+      loading = false;
+    });
   }
 }

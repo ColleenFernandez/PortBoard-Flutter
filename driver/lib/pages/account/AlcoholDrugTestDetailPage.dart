@@ -6,13 +6,13 @@ import 'package:driver/common/APIConst.dart';
 import 'package:driver/common/Common.dart';
 import 'package:driver/common/Constants.dart';
 import 'package:driver/utils/log_utils.dart';
-import 'package:driver/utils/utils.dart';
+import 'package:driver/utils/Utils.dart';
 import 'package:driver/widget/StsImgView.dart';
+import 'package:driver/widget/StsProgressHUD.dart';
 import 'package:fbroadcast/fbroadcast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_absolute_path/flutter_absolute_path.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
-import 'package:progress_dialog/progress_dialog.dart';
 
 class AlcoholDrugTestDetailPage extends StatefulWidget {
   @override
@@ -20,8 +20,9 @@ class AlcoholDrugTestDetailPage extends StatefulWidget {
 }
 
 class _AlcoholDrugTestDetailPageState extends State<AlcoholDrugTestDetailPage> {
-  late final ProgressDialog progressDialog;
+
   late dynamic frontPic = Assets.DEFAULT_IMG;
+  bool loading = false;
 
   bool isEditable = false;
 
@@ -33,9 +34,6 @@ class _AlcoholDrugTestDetailPageState extends State<AlcoholDrugTestDetailPage> {
       Common.userModel.alcoholDrugTestModel.status = Constants.ACCEPT;
       setState(() {});
     });
-
-    progressDialog = ProgressDialog(context, isDismissible: false);
-    progressDialog.style(progressWidget: Container(padding: EdgeInsets.all(13), child: CircularProgressIndicator(color: AppColors.green)));
 
     loadData();
   }
@@ -53,9 +51,9 @@ class _AlcoholDrugTestDetailPageState extends State<AlcoholDrugTestDetailPage> {
   void submitAlcoholDrugTest() async{
     final frontPicFile = frontPic as File;
     final String frontPicPath = await FlutterAbsolutePath.getAbsolutePath(frontPicFile.path);
-    await progressDialog.show();
+    showProgress();
     Common.api.submitAlcoholDrugTest(Common.userModel.id, frontPicPath).then((value) {
-      progressDialog.hide();
+      closeProgress();
       if (value == APIConst.SUCCESS) {
         showSingleButtonDialog(
             context,
@@ -69,7 +67,7 @@ class _AlcoholDrugTestDetailPageState extends State<AlcoholDrugTestDetailPage> {
         showToast(value);
       }
     }).onError((error, stackTrace) {
-      progressDialog.hide();
+      closeProgress();
       LogUtils.log('error ===> ${error.toString()}');
       showToast(APIConst.SERVER_ERROR);
     });
@@ -110,6 +108,11 @@ class _AlcoholDrugTestDetailPageState extends State<AlcoholDrugTestDetailPage> {
 
   @override
   Widget build(BuildContext context) {
+    return new Scaffold(body: StsProgressHUD(context, _buildWidget(context), loading));
+  }
+
+  @override
+  Widget _buildWidget(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.darkBlue,
@@ -128,20 +131,21 @@ class _AlcoholDrugTestDetailPageState extends State<AlcoholDrugTestDetailPage> {
         ),
       ),
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Visibility(
-            visible: Common.userModel.paymentDetailModel.status == Constants.REJECT,
+            visible: Common.userModel.alcoholDrugTestModel.status == Constants.REJECT,
             child: Container(
-                margin: EdgeInsets.only(left: 30, right: 30, top: 20),
+                margin: EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 20),
                 padding: EdgeInsets.all(10),
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.all(Radius.circular(5)),
                     color: Colors.black12
                 ),
-                child: Text('here is the reject reason', style: TextStyle(color: Colors.red),)),
+                child: Text(Common.userModel.alcoholDrugTestModel.reason, style: TextStyle(color: Colors.red),)),
           ),
           Container(
-            margin: EdgeInsets.only(left: 30, top: 20),
+            margin: EdgeInsets.only(left: 20),
             child: Text('Photo',style:  TextStyle(fontSize: 20)),
           ),
           Container(
@@ -180,5 +184,17 @@ class _AlcoholDrugTestDetailPageState extends State<AlcoholDrugTestDetailPage> {
         ],
       ),
     );
+  }
+
+  void showProgress() {
+    setState(() {
+      loading = true;
+    });
+  }
+
+  void closeProgress(){
+    setState(() {
+      loading = false;
+    });
   }
 }

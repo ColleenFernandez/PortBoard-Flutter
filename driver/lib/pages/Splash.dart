@@ -11,10 +11,10 @@ import 'package:driver/pages/Job/JobRequestPage.dart';
 import 'package:driver/pages/temp/JobSearchPage.dart';
 import 'package:driver/service/FCMService.dart';
 import 'package:driver/utils/Prefs.dart';
-import 'package:driver/utils/utils.dart';
+import 'package:driver/utils/Utils.dart';
+import 'package:driver/widget/StsProgressHUD.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:progress_dialog/progress_dialog.dart';
 
 import 'MainPage.dart';
 
@@ -26,17 +26,13 @@ class SplashPage extends StatefulWidget{
 
 class _SplashPageState extends State<SplashPage> {
 
-  late final ProgressDialog progressDialog;
+  bool loading = false;
 
-  final api = API();
   String phone = '';
 
   @override
   void initState() {
     super.initState();
-
-    progressDialog = ProgressDialog(context, isDismissible: false);
-    progressDialog.style(progressWidget: Container(padding: EdgeInsets.all(13), child: CircularProgressIndicator(color: AppColors.green)));
 
     Future.delayed(const Duration(milliseconds: 5000), () {
       readSession();
@@ -53,9 +49,9 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   void login(){
-    progressDialog.show();
-    api.login(phone).then((value) {
-      progressDialog.hide();
+    showProgress();
+    Common.api.login(phone).then((value) {
+      closeProgress();
       if (value != APIConst.SUCCESS){
         showToast(value);
         Navigator.pushNamed(context, '/FirstPage');
@@ -76,8 +72,25 @@ class _SplashPageState extends State<SplashPage> {
 
   @override
   Widget build(BuildContext context) {
+    return new Scaffold(body: StsProgressHUD(context, _buildWidget(context), loading));
+  }
+
+  @override
+  Widget _buildWidget(BuildContext context) {
     return Scaffold(
       body: Image(image: Assets.IMG_SPLASH_BG, fit: BoxFit.cover, width: MediaQuery.of(context).size.width, height: MediaQuery.of(context).size.height,),
     );
+  }
+
+  void showProgress() {
+    setState(() {
+      loading = true;
+    });
+  }
+
+  void closeProgress(){
+    setState(() {
+      loading = false;
+    });
   }
 }

@@ -1,11 +1,7 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:driver/assets/AppColors.dart';
 import 'package:driver/assets/Assets.dart';
-import 'package:driver/common/API.dart';
 import 'package:driver/common/APIConst.dart';
 import 'package:driver/common/Common.dart';
 import 'package:driver/common/Constants.dart';
@@ -13,35 +9,23 @@ import 'package:driver/common/FirebaseAPI.dart';
 import 'package:driver/model/JobModel.dart';
 import 'package:driver/pages/Job/JobRequestPage.dart';
 import 'package:driver/pages/Job/TrackingPage.dart';
-import 'package:driver/pages/temp/AcceptRequestBottomSheet.dart';
-import 'package:driver/pages/temp/CompleteService.dart';
-import 'package:driver/pages/temp/ConfirmBottomSheet.dart';
-import 'package:driver/pages/temp/SaveChassisInfoBottomSheet.dart';
-import 'package:driver/pages/temp/SignatureConfirm.dart';
-import 'package:driver/service/FCMService.dart';
 import 'package:driver/utils/PermissionHelper.dart';
 import 'package:driver/utils/Prefs.dart';
 import 'package:driver/utils/log_utils.dart';
-import 'package:driver/utils/utils.dart';
-import 'package:driver/widget/CustomMapMarker/MapMarker.dart';
-import 'package:driver/widget/CustomMapMarker/MarkerGenerator.dart';
-import 'package:driver/widget/CustomMapMarker/locations.dart';
+import 'package:driver/utils/Utils.dart';
 import 'package:driver/widget/StsImgView.dart';
-import 'package:driver/widget/WaterRipple/WaterRipple.dart';
+import 'package:driver/widget/StsProgressHUD.dart';
 import 'package:fbroadcast/fbroadcast.dart';
-import 'package:fdottedline/fdottedline.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_advanced_switch/flutter_advanced_switch.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:progress_dialog/progress_dialog.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:visibility_aware_state/visibility_aware_state.dart';
 
-import 'temp/ShowJobDetailBottomSheet.dart';
 
 class MainPage extends StatefulWidget{
 
@@ -54,19 +38,16 @@ class _MainPageState extends VisibilityAwareState<MainPage>{
   final switchController = AdvancedSwitchController();
 
   int selectedDestination = 0;
-  late final ProgressDialog progressDialog;
-  GoogleMapController? mapController;
+  bool loading = false;
 
   List<JobModel> allData = [];
   GlobalKey iconKey = GlobalKey();
 
-  LatLng _center = const LatLng(13.1896, 80.3039);
-  List<Marker> markerList = [];
+  LatLng _center = LatLng(13.1896, 80.3039);
+
   dynamic userPhoto = Assets.DEFAULT_IMG;
   bool isMarkerClicked = false;
-  final controller = Completer<GoogleMapController>();
 
-  late Marker myLocationMarker;
   var loadMap = false;
 
   @override
@@ -76,9 +57,6 @@ class _MainPageState extends VisibilityAwareState<MainPage>{
     loadData();
 
     checkLocationPermission();
-
-    progressDialog = ProgressDialog(context, isDismissible: false);
-    progressDialog.style(progressWidget: Container(padding: EdgeInsets.all(13), child: CircularProgressIndicator(color: AppColors.green)),);
 
     FBroadcast.instance().register(Constants.JOB_REQUEST, (value, callback) {
       Navigator.push(context, MaterialPageRoute(builder: (context) => JobRequestPage(Common.jobRequest)));
@@ -126,16 +104,16 @@ class _MainPageState extends VisibilityAwareState<MainPage>{
     }
   }
 
-  void changeOnOffline(String status) async{
-    await progressDialog.show();
+  void changeOnOffline(String status) {
+    showProgress();
     Common.api.changeOnOffline(Common.userModel.id, status).then((value) {
       LogUtils.log('changeOnOffline  ===> ');
-      progressDialog.hide();
+      closeProgress();
       if (value != APIConst.SUCCESS){
         showToast(value);
       }
     }).onError((error, stackTrace) {
-      progressDialog.hide();
+      closeProgress();
     });
   }
 
@@ -216,6 +194,11 @@ class _MainPageState extends VisibilityAwareState<MainPage>{
 
   @override
   Widget build(BuildContext context) {
+    return new Scaffold(body: StsProgressHUD(context, _buildWidget(context), loading));
+  }
+
+  @override
+  Widget _buildWidget(BuildContext context) {
 
     return Scaffold(
       appBar: AppBar(
@@ -356,7 +339,7 @@ class _MainPageState extends VisibilityAwareState<MainPage>{
           Column(
             children: [
               Expanded(
-                child: loadMap ? GoogleMap(
+                /*child: loadMap ? GoogleMap(
                     myLocationEnabled: true,
                     myLocationButtonEnabled: true,
                     zoomControlsEnabled: false,
@@ -368,7 +351,39 @@ class _MainPageState extends VisibilityAwareState<MainPage>{
                       controller.complete(gcontroller);
                       setState(() {
                         mapController = gcontroller;
-                      });}) : Center(child: Text('Locating...'),)
+                      });}) : Center(child: Text('Locating...'),)*/
+                child: loadMap ? FlutterMap(
+                  options: MapOptions(
+                      center: LatLng(Common.myLat, Common.myLng),
+                      zoom: 13.0),
+                  layers: [
+                    TileLayerOptions(
+                      urlTemplate: Constants.MAP_STYLE,
+                      additionalOptions: {
+                        'accessToken' : Constants.MAP_PUBLIC_KEY,
+                        'id' : Constants.TILESET_ID
+                      }
+                    ),
+                    MarkerLayerOptions(
+                      markers: [
+                        Marker(width: 45, height: 45,
+                          point: LatLng(Common.myLat, Common.myLng),
+                          builder: (context) {
+                          return Container(
+                            child: IconButton(
+                              icon: Icon(Icons.location_on),
+                              color: Colors.red,
+                              iconSize: 45,
+                              onPressed: (){
+
+                              },
+                            ),
+                          );
+                        })
+                      ]
+                    )
+                  ],
+                ) : Center(child: Text('Locating...')),
               ),
               Container(
                 padding: EdgeInsets.only(top: 5, bottom: 5),
@@ -453,11 +468,23 @@ class _MainPageState extends VisibilityAwareState<MainPage>{
       ));
   }
 
-  CameraPosition getCameraPosition(){
+/*  CameraPosition getCameraPosition(){
     if (allData.length == 0){
       return CameraPosition(target: Constants.initMapPosition, zoom: 15);
     }
     return CameraPosition(target: LatLng(allData[0].pickupLat, allData[0].pickupLng), zoom: 15);
+  }*/
+
+  void showProgress() {
+    setState(() {
+      loading = true;
+    });
+  }
+
+  void closeProgress(){
+    setState(() {
+      loading = false;
+    });
   }
 }
 

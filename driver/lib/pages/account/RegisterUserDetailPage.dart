@@ -7,10 +7,10 @@ import 'package:driver/common/FirebaseAPI.dart';
 import 'package:driver/pages/MainPage.dart';
 import 'package:driver/utils/Prefs.dart';
 import 'package:driver/utils/log_utils.dart';
-import 'package:driver/utils/utils.dart';
+import 'package:driver/utils/Utils.dart';
+import 'package:driver/widget/StsProgressHUD.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:progress_dialog/progress_dialog.dart';
 
 class RegisterUserDetailPage extends StatefulWidget {
 
@@ -22,7 +22,8 @@ class RegisterUserDetailPage extends StatefulWidget {
 }
 
 class _RegisterUserDetailPageState extends State<RegisterUserDetailPage> {
-  late final ProgressDialog progressDialog;
+
+  bool loading = false;
 
   TextEditingController edtFirstName = new TextEditingController();
   TextEditingController edtLastName = new TextEditingController();
@@ -35,8 +36,6 @@ class _RegisterUserDetailPageState extends State<RegisterUserDetailPage> {
   @override
   void initState() {
     super.initState();
-    progressDialog = ProgressDialog(context, isDismissible: false);
-    progressDialog.style(progressWidget: Container(padding: EdgeInsets.all(13), child: CircularProgressIndicator(color: AppColors.green)));
   }
 
   bool isValid(){
@@ -58,10 +57,10 @@ class _RegisterUserDetailPageState extends State<RegisterUserDetailPage> {
 
     return true;
   }
-  void registerUserDetail() async {
-    await progressDialog.show();
+  void registerUserDetail(){
+    showProgress();
     Common.api.register(widget.phone, edtFirstName.text, edtLastName.text, edtEmail.text, gender, Constants.USER_TYPE).then((value) {
-      progressDialog.hide();
+      closeProgress();
       if (value is String){
         showToast(value);
       }else {
@@ -70,13 +69,18 @@ class _RegisterUserDetailPageState extends State<RegisterUserDetailPage> {
         gotoMainPage();
       }
     }).onError((error, stackTrace) {
-      progressDialog.hide();
+      closeProgress();
       LogUtils.log('error ===> ${error.toString()}');
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    return new Scaffold(body: StsProgressHUD(context, _buildWidget(context), loading));
+  }
+
+  @override
+  Widget _buildWidget(BuildContext context) {
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
@@ -219,5 +223,17 @@ class _RegisterUserDetailPageState extends State<RegisterUserDetailPage> {
   void gotoMainPage() {
     Prefs.save(Constants.PHONE, widget.phone);
     Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) => MainPage()), ModalRoute.withName('/MainPage'));
+  }
+
+  void showProgress() {
+    setState(() {
+      loading = true;
+    });
+  }
+
+  void closeProgress(){
+    setState(() {
+      loading = false;
+    });
   }
 }

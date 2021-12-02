@@ -1,5 +1,6 @@
 import 'package:driver/adapter/VerificationAdapter.dart';
 import 'package:driver/assets/AppColors.dart';
+import 'package:driver/common/APIConst.dart';
 import 'package:driver/common/Common.dart';
 import 'package:driver/common/Constants.dart';
 import 'package:driver/model/VerificationModel.dart';
@@ -21,7 +22,9 @@ import 'package:driver/pages/account/SubmitPaymentDetailPage.dart';
 import 'package:driver/pages/account/SubmitSealinkCardPage.dart';
 import 'package:driver/pages/account/SubmitTwicCardPage.dart';
 import 'package:driver/pages/account/TwicCardDetailPage.dart';
-import 'package:driver/utils/utils.dart';
+import 'package:driver/utils/Utils.dart';
+import 'package:driver/utils/log_utils.dart';
+import 'package:driver/widget/StsProgressHUD.dart';
 import 'package:fbroadcast/fbroadcast.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -34,11 +37,57 @@ class VerificationStatusPage extends StatefulWidget {
 
 class _VerificationStatusPageState extends State<VerificationStatusPage> {
 
+  bool loading = false;
   List<VerificationModel> allData = [];
 
   @override
   void initState() {
     super.initState();
+
+    FBroadcast.instance().register(Constants.DRIVER_LICENSE_REJECTED, (value, callback) {
+      Common.userModel.driverLicenseModel.status = Constants.REJECT;
+      refreshUserDetail();
+    });
+
+    FBroadcast.instance().register(Constants.TWIC_CARD_REJECTED, (value, callback) {
+      Common.userModel.twicCardModel.status = Constants.REJECT;
+      refreshUserDetail();
+    });
+
+    FBroadcast.instance().register(Constants.SEALINK_CARD_REJECTED, (value, callback) {
+      Common.userModel.seaLinkCardModel.status = Constants.REJECT;
+      refreshUserDetail();
+    });
+
+    FBroadcast.instance().register(Constants.MEDICAL_CARD_REJECTED, (value, callback) {
+      Common.userModel.medicalCardModel.status = Constants.REJECT;
+      refreshUserDetail();
+    });
+
+    FBroadcast.instance().register(Constants.BUSINESS_CERTIFICATE_REJECTED, (value, callback) {
+      Common.userModel.businessCertificateModel.status = Constants.REJECT;
+      refreshUserDetail();
+    });
+
+    FBroadcast.instance().register(Constants.BUSINESS_EIN_REJECTED, (value, callback) {
+      Common.userModel.businessEINModel.status = Constants.REJECT;
+      refreshUserDetail();
+    });
+
+    FBroadcast.instance().register(Constants.PAYMENT_DETAIL_REJECTED, (value, callback) {
+      Common.userModel.paymentDetailModel.status = Constants.REJECT;
+      refreshUserDetail();
+    });
+
+    FBroadcast.instance().register(Constants.ALCOHOL_DRUG_TEST_REJECTED, (value, callback) {
+      Common.userModel.alcoholDrugTestModel.status = Constants.REJECT;
+      refreshUserDetail();
+    });
+
+    FBroadcast.instance().register(Constants.DRIVER_PHOTO_REJECTED, (value, callback) {
+      Common.userModel.driverPhotoModel.status = Constants.REJECT;
+      refreshUserDetail();
+    });
 
     FBroadcast.instance().register(Constants.DRIVER_LICENSE_APPROVED, (value, callback) {
       Common.userModel.driverLicenseModel.status = Constants.ACCEPT;
@@ -94,7 +143,23 @@ class _VerificationStatusPageState extends State<VerificationStatusPage> {
       setState(() {});
     });
 
-    getVerificationData();
+    refreshUserDetail();
+  }
+
+  void refreshUserDetail(){
+    showProgress();
+    Common.api.login(Common.userModel.phone).then((value) {
+      closeProgress();
+      if (value == APIConst.SUCCESS){
+        getVerificationData();
+        setState(() {});
+      }
+    }).onError((error, stackTrace) {
+      closeProgress();
+      showToast(APIConst.SERVER_ERROR);
+
+      LogUtils.log('error ===> ${error.toString()}');
+    });
   }
 
   void getVerificationData(){
@@ -198,6 +263,11 @@ class _VerificationStatusPageState extends State<VerificationStatusPage> {
 
   @override
   Widget build(BuildContext context) {
+    return new Scaffold(body: StsProgressHUD(context, _buildWidget(context), loading));
+  }
+
+  @override
+  Widget _buildWidget(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -343,5 +413,17 @@ class _VerificationStatusPageState extends State<VerificationStatusPage> {
         ),
       )
     );
+  }
+
+  void showProgress() {
+    setState(() {
+      loading = true;
+    });
+  }
+
+  void closeProgress(){
+    setState(() {
+      loading = false;
+    });
   }
 }

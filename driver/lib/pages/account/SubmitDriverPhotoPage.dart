@@ -8,10 +8,10 @@ import 'package:driver/common/Constants.dart';
 import 'package:driver/utils/log_utils.dart';
 import 'package:driver/utils/utils.dart';
 import 'package:driver/widget/StsImgView.dart';
+import 'package:driver/widget/StsProgressHUD.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_absolute_path/flutter_absolute_path.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
-import 'package:progress_dialog/progress_dialog.dart';
 
 class SubmitDriverPhotoPage extends StatefulWidget {
   @override
@@ -22,21 +22,19 @@ class _SubmitDriverPhotoPageState extends State<SubmitDriverPhotoPage> {
 
   late dynamic frontPic = Assets.DEFAULT_IMG;
   bool isChecked = false;
-  late final ProgressDialog progressDialog;
+  bool loading = false;
 
   @override
   void initState() {
     super.initState();
-    progressDialog = ProgressDialog(context, isDismissible: false);
-    progressDialog.style(progressWidget: Container(padding: EdgeInsets.all(13), child: CircularProgressIndicator(color: AppColors.green)));
   }
 
   void submitDriverPhoto() async{
     final frontPicFile = frontPic as File;
     final String frontPicPath = await FlutterAbsolutePath.getAbsolutePath(frontPicFile.path);
-    await progressDialog.show();
+    showProgress();
     Common.api.submitDriverPhoto(Common.userModel.id, frontPicPath).then((value) {
-      progressDialog.hide();
+      closeProgress();
       if (value == APIConst.SUCCESS) {
         showSingleButtonDialog(
             context,
@@ -50,7 +48,7 @@ class _SubmitDriverPhotoPageState extends State<SubmitDriverPhotoPage> {
         showToast(value);
       }
     }).onError((error, stackTrace) {
-      progressDialog.hide();
+      closeProgress();
       LogUtils.log('error ===> ${error.toString()}');
       showToast(APIConst.SERVER_ERROR);
     });
@@ -85,6 +83,11 @@ class _SubmitDriverPhotoPageState extends State<SubmitDriverPhotoPage> {
 
   @override
   Widget build(BuildContext context) {
+    return new Scaffold(body: StsProgressHUD(context, _buildWidget(context), loading));
+  }
+
+  @override
+  Widget _buildWidget(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.darkBlue,
@@ -169,5 +172,17 @@ class _SubmitDriverPhotoPageState extends State<SubmitDriverPhotoPage> {
       return AppColors.darkBlue;
     }
     return AppColors.darkBlue;
+  }
+
+  void showProgress() {
+    setState(() {
+      loading = true;
+    });
+  }
+
+  void closeProgress(){
+    setState(() {
+      loading = false;
+    });
   }
 }

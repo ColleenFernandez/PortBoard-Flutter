@@ -6,14 +6,14 @@ import 'package:driver/common/APIConst.dart';
 import 'package:driver/common/Common.dart';
 import 'package:driver/common/Constants.dart';
 import 'package:driver/utils/log_utils.dart';
-import 'package:driver/utils/utils.dart';
+import 'package:driver/utils/Utils.dart';
 import 'package:driver/widget/StsImgView.dart';
+import 'package:driver/widget/StsProgressHUD.dart';
 import 'package:fbroadcast/fbroadcast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_absolute_path/flutter_absolute_path.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
-import 'package:progress_dialog/progress_dialog.dart';
 
 class DriverLicenseDetailPage extends StatefulWidget {
   @override
@@ -24,7 +24,8 @@ class _DriverLicenseDetailPageState extends State<DriverLicenseDetailPage> {
 
   final int IS_FRONT_PIC = 100, IS_BACK_PIC = 101;
 
-  late final ProgressDialog progressDialog;
+  bool loading = false;
+
   TextEditingController edtDriverLicenseNumber = new TextEditingController();
   TextEditingController edtExpiryDate = new TextEditingController();
   int expiryDate = 0, imgType = 0;
@@ -35,13 +36,14 @@ class _DriverLicenseDetailPageState extends State<DriverLicenseDetailPage> {
   void initState() {
     super.initState();
 
+    FBroadcast.instance().register(Constants.DRIVER_LICENSE_REJECTED, (value, callback) {
+      callLoginAPI();
+    });
+
     FBroadcast.instance().register(Constants.DRIVER_LICENSE_APPROVED, (value, callback) {
       Common.userModel.driverLicenseModel.status = Constants.ACCEPT;
       setState(() {});
     });
-
-    progressDialog = ProgressDialog(context, isDismissible: false);
-    progressDialog.style(progressWidget: Container(padding: EdgeInsets.all(13), child: CircularProgressIndicator(color: AppColors.green)));
 
     if (Common.userModel.driverLicenseModel.status == Constants.PENDING || Common.userModel.driverLicenseModel.status == Constants.ACCEPT){
       isEditable = false;
@@ -50,6 +52,22 @@ class _DriverLicenseDetailPageState extends State<DriverLicenseDetailPage> {
     }
 
     loadData();
+  }
+
+  void callLoginAPI(){
+    showProgress();
+    Common.api.login(Common.userModel.phone).then((value) {
+      closeProgress();
+      if (value == APIConst.SUCCESS){
+        setState(() {});
+      }else {
+        showToast(APIConst.SERVER_ERROR);
+      }
+    }).onError((error, stackTrace) {
+      LogUtils.log('error ===> ${error.toString()}');
+      closeProgress();
+      showToast(APIConst.SERVER_ERROR);
+    });
   }
 
   void loadData(){
@@ -67,9 +85,9 @@ class _DriverLicenseDetailPageState extends State<DriverLicenseDetailPage> {
     final backPicFile = backPic as File;
     final String backPicPath = await FlutterAbsolutePath.getAbsolutePath(backPicFile.path);
 
-    await progressDialog.show();
+    showProgress();
     Common.api.submitDriverLicense(Common.userModel.id, edtDriverLicenseNumber.text, expiryDate.toString(), frontPicPath, backPicPath).then((value) {
-      progressDialog.hide();
+      closeProgress();
       if (value == APIConst.SUCCESS) {
         showSingleButtonDialog(
             context,
@@ -83,7 +101,7 @@ class _DriverLicenseDetailPageState extends State<DriverLicenseDetailPage> {
         showToast(value);
       }
     }).onError((error, stackTrace) {
-      progressDialog.hide();
+      closeProgress();
       LogUtils.log('Submit Driver License API Error ====>  ${error.toString()}');
       showToast(APIConst.SERVER_ERROR);
     });
@@ -166,6 +184,11 @@ class _DriverLicenseDetailPageState extends State<DriverLicenseDetailPage> {
 
   @override
   Widget build(BuildContext context) {
+    return new Scaffold(body: StsProgressHUD(context, _buildWidget(context), loading));
+  }
+
+  @override
+  Widget _buildWidget(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
           backgroundColor: AppColors.darkBlue,
@@ -197,7 +220,7 @@ class _DriverLicenseDetailPageState extends State<DriverLicenseDetailPage> {
                       borderRadius: BorderRadius.all(Radius.circular(5)),
                       color: Colors.black12
                     ),
-                    child: Text('here is the reject reason', style: TextStyle(color: Colors.red),)),
+                    child: Text(Common.userModel.driverLicenseModel.reason, style: TextStyle(color: Colors.red),)),
               ),
               Container(
                 margin: EdgeInsets.only(left: 30, top: 20),
@@ -311,5 +334,17 @@ class _DriverLicenseDetailPageState extends State<DriverLicenseDetailPage> {
           ),
         )
     );
+  }
+
+  void showProgress() {
+    setState(() {
+      loading = true;
+    });
+  }
+
+  void closeProgress(){
+    setState(() {
+      loading = false;
+    });
   }
 }

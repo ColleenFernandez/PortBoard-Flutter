@@ -1,7 +1,9 @@
 import 'dart:io';
 
 import 'package:driver/assets/AppColors.dart';
+import 'package:driver/common/Common.dart';
 import 'package:driver/common/Constants.dart';
+import 'package:fbroadcast/fbroadcast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_absolute_path/flutter_absolute_path.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -12,6 +14,99 @@ import 'package:intl/intl.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 
 class Utils {
+
+  static changeDocumentStatus(String title){
+
+    if (title == Constants.NOTI_DRIVER_LICENSE_REJECT_TITLE) {
+      Common.userModel.driverLicenseModel.status = Constants.REJECT;
+      FBroadcast.instance().broadcast(Constants.DRIVER_LICENSE_REJECTED);
+    }
+
+    if (title == Constants.NOTI_ALCOHOL_DRUG_TEST_REJECT_TITLE) {
+      Common.userModel.alcoholDrugTestModel.status = Constants.REJECT;
+      FBroadcast.instance().broadcast(Constants.ALCOHOL_DRUG_TEST_REJECTED);
+    }
+
+    if (title == Constants.NOTI_BUSINESS_CERTIFICATION_REJECT_TITLE) {
+      Common.userModel.businessCertificateModel.status = Constants.REJECT;
+      FBroadcast.instance().broadcast(Constants.BUSINESS_CERTIFICATE_REJECTED);
+    }
+
+    if (title == Constants.NOTI_BUSINESS_EIN_NUMBER_REJECT_TITLE) {
+      Common.userModel.businessEINModel.status = Constants.REJECT;
+      FBroadcast.instance().broadcast(Constants.BUSINESS_EIN_REJECTED);
+    }
+
+    if (title == Constants.NOTI_DRIVER_PHOTO_REJECT_TITLE) {
+      Common.userModel.driverPhotoModel.status = Constants.REJECT;
+      FBroadcast.instance().broadcast(Constants.DRIVER_PHOTO_REJECTED);
+    }
+
+    if (title == Constants.NOTI_MEDICAL_CARD_REJECT_TITLE) {
+      Common.userModel.medicalCardModel.status = Constants.REJECT;
+      FBroadcast.instance().broadcast(Constants.MEDICAL_CARD_REJECTED);
+    }
+
+    if (title == Constants.NOTI_SEALINK_CARD_REJECT_TITLE) {
+      Common.userModel.seaLinkCardModel.status = Constants.REJECT;
+      FBroadcast.instance().broadcast(Constants.SEALINK_CARD_REJECTED);
+    }
+
+    if (title == Constants.NOTI_TWIC_CARD_REJECT_TITLE) {
+      Common.userModel.twicCardModel.status = Constants.REJECT;
+      FBroadcast.instance().broadcast(Constants.TWIC_CARD_REJECTED);
+    }
+
+    if (title == Constants.NOTI_PAYMENT_DETAIL_REJECT_TITLE) {
+      Common.userModel.paymentDetailModel.status = Constants.REJECT;
+      FBroadcast.instance().broadcast(Constants.PAYMENT_DETAIL_REJECTED);
+    }
+
+    if (title == Constants.NOTI_DRIVER_LICENSE_APPROVED_TITLE) {
+      Common.userModel.driverLicenseModel.status = Constants.ACCEPT;
+      FBroadcast.instance().broadcast(Constants.DRIVER_LICENSE_APPROVED);
+    }
+
+    if (title == Constants.NOTI_ALCOHOL_DRUG_TEST_APPROVED_TITLE) {
+      Common.userModel.alcoholDrugTestModel.status = Constants.ACCEPT;
+      FBroadcast.instance().broadcast(Constants.ALCOHOL_DRUG_TEST_APPROVED);
+    }
+
+    if (title == Constants.NOTI_BUSINESS_CERTIFICATION_APPROVED_TITLE) {
+      Common.userModel.businessCertificateModel.status = Constants.ACCEPT;
+      FBroadcast.instance().broadcast(Constants.BUSINESS_CERTIFICATE_APPROVED);
+    }
+
+    if (title == Constants.NOTI_BUSINESS_EIN_NUMBER_APPROVED_TITLE) {
+      Common.userModel.businessEINModel.status = Constants.ACCEPT;
+      FBroadcast.instance().broadcast(Constants.BUSINESS_EIN_APPROVED);
+    }
+
+    if (title == Constants.NOTI_DRIVER_PHOTO_APPROVED_TITLE) {
+      Common.userModel.driverPhotoModel.status = Constants.ACCEPT;
+      FBroadcast.instance().broadcast(Constants.DRIVER_PHOTO_APPROVED);
+    }
+
+    if (title == Constants.NOTI_MEDICAL_CARD_APPROVED_TITLE) {
+      Common.userModel.medicalCardModel.status = Constants.ACCEPT;
+      FBroadcast.instance().broadcast(Constants.MEDICAL_CARD_APPROVED);
+    }
+
+    if (title == Constants.NOTI_SEALINK_CARD_APPROVED_TITLE) {
+      Common.userModel.seaLinkCardModel.status = Constants.ACCEPT;
+      FBroadcast.instance().broadcast(Constants.SEALINK_CARD_APPROVED);
+    }
+
+    if (title == Constants.NOTI_TWIC_CARD_APPROVED_TITLE) {
+      Common.userModel.twicCardModel.status = Constants.ACCEPT;
+      FBroadcast.instance().broadcast(Constants.TWIC_CARD_APPROVED);
+    }
+
+    if (title == Constants.NOTI_PAYMENT_DETAIL_APPROVED_TITLE) {
+      Common.userModel.paymentDetailModel.status = Constants.ACCEPT;
+      FBroadcast.instance().broadcast(Constants.PAYMENT_DETAIL_APPROVED);
+    }
+  }
 
   static List<dynamic> sortData(dynamic allData, String sortKey){
     if (allData is List<String>){

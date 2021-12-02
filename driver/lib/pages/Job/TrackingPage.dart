@@ -4,7 +4,7 @@ import 'package:driver/assets/AppColors.dart';
 import 'package:driver/common/Common.dart';
 import 'package:driver/model/JobModel.dart';
 import 'package:driver/utils/log_utils.dart';
-import 'package:driver/utils/utils.dart';
+import 'package:driver/utils/Utils.dart';
 import 'package:fdottedline/fdottedline.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';

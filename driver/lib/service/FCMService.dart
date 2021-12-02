@@ -10,7 +10,7 @@ import 'package:driver/model/JobModel.dart';
 import 'package:driver/pages/MainPage.dart';
 import 'package:driver/utils/Prefs.dart';
 import 'package:driver/utils/log_utils.dart';
-import 'package:driver/utils/utils.dart';
+import 'package:driver/utils/Utils.dart';
 import 'package:fbroadcast/fbroadcast.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -196,42 +196,7 @@ class FCMService {
         getJobRequest();
       }
 
-      if (notification.title == Constants.NOTI_DRIVER_LICENSE_APPROVED_TITLE) {
-        FBroadcast.instance().broadcast(Constants.DRIVER_LICENSE_APPROVED);
-      }
-
-      if (notification.title == Constants.NOTI_ALCOHOL_DRUG_TEST_APPROVED_TITLE) {
-        FBroadcast.instance().broadcast(Constants.ALCOHOL_DRUG_TEST_APPROVED);
-      }
-
-      if (notification.title == Constants.NOTI_BUSINESS_CERTIFICATION_APPROVED_TITLE) {
-        FBroadcast.instance().broadcast(Constants.BUSINESS_CERTIFICATE_APPROVED);
-      }
-
-      if (notification.title == Constants.NOTI_BUSINESS_EIN_NUMBER_APPROVED_TITLE) {
-        FBroadcast.instance().broadcast(Constants.BUSINESS_EIN_APPROVED);
-      }
-
-      if (notification.title == Constants.NOTI_DRIVER_PHOTO_APPROVED_TITLE) {
-        FBroadcast.instance().broadcast(Constants.DRIVER_PHOTO_APPROVED);
-      }
-
-      if (notification.title == Constants.NOTI_MEDICAL_CARD_APPROVED_TITLE) {
-        FBroadcast.instance().broadcast(Constants.MEDICAL_CARD_APPROVED);
-      }
-
-      if (notification.title == Constants.NOTI_SEALINK_CARD_APPROVED_TITLE) {
-        FBroadcast.instance().broadcast(Constants.SEALINK_CARD_APPROVED);
-      }
-
-      if (notification.title == Constants.NOTI_TWIC_CARD_APPROVED_TITLE) {
-        FBroadcast.instance().broadcast(Constants.TWIC_CARD_APPROVED);
-      }
-
-      if (notification.title == Constants.NOTI_PAYMENT_DETAIL_APPROVED_TITLE) {
-        FBroadcast.instance().broadcast(Constants.PAYMENT_DETAIL_APPROVED);
-      }
-
+      Utils.changeDocumentStatus(notification.title!);
     });
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {

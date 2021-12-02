@@ -6,13 +6,13 @@ import 'package:driver/common/APIConst.dart';
 import 'package:driver/common/Common.dart';
 import 'package:driver/common/Constants.dart';
 import 'package:driver/utils/log_utils.dart';
-import 'package:driver/utils/utils.dart';
+import 'package:driver/utils/Utils.dart';
 import 'package:driver/widget/StsImgView.dart';
+import 'package:driver/widget/StsProgressHUD.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_absolute_path/flutter_absolute_path.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
-import 'package:progress_dialog/progress_dialog.dart';
 
 class SubmitSealinkCardPage extends StatefulWidget {
   @override
@@ -22,7 +22,7 @@ class SubmitSealinkCardPage extends StatefulWidget {
 class _SubmitSealinkCardPageState extends State<SubmitSealinkCardPage> {
 
   final int IS_FRONT_PIC = 100, IS_BACK_PIC = 101;
-  late final ProgressDialog progressDialog;
+  bool loading = false;
 
   TextEditingController edtCardNumber =  new TextEditingController();
   TextEditingController edtExpiryDate = new TextEditingController();
@@ -33,8 +33,6 @@ class _SubmitSealinkCardPageState extends State<SubmitSealinkCardPage> {
   @override
   void initState() {
     super.initState();
-    progressDialog = ProgressDialog(context, isDismissible: false);
-    progressDialog.style(progressWidget: Container(padding: EdgeInsets.all(13), child: CircularProgressIndicator(color: AppColors.green)));
   }
 
   void submitSealinkCard() async{
@@ -44,9 +42,9 @@ class _SubmitSealinkCardPageState extends State<SubmitSealinkCardPage> {
     final backPicFile = backPic as File;
     final String backPicPath = await FlutterAbsolutePath.getAbsolutePath(backPicFile.path);
 
-    await progressDialog.show();
+    showProgress();
     Common.api.submitSealinkCard(Common.userModel.id, edtCardNumber.text, expiryDate.toString(), frontPicPath, backPicPath).then((value) {
-      progressDialog.hide();
+      closeProgress();
       if (value == APIConst.SUCCESS) {
         showSingleButtonDialog(
             context,
@@ -60,7 +58,7 @@ class _SubmitSealinkCardPageState extends State<SubmitSealinkCardPage> {
         showToast(value);
       }
     }).onError((error, stackTrace) {
-      progressDialog.hide();
+      closeProgress();
       LogUtils.log('error ====>  ${error.toString()}');
       showToast(APIConst.SERVER_ERROR);
     });
@@ -139,6 +137,11 @@ class _SubmitSealinkCardPageState extends State<SubmitSealinkCardPage> {
 
   @override
   Widget build(BuildContext context) {
+    return new Scaffold(body: StsProgressHUD(context, _buildWidget(context), loading));
+  }
+
+  @override
+  Widget _buildWidget(BuildContext context) {
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
@@ -252,5 +255,17 @@ class _SubmitSealinkCardPageState extends State<SubmitSealinkCardPage> {
         ),
       ),
     );
+  }
+
+  void showProgress() {
+    setState(() {
+      loading = true;
+    });
+  }
+
+  void closeProgress(){
+    setState(() {
+      loading = false;
+    });
   }
 }

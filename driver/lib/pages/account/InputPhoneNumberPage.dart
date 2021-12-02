@@ -8,11 +8,11 @@ import 'package:driver/common/FirebaseAPI.dart';
 import 'package:driver/main.dart';
 import 'package:driver/utils/Prefs.dart';
 import 'package:driver/utils/log_utils.dart';
-import 'package:driver/utils/utils.dart';
+import 'package:driver/utils/Utils.dart';
+import 'package:driver/widget/StsProgressHUD.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:progress_dialog/progress_dialog.dart';
 
 import '../MainPage.dart';
 
@@ -25,33 +25,31 @@ class _InputPhoneNumberPageState extends State<InputPhoneNumberPage> {
 
   TextEditingController edtPhone = new TextEditingController();
 
-  late final ProgressDialog progressDialog;
+  bool loading = false;
 
   String countryCode = '+1', verificationId = '';
 
   @override
   void initState() {
     super.initState();
-    progressDialog = ProgressDialog(context, isDismissible: false);
-    progressDialog.style(progressWidget: Container(padding: EdgeInsets.all(13), child: CircularProgressIndicator(color: AppColors.green)));
   }
 
   void sendOTP() async{
-    progressDialog.show();
+    showProgress();
     await FirebaseAuth.instance.verifyPhoneNumber(
         phoneNumber: countryCode + edtPhone.text,
         verificationCompleted: (PhoneAuthCredential credential) {
-          progressDialog.hide();
+          closeProgress();
         },
         verificationFailed: (FirebaseException e) {
-          progressDialog.hide();
+          closeProgress();
           showToast(e.toString());
         }, codeSent: (String verificationID, int? resendToken) {
           this.verificationId = verificationID;
-          progressDialog.hide();
+          closeProgress();
           gotoPhoneOTPPage();
     }, codeAutoRetrievalTimeout: (String verificationID) {
-       progressDialog.hide();
+      closeProgress();
     });
   }
 
@@ -63,10 +61,10 @@ class _InputPhoneNumberPageState extends State<InputPhoneNumberPage> {
         });
   }
 
-  void login() async{
-    await progressDialog.show();
+  void login() {
+    showProgress();
     Common.api.login(countryCode + edtPhone.text).then((value) {
-      progressDialog.hide();
+      closeProgress();
       if (value != APIConst.SUCCESS){
         showToast(value);
       }else{
@@ -75,7 +73,7 @@ class _InputPhoneNumberPageState extends State<InputPhoneNumberPage> {
       }
     }).onError((error, stackTrace) {
       LogUtils.log('error ===> ${error.toString()}');
-      progressDialog.hide();
+      closeProgress();
     });
   }
 
@@ -86,6 +84,11 @@ class _InputPhoneNumberPageState extends State<InputPhoneNumberPage> {
 
   @override
   Widget build(BuildContext context) {
+    return new Scaffold(body: StsProgressHUD(context, _buildWidget(context), loading));
+  }
+
+  @override
+  Widget _buildWidget(BuildContext context) {
 
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
@@ -146,5 +149,17 @@ class _InputPhoneNumberPageState extends State<InputPhoneNumberPage> {
           ),
       ),
     );
+  }
+
+  void showProgress() {
+    setState(() {
+      loading = true;
+    });
+  }
+
+  void closeProgress(){
+    setState(() {
+      loading = false;
+    });
   }
 }

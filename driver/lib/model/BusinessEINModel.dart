@@ -25,6 +25,7 @@ class BusinessEINModel {
     model.zipCode = res[APIConst.zipCode];
     model.frontPic = res[APIConst.frontPic];
     model.status = int.parse(res[APIConst.status]);
+    model.reason = res[APIConst.reason];
 
     return model;
   }

@@ -8,11 +8,11 @@ import 'package:driver/pages/Job/TrackingPage.dart';
 import 'package:driver/pages/MainPage.dart';
 import 'package:driver/utils/Prefs.dart';
 import 'package:driver/utils/log_utils.dart';
-import 'package:driver/utils/utils.dart';
+import 'package:driver/utils/Utils.dart';
+import 'package:driver/widget/StsProgressHUD.dart';
 import 'package:fdottedline/fdottedline.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:progress_dialog/progress_dialog.dart';
 import 'package:simple_timer/simple_timer.dart';
 
 class JobRequestPage extends StatefulWidget {
@@ -27,7 +27,7 @@ class JobRequestPage extends StatefulWidget {
 
 class _JobRequestPageState extends State<JobRequestPage> with SingleTickerProviderStateMixin {
 
-  late final ProgressDialog progressDialog;
+  bool loading = false;
 
   late TimerController timerController;
   String countdownClock = '00:00';
@@ -36,9 +36,6 @@ class _JobRequestPageState extends State<JobRequestPage> with SingleTickerProvid
   @override
   void initState() {
     super.initState();
-
-    progressDialog = ProgressDialog(context, isDismissible: false);
-    progressDialog.style(progressWidget: Container(padding: EdgeInsets.all(13), child: CircularProgressIndicator(color: AppColors.green)));
 
     timerController = TimerController(this);
     Future.delayed(Duration(seconds: 1), () {
@@ -70,10 +67,10 @@ class _JobRequestPageState extends State<JobRequestPage> with SingleTickerProvid
     }
   }
 
-  void acceptJob() async{
-    await progressDialog.show();
+  void acceptJob() {
+    showProgress();
     Common.api.acceptJob(Common.userModel.id, widget.model!.id.toString()).then((value) {
-      progressDialog.hide();
+      closeProgress();
       if (value == APIConst.SUCCESS){
         Common.jobRequest.driverId = int.parse(Common.userModel.id);
         Common.jobRequest.status = Constants.ACCEPT;
@@ -83,16 +80,16 @@ class _JobRequestPageState extends State<JobRequestPage> with SingleTickerProvid
         showToast(APIConst.SERVER_ERROR);
       }
     }).onError((error, stackTrace) {
-      progressDialog.hide();
+      closeProgress();
       showToast(APIConst.SERVER_ERROR);
       LogUtils.log('error ====> ${error.toString()}');
     });
   }
 
-  void rejectJob() async{
-    await progressDialog.show();
+  void rejectJob(){
+    showProgress();
     Common.api.rejectJob(Common.userModel.id, widget.model!.id.toString()).then((value) {
-      progressDialog.hide();
+      closeProgress();
       Common.jobRequest = new JobModel();
       if (value == APIConst.SUCCESS){
         Navigator.pop(context);
@@ -103,14 +100,14 @@ class _JobRequestPageState extends State<JobRequestPage> with SingleTickerProvid
     }).onError((error, stackTrace) {
       LogUtils.log('error ===> ${error.toString()}');
       Common.jobRequest = new JobModel();
-      progressDialog.hide();
+      closeProgress();
     });
   }
 
-  void skipDriver() async {
-    await progressDialog.show();
+  void skipDriver(){
+    showProgress();
     Common.api.skipDriver(Common.userModel.id, widget.model!.id.toString()).then((value) {
-      progressDialog.hide();
+      closeProgress();
       if (value == APIConst.SUCCESS){
         Common.jobRequest = new JobModel();
         if (Common.isMainPageLoaded){
@@ -122,7 +119,7 @@ class _JobRequestPageState extends State<JobRequestPage> with SingleTickerProvid
         showToast(value);
       }
     }).onError((error, stackTrace) {
-      progressDialog.hide();
+      closeProgress();
       LogUtils.log('error ===> ${error.toString()}');
       showToast(APIConst.SERVER_ERROR);
     });
@@ -130,6 +127,11 @@ class _JobRequestPageState extends State<JobRequestPage> with SingleTickerProvid
 
   @override
   Widget build(BuildContext context) {
+    return new Scaffold(body: StsProgressHUD(context, _buildWidget(context), loading));
+  }
+
+  @override
+  Widget _buildWidget(BuildContext context) {
     return WillPopScope(
       onWillPop: () async => false,
       child: Scaffold(
@@ -353,5 +355,17 @@ class _JobRequestPageState extends State<JobRequestPage> with SingleTickerProvid
         ),
       ),
     );
+  }
+
+  void showProgress() {
+    setState(() {
+      loading = true;
+    });
+  }
+
+  void closeProgress(){
+    setState(() {
+      loading = false;
+    });
   }
 }
