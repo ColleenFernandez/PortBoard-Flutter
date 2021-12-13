@@ -31,11 +31,27 @@ class _PaymentDetailPageState extends State<PaymentDetailPage> {
   void initState() {
     super.initState();
 
-    FBroadcast.instance().register(Constants.PAYMENT_DETAIL_APPROVED, (value, callback) {
-      Common.userModel.paymentDetailModel.status = Constants.ACCEPT;
-      setState(() {});
+    FBroadcast.instance().register(Constants.NOTI_DOCUMENT_VERIFY_STATUS, (value, callback) {
+      refreshUserDetail();
     });
     loadData();
+  }
+
+  void refreshUserDetail(){
+    showProgress();
+    Common.api.login(Common.userModel.phone).then((value) {
+      closeProgress();
+      if (value == APIConst.SUCCESS){
+        loadData();
+        setState(() {});
+      }else {
+        showToast(APIConst.SERVER_ERROR);
+      }
+    }).onError((error, stackTrace) {
+      LogUtils.log('error ===> ${error.toString()}');
+      closeProgress();
+      showToast(APIConst.SERVER_ERROR);
+    });
   }
 
   void loadData(){

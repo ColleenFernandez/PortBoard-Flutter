@@ -18,6 +18,7 @@ class Assets{
   static const IC_BAR_CODE = AssetImage('assets/images/bar-code.png');
   static const IMG_BG_FOCUS = AssetImage('assets/images/bg_focus.png');
   static const IMG_CRANE_ARM = AssetImage('assets/images/crane_arm.png');
+  static const IMG_TRUCK = AssetImage('assets/images/img_truck.png');
 
   static const String ROBOTO_FONT = 'RobotoCondensed';
   static const String NOTI_ICON_PATH = 'assets/images/noti_icon.png';

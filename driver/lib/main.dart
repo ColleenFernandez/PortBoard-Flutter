@@ -60,7 +60,6 @@ class _MyAppState extends State<MyApp> {
         '/PhoneOTPPage' : (BuildContext context) => new PhoneOTPPage(),
         '/RegisterUserDetailPage' : (BuildContext context) => new RegisterUserDetailPage(''),
         '/MainPage' : (BuildContext context) => MainPage(),
-        '/VerificationStatusPage' : (BuildContext context) => VerificationStatusPage(),
         '/SubmitDriverLicensePage' : (BuildContext context) => SubmitDriverLicensePage(),
         '/SubmitTwicCardPage' : (BuildContext context) => SubmitTwicCardPage(),
         '/SubmitSealinkCardPage' : (BuildContext context) => SubmitSealinkCardPage(),

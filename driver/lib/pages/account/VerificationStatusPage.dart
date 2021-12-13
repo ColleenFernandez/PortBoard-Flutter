@@ -28,7 +28,6 @@ import 'package:driver/widget/StsProgressHUD.dart';
 import 'package:fbroadcast/fbroadcast.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 
 class VerificationStatusPage extends StatefulWidget {
   @override
@@ -44,103 +43,8 @@ class _VerificationStatusPageState extends State<VerificationStatusPage> {
   void initState() {
     super.initState();
 
-    FBroadcast.instance().register(Constants.DRIVER_LICENSE_REJECTED, (value, callback) {
-      Common.userModel.driverLicenseModel.status = Constants.REJECT;
+    FBroadcast.instance().register(Constants.NOTI_DOCUMENT_VERIFY_STATUS, (value, callback) {
       refreshUserDetail();
-    });
-
-    FBroadcast.instance().register(Constants.TWIC_CARD_REJECTED, (value, callback) {
-      Common.userModel.twicCardModel.status = Constants.REJECT;
-      refreshUserDetail();
-    });
-
-    FBroadcast.instance().register(Constants.SEALINK_CARD_REJECTED, (value, callback) {
-      Common.userModel.seaLinkCardModel.status = Constants.REJECT;
-      refreshUserDetail();
-    });
-
-    FBroadcast.instance().register(Constants.MEDICAL_CARD_REJECTED, (value, callback) {
-      Common.userModel.medicalCardModel.status = Constants.REJECT;
-      refreshUserDetail();
-    });
-
-    FBroadcast.instance().register(Constants.BUSINESS_CERTIFICATE_REJECTED, (value, callback) {
-      Common.userModel.businessCertificateModel.status = Constants.REJECT;
-      refreshUserDetail();
-    });
-
-    FBroadcast.instance().register(Constants.BUSINESS_EIN_REJECTED, (value, callback) {
-      Common.userModel.businessEINModel.status = Constants.REJECT;
-      refreshUserDetail();
-    });
-
-    FBroadcast.instance().register(Constants.PAYMENT_DETAIL_REJECTED, (value, callback) {
-      Common.userModel.paymentDetailModel.status = Constants.REJECT;
-      refreshUserDetail();
-    });
-
-    FBroadcast.instance().register(Constants.ALCOHOL_DRUG_TEST_REJECTED, (value, callback) {
-      Common.userModel.alcoholDrugTestModel.status = Constants.REJECT;
-      refreshUserDetail();
-    });
-
-    FBroadcast.instance().register(Constants.DRIVER_PHOTO_REJECTED, (value, callback) {
-      Common.userModel.driverPhotoModel.status = Constants.REJECT;
-      refreshUserDetail();
-    });
-
-    FBroadcast.instance().register(Constants.DRIVER_LICENSE_APPROVED, (value, callback) {
-      Common.userModel.driverLicenseModel.status = Constants.ACCEPT;
-      getVerificationData();
-      setState(() {});
-    });
-
-    FBroadcast.instance().register(Constants.TWIC_CARD_APPROVED, (value, callback) {
-      Common.userModel.twicCardModel.status = Constants.ACCEPT;
-      getVerificationData();
-      setState(() {});
-    });
-
-    FBroadcast.instance().register(Constants.SEALINK_CARD_APPROVED, (value, callback) {
-      Common.userModel.seaLinkCardModel.status = Constants.ACCEPT;
-      getVerificationData();
-      setState(() {});
-    });
-
-    FBroadcast.instance().register(Constants.MEDICAL_CARD_APPROVED, (value, callback) {
-      Common.userModel.medicalCardModel.status = Constants.ACCEPT;
-      getVerificationData();
-      setState(() {});
-    });
-
-    FBroadcast.instance().register(Constants.BUSINESS_CERTIFICATE_APPROVED, (value, callback) {
-      Common.userModel.businessCertificateModel.status = Constants.ACCEPT;
-      getVerificationData();
-      setState(() {});
-    });
-
-    FBroadcast.instance().register(Constants.BUSINESS_EIN_APPROVED, (value, callback) {
-      Common.userModel.businessEINModel.status = Constants.ACCEPT;
-      getVerificationData();
-      setState(() {});
-    });
-
-    FBroadcast.instance().register(Constants.PAYMENT_DETAIL_APPROVED, (value, callback) {
-      Common.userModel.paymentDetailModel.status = Constants.ACCEPT;
-      getVerificationData();
-      setState(() {});
-    });
-
-    FBroadcast.instance().register(Constants.ALCOHOL_DRUG_TEST_APPROVED, (value, callback) {
-      Common.userModel.alcoholDrugTestModel.status = Constants.ACCEPT;
-      getVerificationData();
-      setState(() {});
-    });
-
-    FBroadcast.instance().register(Constants.DRIVER_PHOTO_APPROVED, (value, callback) {
-      Common.userModel.driverPhotoModel.status = Constants.ACCEPT;
-      getVerificationData();
-      setState(() {});
     });
 
     refreshUserDetail();
@@ -169,8 +73,6 @@ class _VerificationStatusPageState extends State<VerificationStatusPage> {
     driverLicense.documentName = Constants.DRIVER_LICENSE;
     if (Common.userModel.driverLicenseModel.driverLicense.isNotEmpty){
       driverLicense.status = Common.userModel.driverLicenseModel.status;
-      driverLicense.expireDate = Utils.getDate(Common.userModel.driverLicenseModel.expirationDate);
-      driverLicense.reason = Common.userModel.driverLicenseModel.reason;
     }else {
       driverLicense.status = Constants.NOT_SUBMITTED;
     }
@@ -180,8 +82,6 @@ class _VerificationStatusPageState extends State<VerificationStatusPage> {
     twicCard.documentName = Constants.TWIC_CARD;
     if (Common.userModel.twicCardModel.cardNumber.isNotEmpty){
       twicCard.status = Common.userModel.twicCardModel.status;
-      twicCard.expireDate = Utils.getDate(Common.userModel.twicCardModel.expirationDate);
-      twicCard.reason = Common.userModel.twicCardModel.reason;
     }else {
       twicCard.status = Constants.NOT_SUBMITTED;
     }
@@ -191,8 +91,6 @@ class _VerificationStatusPageState extends State<VerificationStatusPage> {
     seaLinkCard.documentName = Constants.SEALINK_CARD;
     if (Common.userModel.seaLinkCardModel.cardNumber.isNotEmpty) {
       seaLinkCard.status = Common.userModel.seaLinkCardModel.status;
-      seaLinkCard.expireDate = Utils.getDate(Common.userModel.seaLinkCardModel.expirationDate);
-      seaLinkCard.reason = Common.userModel.seaLinkCardModel.reason;
     }else {
       seaLinkCard.status = Constants.NOT_SUBMITTED;
     }
@@ -202,8 +100,6 @@ class _VerificationStatusPageState extends State<VerificationStatusPage> {
     medicalCard.documentName = Constants.MEDICAL_CARD;
     if (Common.userModel.medicalCardModel.expirationDate > 0){
       medicalCard.status = Common.userModel.medicalCardModel.status;
-      medicalCard.expireDate = Utils.getDate(Common.userModel.medicalCardModel.expirationDate);
-      medicalCard.reason = Common.userModel.medicalCardModel.reason;
     }else {
       medicalCard.status = Constants.NOT_SUBMITTED;
     }
@@ -296,7 +192,12 @@ class _VerificationStatusPageState extends State<VerificationStatusPage> {
                       onTap: () {
                         if (model.documentName == Constants.DRIVER_LICENSE) {
                           if (model.status == Constants.NOT_SUBMITTED){
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => SubmitDriverLicensePage()));
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => SubmitDriverLicensePage())).then((value) {
+                              if (value == null) return;
+                              if (value == true){
+                                refreshUserDetail();
+                              }
+                            });
                           }else {
                             Navigator.push(context, MaterialPageRoute(builder: (context) => DriverLicenseDetailPage()));
                           }
@@ -304,7 +205,12 @@ class _VerificationStatusPageState extends State<VerificationStatusPage> {
 
                         if (model.documentName == Constants.TWIC_CARD){
                           if (model.status == Constants.NOT_SUBMITTED){
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => SubmitTwicCardPage()));
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => SubmitTwicCardPage())).then((value) {
+                              if (value == null) return;
+                              if (value == true){
+                                refreshUserDetail();
+                              }
+                            });
                           }else {
                             Navigator.push(context, MaterialPageRoute(builder: (context) => TwicCardDetailPage()));
                           }
@@ -312,7 +218,12 @@ class _VerificationStatusPageState extends State<VerificationStatusPage> {
 
                         if (model.documentName == Constants.SEALINK_CARD){
                           if (model.status == Constants.NOT_SUBMITTED){
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => SubmitSealinkCardPage()));
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => SubmitSealinkCardPage())).then((value) {
+                              if (value == null) return;
+                              if (value == true) {
+                                refreshUserDetail();
+                              }
+                            });
                           }else {
                             Navigator.push(context, MaterialPageRoute(builder: (context) => SealinkCaradDetailPage()));
                           }
@@ -320,7 +231,12 @@ class _VerificationStatusPageState extends State<VerificationStatusPage> {
 
                         if (model.documentName == Constants.MEDICAL_CARD){
                           if (model.status == Constants.NOT_SUBMITTED){
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => SubmitMedicalCardPage()));
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => SubmitMedicalCardPage())).then((value) {
+                              if (value == null) return;
+                              if (value == true){
+                                refreshUserDetail();
+                              }
+                            });
                           }else {
                             Navigator.push(context, MaterialPageRoute(builder: (context) => MedicalCardDetailPage()));
                           }
@@ -328,7 +244,12 @@ class _VerificationStatusPageState extends State<VerificationStatusPage> {
 
                         if (model.documentName == Constants.BUSINESS_CERTIFICATE){
                           if (model.status == Constants.NOT_SUBMITTED){
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => SubmitBusinessCertificatePage()));
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => SubmitBusinessCertificatePage())).then((value) {
+                              if (value == null) return;
+                              if (value == true){
+                                refreshUserDetail();
+                              }
+                            });
                           }else {
                             Navigator.push(context, MaterialPageRoute(builder: (context) => BusinessCertificateDetailPage()));
                           }
@@ -336,7 +257,12 @@ class _VerificationStatusPageState extends State<VerificationStatusPage> {
 
                         if (model.documentName == Constants.BUSINESS_EIN_NUMBER){
                           if (model.status == Constants.NOT_SUBMITTED){
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => SubmitBusinessEINPage()));
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => SubmitBusinessEINPage())).then((value) {
+                              if (value == null) return;
+                              if (value == true){
+                                refreshUserDetail();
+                              }
+                            });
                           }else {
                             Navigator.push(context, MaterialPageRoute(builder: (context) => BusinessEINDetailPage()));
                           }
@@ -344,7 +270,12 @@ class _VerificationStatusPageState extends State<VerificationStatusPage> {
 
                         if (model.documentName == Constants.PAYMENT_DETAILS) {
                           if (model.status == Constants.NOT_SUBMITTED){
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => SubmitPaymentDetailPage()));
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => SubmitPaymentDetailPage())).then((value) {
+                              if (value == null) return;
+                              if (value == true){
+                                refreshUserDetail();
+                              }
+                            });
                           }else {
                             Navigator.push(context, MaterialPageRoute(builder: (context) => PaymentDetailPage()));
                           }
@@ -352,7 +283,12 @@ class _VerificationStatusPageState extends State<VerificationStatusPage> {
 
                         if (model.documentName == Constants.ALCOHOL_DRUG_TEST){
                           if (model.status == Constants.NOT_SUBMITTED){
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => SubmitAlcoholDrugTestPage()));
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => SubmitAlcoholDrugTestPage())).then((value) {
+                              if (value == null) return;
+                              if (value == true){
+                                refreshUserDetail();
+                              }
+                            });
                           }else {
                             Navigator.push(context, MaterialPageRoute(builder: (context) => AlcoholDrugTestDetailPage()));
                           }
@@ -360,7 +296,12 @@ class _VerificationStatusPageState extends State<VerificationStatusPage> {
 
                         if (model.documentName == Constants.DRIVER_PHOTO){
                           if (model.status == Constants.NOT_SUBMITTED){
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => SubmitDriverPhotoPage()));
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => SubmitDriverPhotoPage())).then((value) {
+                              if (value == null) return;
+                              if (value == true){
+                                refreshUserDetail();
+                              }
+                            });
                           }else {
                             Navigator.push(context, MaterialPageRoute(builder: (context) => DriverPhotoPage()));
                           }

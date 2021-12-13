@@ -54,7 +54,7 @@ class _SubmitPaymentDetailPageState extends State<SubmitPaymentDetailPage> {
             'Your payment detail submitted successfully!\nAdministrator will check it and reply you as soon as possible.',
             Constants.Okay, () {
           Navigator.pop(context);
-          Navigator.pop(context);
+          Navigator.pop(context, true);
         });
       }else {
         showToast(value);

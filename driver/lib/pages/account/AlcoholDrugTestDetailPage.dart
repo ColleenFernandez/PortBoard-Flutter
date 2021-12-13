@@ -30,13 +30,30 @@ class _AlcoholDrugTestDetailPageState extends State<AlcoholDrugTestDetailPage> {
   void initState() {
     super.initState();
 
-    FBroadcast.instance().register(Constants.ALCOHOL_DRUG_TEST_APPROVED, (value, callback) {
-      Common.userModel.alcoholDrugTestModel.status = Constants.ACCEPT;
-      setState(() {});
+    FBroadcast.instance().register(Constants.NOTI_DOCUMENT_VERIFY_STATUS, (value, callback) {
+      refreshUserDetail();
     });
 
     loadData();
   }
+
+  void refreshUserDetail(){
+    showProgress();
+    Common.api.login(Common.userModel.phone).then((value) {
+      closeProgress();
+      if (value == APIConst.SUCCESS){
+        loadData();
+        setState(() {});
+      }else {
+        showToast(APIConst.SERVER_ERROR);
+      }
+    }).onError((error, stackTrace) {
+      LogUtils.log('error ===> ${error.toString()}');
+      closeProgress();
+      showToast(APIConst.SERVER_ERROR);
+    });
+  }
+
 
   void loadData(){
     if (Common.userModel.alcoholDrugTestModel.status == Constants.PENDING || Common.userModel.alcoholDrugTestModel.status == Constants.ACCEPT){
@@ -45,7 +62,7 @@ class _AlcoholDrugTestDetailPageState extends State<AlcoholDrugTestDetailPage> {
       isEditable = true;
     }
 
-    frontPic = Constants.DOCUMENT_DIRECTORY_URL + Common.userModel.alcoholDrugTestModel.frontPic;
+    frontPic = Common.userModel.alcoholDrugTestModel.frontPic;
   }
 
   void submitAlcoholDrugTest() async{

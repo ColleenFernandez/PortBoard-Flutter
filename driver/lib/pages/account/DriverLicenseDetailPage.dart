@@ -36,29 +36,19 @@ class _DriverLicenseDetailPageState extends State<DriverLicenseDetailPage> {
   void initState() {
     super.initState();
 
-    FBroadcast.instance().register(Constants.DRIVER_LICENSE_REJECTED, (value, callback) {
-      callLoginAPI();
+    FBroadcast.instance().register(Constants.NOTI_DOCUMENT_VERIFY_STATUS, (value, callback) {
+      refreshUserDetail();
     });
-
-    FBroadcast.instance().register(Constants.DRIVER_LICENSE_APPROVED, (value, callback) {
-      Common.userModel.driverLicenseModel.status = Constants.ACCEPT;
-      setState(() {});
-    });
-
-    if (Common.userModel.driverLicenseModel.status == Constants.PENDING || Common.userModel.driverLicenseModel.status == Constants.ACCEPT){
-      isEditable = false;
-    }else {
-      isEditable = true;
-    }
 
     loadData();
   }
 
-  void callLoginAPI(){
+  void refreshUserDetail(){
     showProgress();
     Common.api.login(Common.userModel.phone).then((value) {
       closeProgress();
       if (value == APIConst.SUCCESS){
+        loadData();
         setState(() {});
       }else {
         showToast(APIConst.SERVER_ERROR);
@@ -71,10 +61,17 @@ class _DriverLicenseDetailPageState extends State<DriverLicenseDetailPage> {
   }
 
   void loadData(){
+
+    if (Common.userModel.driverLicenseModel.status == Constants.PENDING || Common.userModel.driverLicenseModel.status == Constants.ACCEPT){
+      isEditable = false;
+    }else {
+      isEditable = true;
+    }
+
     edtDriverLicenseNumber.text = Common.userModel.driverLicenseModel.driverLicense;
     edtExpiryDate.text = Utils.getDate(Common.userModel.driverLicenseModel.expirationDate);
-    frontPic = Constants.DOCUMENT_DIRECTORY_URL + Common.userModel.driverLicenseModel.frontPic;
-    backPic = Constants.DOCUMENT_DIRECTORY_URL + Common.userModel.driverLicenseModel.backPic;
+    frontPic = Common.userModel.driverLicenseModel.frontPic;
+    backPic = Common.userModel.driverLicenseModel.backPic;
   }
 
   void updateDriverLicense() async{

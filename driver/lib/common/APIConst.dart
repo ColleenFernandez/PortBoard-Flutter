@@ -92,4 +92,23 @@ class APIConst{
   static const String alcoholDrugTestDetail = 'alcoholDrugTestDetail';
   static const String photo = 'photo';
   static const String driverPhotoDetail = 'driverPhotoDetail';
+  static const String companyName = 'companyName';
+  static const String plateNumber = 'plateNumber';
+  static const String usdotNumber = 'usdotNumber';
+  static const String iftaStickerNumber = 'iftaStickerNumber';
+  static const String inspectionNumber = 'inspectionNumber';
+  static const String policyNumber = 'policyNumber';
+  static const String companyPhone = 'companyPhone';
+  static const String effectiveDate = 'effectiveDate';
+  static const String vehiculeIDNumber = 'vehiculeIDNumber';
+  static const String year = 'year';
+  static const String make = 'make';
+  static const String model = 'model';
+  static const String color = 'color';
+  static const String truckRegistrationDetail = 'truckRegistrationDetail';
+  static const String truckInsuranceDetail = 'truckInsuranceDetail';
+  static const String iftaStickerDetail = 'iftaStickerDetail';
+  static const String emitionInspectionDetail = 'emitionInspectionDetail';
+  static const String truckInformationDetail = 'truckInformationDetail';
+  static const String tag = 'tag';
 }

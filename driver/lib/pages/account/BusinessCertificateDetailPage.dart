@@ -42,11 +42,27 @@ class _BusinessCertificateDetailPageState extends State<BusinessCertificateDetai
   void initState() {
     super.initState();
 
-    FBroadcast.instance().register(Constants.BUSINESS_CERTIFICATE_APPROVED, (value, callback) {
-      Common.userModel.businessCertificateModel.status = Constants.ACCEPT;
+    FBroadcast.instance().register(Constants.NOTI_DOCUMENT_VERIFY_STATUS, (value, callback) {
+      refreshUserDetail();
       setState(() {});
     });
     loadData();
+  }
+
+  void refreshUserDetail(){
+    showProgress();
+    Common.api.login(Common.userModel.phone).then((value) {
+      closeProgress();
+      if (value == APIConst.SUCCESS){
+        loadData();
+        setState(() {});
+      }
+    }).onError((error, stackTrace) {
+      closeProgress();
+      showToast(APIConst.SERVER_ERROR);
+
+      LogUtils.log('error ===> ${error.toString()}');
+    });
   }
 
   void loadData(){
@@ -63,7 +79,7 @@ class _BusinessCertificateDetailPageState extends State<BusinessCertificateDetai
     state = Common.userModel.businessCertificateModel.state;
     edtZipCode.text = Common.userModel.businessCertificateModel.zipCode;
 
-    frontPic = Constants.DOCUMENT_DIRECTORY_URL + Common.userModel.businessCertificateModel.frontPic;
+    frontPic = Common.userModel.businessCertificateModel.frontPic;
   }
 
   void submitBusinessCertificate() async{

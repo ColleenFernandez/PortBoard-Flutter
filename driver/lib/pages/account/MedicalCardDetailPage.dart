@@ -36,12 +36,28 @@ class _MedicalCardDetailPageState extends State<MedicalCardDetailPage> {
   void initState() {
     super.initState();
 
-    FBroadcast.instance().register(Constants.MEDICAL_CARD_APPROVED, (value, callback) {
-      Common.userModel.medicalCardModel.status = Constants.ACCEPT;
-      setState(() {});
+    FBroadcast.instance().register(Constants.NOTI_DOCUMENT_VERIFY_STATUS, (value, callback) {
+      refreshUserDetail();
     });
 
     loadData();
+  }
+
+  void refreshUserDetail(){
+    showProgress();
+    Common.api.login(Common.userModel.phone).then((value) {
+      closeProgress();
+      if (value == APIConst.SUCCESS){
+        loadData();
+        setState(() {});
+      }else {
+        showToast(APIConst.SERVER_ERROR);
+      }
+    }).onError((error, stackTrace) {
+      LogUtils.log('error ===> ${error.toString()}');
+      closeProgress();
+      showToast(APIConst.SERVER_ERROR);
+    });
   }
 
   void loadData(){
@@ -52,8 +68,8 @@ class _MedicalCardDetailPageState extends State<MedicalCardDetailPage> {
     }
     edtExpiryDate.text = Utils.getDate(Common.userModel.medicalCardModel.expirationDate);
     edtIssuedDate.text = Utils.getDate(Common.userModel.medicalCardModel.issuedDate);
-    frontPic = Constants.DOCUMENT_DIRECTORY_URL + Common.userModel.medicalCardModel.frontPic;
-    backPic = Constants.DOCUMENT_DIRECTORY_URL + Common.userModel.medicalCardModel.backPic;
+    frontPic = Common.userModel.medicalCardModel.frontPic;
+    backPic = Common.userModel.medicalCardModel.backPic;
   }
 
   void submitMedicalCard() async{

@@ -127,10 +127,7 @@ class FCMService {
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) async{
 
-      LogUtils.log('foregroundNoti ===> ${message.data}');
-
       RemoteNotification? notification = message.notification;
-      AndroidNotification? android = message.notification!.android;
 
       if (Platform.isAndroid){
         AndroidNotificationDetails androidNotiDetail = AndroidNotificationDetails(
@@ -196,7 +193,11 @@ class FCMService {
         getJobRequest();
       }
 
-      Utils.changeDocumentStatus(notification.title!);
+      final notiType = message.data as Map<String, dynamic>;
+      final notiTag = notiType[APIConst.tag];
+      if (notiTag == Constants.NOTI_DOCUMENT_VERIFY_STATUS){
+        FBroadcast.instance().broadcast(Constants.NOTI_DOCUMENT_VERIFY_STATUS);
+      }
     });
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {

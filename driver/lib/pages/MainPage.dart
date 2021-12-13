@@ -9,6 +9,8 @@ import 'package:driver/common/FirebaseAPI.dart';
 import 'package:driver/model/JobModel.dart';
 import 'package:driver/pages/Job/JobRequestPage.dart';
 import 'package:driver/pages/Job/TrackingPage.dart';
+import 'package:driver/pages/account/TVerificationStatusPage.dart';
+import 'package:driver/pages/account/VerificationStatusPage.dart';
 import 'package:driver/utils/PermissionHelper.dart';
 import 'package:driver/utils/Prefs.dart';
 import 'package:driver/utils/log_utils.dart';
@@ -62,12 +64,6 @@ class _MainPageState extends VisibilityAwareState<MainPage>{
       Navigator.push(context, MaterialPageRoute(builder: (context) => JobRequestPage(Common.jobRequest)));
     });
 
-    FBroadcast.instance().register(Constants.DRIVER_PHOTO_APPROVED, (value, callback) {
-      Common.userModel.driverPhotoModel.status = Constants.ACCEPT;
-      userPhoto = Constants.DOCUMENT_DIRECTORY_URL + Common.userModel.driverPhotoModel.photo;
-      setState(() {});
-    });
-
     FBroadcast.instance().register(Constants.LOCATION_UPDATE, (value, callback) {
 
       if (!loadMap){
@@ -100,7 +96,7 @@ class _MainPageState extends VisibilityAwareState<MainPage>{
 
   void loadData(){
     if (Common.userModel.driverPhotoModel.status == Constants.ACCEPT){
-      userPhoto = Constants.DOCUMENT_DIRECTORY_URL +  Common.userModel.driverPhotoModel.photo;
+      userPhoto = Common.userModel.driverPhotoModel.photo;
     }
   }
 
@@ -292,7 +288,7 @@ class _MainPageState extends VisibilityAwareState<MainPage>{
                 trailing: Icon(Icons.error_outline_outlined, color: Colors.red),
                 onTap: (){
                   Navigator.pop(context);
-                  Navigator.pushNamed(context, '/VerificationStatusPage');
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => VerificationStatusPage()));
                 },
               ),
               ListTile(
@@ -300,7 +296,8 @@ class _MainPageState extends VisibilityAwareState<MainPage>{
                 dense: true,
                 leading: Icon(Icons.insert_drive_file_sharp, color:Colors.black87), title: Text('My Trucks', style: TextStyle(color:Colors.black87)),
                 onTap: (){
-
+                  Navigator.pop(context);
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => TVerificationStatusPage()));
                 },
               ),
               ListTile(

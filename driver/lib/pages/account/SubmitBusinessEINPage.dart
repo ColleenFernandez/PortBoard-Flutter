@@ -64,7 +64,7 @@ class _SubmitBusinessEINPageState extends State<SubmitBusinessEINPage> {
             'Your business EIN number submitted successfully!\nAdministrator will check it and reply you as soon as possible.',
             Constants.Okay, () {
           Navigator.pop(context);
-          Navigator.pop(context);
+          Navigator.pop(context, true);
         });
       }else {
         showToast(value);
@@ -174,7 +174,7 @@ class _SubmitBusinessEINPageState extends State<SubmitBusinessEINPage> {
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: AppColors.darkBlue,
-          title: Text('Business Certificate'),
+          title: Text('Business EIN'),
           elevation: 1,
         ),
         body: SingleChildScrollView(
@@ -201,7 +201,6 @@ class _SubmitBusinessEINPageState extends State<SubmitBusinessEINPage> {
                 SizedBox(height: 20,),
                 Text('Issued Date', style: TextStyle(color: AppColors.darkBlue)),
                 TextField(
-                  enabled: false,
                   controller: edtIssuedDate,
                   decoration: InputDecoration(
                       suffixIcon: IconButton(

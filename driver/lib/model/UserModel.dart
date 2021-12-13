@@ -4,9 +4,14 @@ import 'package:driver/model/BusinessCertificateModel.dart';
 import 'package:driver/model/BusinessEINModel.dart';
 import 'package:driver/model/DriverLicenseModel.dart';
 import 'package:driver/model/DriverPhotoModel.dart';
+import 'package:driver/model/EmitionInspectionModel.dart';
+import 'package:driver/model/IFTAStickerModel.dart';
 import 'package:driver/model/MedicalCardModel.dart';
 import 'package:driver/model/PaymentDetailModel.dart';
 import 'package:driver/model/SeaLinkCardModel.dart';
+import 'package:driver/model/TruckInformationModel.dart';
+import 'package:driver/model/TruckInsuranceModel.dart';
+import 'package:driver/model/TruckRegistrationModel.dart';
 import 'package:driver/model/TwicCardModel.dart';
 import 'package:flutter/material.dart';
 
@@ -32,6 +37,11 @@ class UserModel {
   PaymentDetailModel paymentDetailModel = new PaymentDetailModel();
   AlcoholDrugTestModel alcoholDrugTestModel = new AlcoholDrugTestModel();
   DriverPhotoModel driverPhotoModel = new DriverPhotoModel();
+  TruckRegistrationModel truckRegistrationModel = new TruckRegistrationModel();
+  TruckInsuranceModel  truckInsuranceModel = new TruckInsuranceModel();
+  IFTAStickerModel iftaStickerModel = new IFTAStickerModel();
+  EmitionInspectionModel emitionInspectionModel = new EmitionInspectionModel();
+  TruckInformationModel truckInformationModel = new TruckInformationModel();
 
   UserModel();
 

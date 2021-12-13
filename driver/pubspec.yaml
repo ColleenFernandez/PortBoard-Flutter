@@ -91,6 +91,7 @@ flutter:
     - assets/images/noti_icon.png
     - assets/images/crane_arm.png
     - assets/images/loading_gif.gif
+    - assets/images/img_truck.png
 
     - assets/sound/noti_sound.mp3
 

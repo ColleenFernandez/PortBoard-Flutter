@@ -36,12 +36,27 @@ class _TwicCardDetailPageState extends State<TwicCardDetailPage> {
   void initState() {
     super.initState();
 
-    FBroadcast.instance().register(Constants.TWIC_CARD_APPROVED, (value, callback) {
-      Common.userModel.twicCardModel.status = Constants.ACCEPT;
-      setState(() {});
+    FBroadcast.instance().register(Constants.NOTI_DOCUMENT_VERIFY_STATUS, (value, callback) {
+      refreshUserDetail();
     });
 
     loadData();
+  }
+
+  void refreshUserDetail(){
+    showProgress();
+    Common.api.login(Common.userModel.phone).then((value) {
+      closeProgress();
+      if (value == APIConst.SUCCESS){
+        loadData();
+        setState(() {});
+      }
+    }).onError((error, stackTrace) {
+      closeProgress();
+      showToast(APIConst.SERVER_ERROR);
+
+      LogUtils.log('error ===> ${error.toString()}');
+    });
   }
 
   void loadData(){
@@ -54,8 +69,8 @@ class _TwicCardDetailPageState extends State<TwicCardDetailPage> {
 
     edtCardNumber.text = Common.userModel.twicCardModel.cardNumber;
     edtExpiryDate.text = Utils.getDate(Common.userModel.twicCardModel.expirationDate);
-    frontPic = Constants.DOCUMENT_DIRECTORY_URL + Common.userModel.twicCardModel.frontPic;
-    backPic = Constants.DOCUMENT_DIRECTORY_URL + Common.userModel.twicCardModel.backPic;
+    frontPic = Common.userModel.twicCardModel.frontPic;
+    backPic = Common.userModel.twicCardModel.backPic;
   }
 
   void submitTwicCard() async{

@@ -30,11 +30,28 @@ class _DriverPhotoPageState extends State<DriverPhotoPage> {
   void initState() {
     super.initState();
 
-    FBroadcast.instance().register(Constants.DRIVER_PHOTO_APPROVED, (value, callback) {
-      Common.userModel.driverPhotoModel.status = Constants.ACCEPT;
-      setState(() {});
+    FBroadcast.instance().register(Constants.NOTI_DOCUMENT_VERIFY_STATUS, (value, callback) {
+      refreshUserDetail();
     });
+
     loadData();
+  }
+
+  void refreshUserDetail(){
+    showProgress();
+    Common.api.login(Common.userModel.phone).then((value) {
+      closeProgress();
+      if (value == APIConst.SUCCESS){
+        loadData();
+        setState(() {});
+      }else {
+        showToast(APIConst.SERVER_ERROR);
+      }
+    }).onError((error, stackTrace) {
+      LogUtils.log('error ===> ${error.toString()}');
+      closeProgress();
+      showToast(APIConst.SERVER_ERROR);
+    });
   }
 
   void loadData(){
@@ -44,7 +61,7 @@ class _DriverPhotoPageState extends State<DriverPhotoPage> {
       isEditable = true;
     }
 
-    frontPic = Constants.DOCUMENT_DIRECTORY_URL + Common.userModel.driverPhotoModel.photo;
+    frontPic = Common.userModel.driverPhotoModel.photo;
   }
 
   void submitDriverPhoto() async{

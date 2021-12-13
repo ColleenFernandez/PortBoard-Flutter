@@ -52,7 +52,7 @@ class _SubmitSealinkCardPageState extends State<SubmitSealinkCardPage> {
             'Your Sealink card submitted successfully!\nAdministrator will check it and reply you as soon as possible.',
             Constants.Okay, () {
           Navigator.pop(context);
-          Navigator.pop(context);
+          Navigator.pop(context, true);
         });
       }else {
         showToast(value);

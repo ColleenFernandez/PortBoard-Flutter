@@ -62,7 +62,7 @@ class _SubmitBusinessCertificatePageState extends State<SubmitBusinessCertificat
             'Your business certificate submitted successfully!\nAdministrator will check it and reply you as soon as possible.',
             Constants.Okay, () {
           Navigator.pop(context);
-          Navigator.pop(context);
+          Navigator.pop(context, true);
         });
       }else {
         showToast(value);

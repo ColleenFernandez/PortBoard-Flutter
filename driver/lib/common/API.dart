@@ -1,4 +1,6 @@
 
+import 'dart:math';
+
 import 'package:dio/dio.dart';
 import 'package:driver/common/APIConst.dart';
 import 'package:driver/common/Constants.dart';
@@ -7,10 +9,15 @@ import 'package:driver/model/BusinessCertificateModel.dart';
 import 'package:driver/model/BusinessEINModel.dart';
 import 'package:driver/model/DriverLicenseModel.dart';
 import 'package:driver/model/DriverPhotoModel.dart';
+import 'package:driver/model/EmitionInspectionModel.dart';
+import 'package:driver/model/IFTAStickerModel.dart';
 import 'package:driver/model/JobModel.dart';
 import 'package:driver/model/MedicalCardModel.dart';
 import 'package:driver/model/PaymentDetailModel.dart';
 import 'package:driver/model/SeaLinkCardModel.dart';
+import 'package:driver/model/TruckInformationModel.dart';
+import 'package:driver/model/TruckInsuranceModel.dart';
+import 'package:driver/model/TruckRegistrationModel.dart';
 import 'package:driver/model/TwicCardModel.dart';
 import 'package:driver/model/UserModel.dart';
 
@@ -21,10 +28,187 @@ class API {
   var dio = Dio();
 
   String baseURL = 'https://admin.portboard.app/index.php/DriverApi/';
-  //String baseURL = 'http://192.168.101.58:2000/index.php/DriverApi/';
+  //static String baseURL = 'http://192.168.101.58:2000/index.php/DriverApi/';
   final header = {
     'Content-Type': 'application/x-www-form-urlencoded',
   };
+
+  Future<String> submitTruckInfo(String userId,
+      String vehiculeIDNumber,
+      String plateNumber,
+      String year,
+      String make,
+      String model,
+      String color,
+      String frontPic) async {
+
+    final url = baseURL + 'submitTruckInfo';
+    final params = FormData.fromMap({
+      APIConst.userId : userId,
+      APIConst.vehiculeIDNumber : vehiculeIDNumber,
+      APIConst.plateNumber: plateNumber,
+      APIConst.year : year,
+      APIConst.make : make,
+      APIConst.model : model,
+      APIConst.color : color,
+      APIConst.frontPic : frontPic.isNotEmpty ? await MultipartFile.fromFile(frontPic) : ''
+    });
+
+    final res = await dio.post(url, data:  params, options: Options(headers: header));
+    if (res.statusCode != 200){
+      return APIConst.SERVER_ERROR;
+    }
+
+    final msg = res.data[APIConst.MSG];
+    if (msg != APIConst.SUCCESS){
+      return msg;
+    }
+
+    final truckInfomationModel = TruckInformationModel.fromJSON(res.data[APIConst.truckInformationDetail]);
+    Common.userModel.truckInformationModel = truckInfomationModel;
+
+    return APIConst.SUCCESS;
+  }
+
+  Future<String> submitEmitionInspection(String userId,
+      String inspectionNumber,
+      String state,
+      String expirationDate,
+      String frontPic) async {
+
+    final url = baseURL + 'submitEmitionInspection';
+    final params = FormData.fromMap({
+      APIConst.userId : userId,
+      APIConst.inspectionNumber : inspectionNumber,
+      APIConst.state: state,
+      APIConst.expirationDate : expirationDate,
+      APIConst.frontPic : frontPic.isNotEmpty ? await MultipartFile.fromFile(frontPic) : ''
+    });
+
+    final res = await dio.post(url, data:  params, options: Options(headers: header));
+    if (res.statusCode != 200){
+      return APIConst.SERVER_ERROR;
+    }
+
+    final msg = res.data[APIConst.MSG];
+    if (msg != APIConst.SUCCESS){
+      return msg;
+    }
+
+    final emitionInspection = EmitionInspectionModel.fromJSON(res.data[APIConst.emitionInspectionDetail]);
+    Common.userModel.emitionInspectionModel = emitionInspection;
+
+    return APIConst.SUCCESS;
+  }
+
+  Future<String> submitIFTASticker(String userId,
+      String iftaStickerNumber,
+      String state,
+      String expirationDate,
+      String frontPic) async {
+
+    final url = baseURL + 'submitIFTASticker';
+    final params = FormData.fromMap({
+      APIConst.userId : userId,
+      APIConst.iftaStickerNumber : iftaStickerNumber,
+      APIConst.state: state,
+      APIConst.expirationDate : expirationDate,
+      APIConst.frontPic : frontPic.isNotEmpty ? await MultipartFile.fromFile(frontPic) : ''
+    });
+
+    final res = await dio.post(url, data:  params, options: Options(headers: header));
+    if (res.statusCode != 200){
+      return APIConst.SERVER_ERROR;
+    }
+
+    final msg = res.data[APIConst.MSG];
+    if (msg != APIConst.SUCCESS){
+      return msg;
+    }
+
+    final iftaStickerModel = IFTAStickerModel.fromJSON(res.data[APIConst.iftaStickerDetail]);
+    Common.userModel.iftaStickerModel = iftaStickerModel;
+
+    return APIConst.SUCCESS;
+  }
+
+  Future<String> submitTruckInsurance(String userId,
+      String companyName,
+      String policyNumber,
+      String companyPhone,
+      String effectiveDate,
+      String expirationDate,
+      String address, String city, String state, String zipCode , String frontPic) async {
+
+    final url = baseURL + 'submitTruckInsurance';
+    final params = FormData.fromMap({
+      APIConst.userId : userId,
+      APIConst.companyName : companyName,
+      APIConst.policyNumber: policyNumber,
+      APIConst.companyPhone: companyPhone,
+      APIConst.effectiveDate : effectiveDate,
+      APIConst.expirationDate : expirationDate,
+      APIConst.address : address,
+      APIConst.city : city,
+      APIConst.state : state,
+      APIConst.zipCode : zipCode,
+      APIConst.frontPic : frontPic.isNotEmpty ? await MultipartFile.fromFile(frontPic) : ''
+    });
+
+    final res = await dio.post(url, data:  params, options: Options(headers: header));
+    if (res.statusCode != 200){
+      return APIConst.SERVER_ERROR;
+    }
+
+    final msg = res.data[APIConst.MSG];
+    if (msg != APIConst.SUCCESS){
+      return msg;
+    }
+
+    final truckInsuranceDetail = TruckInsuranceModel.fromJSON(res.data[APIConst.truckInsuranceDetail]);
+    Common.userModel.truckInsuranceModel = truckInsuranceDetail;
+
+    return APIConst.SUCCESS;
+  }
+
+  Future<String> submitTruckReg(String userId,
+      String companyName,
+      String accountNumber,
+      String plateNumber,
+      String usdotNumber,
+      String expirationDate,
+      String address, String city, String state, String zipCode , String frontPic) async {
+
+    final url = baseURL + 'submitTruckReg';
+    final params = FormData.fromMap({
+      APIConst.userId : userId,
+      APIConst.companyName : companyName,
+      APIConst.accountNumber: accountNumber,
+      APIConst.plateNumber: plateNumber,
+      APIConst.usdotNumber : usdotNumber,
+      APIConst.expirationDate : expirationDate,
+      APIConst.address : address,
+      APIConst.city : city,
+      APIConst.state : state,
+      APIConst.zipCode : zipCode,
+      APIConst.frontPic : frontPic.isNotEmpty ? await MultipartFile.fromFile(frontPic) : ''
+    });
+
+    final res = await dio.post(url, data:  params, options: Options(headers: header));
+    if (res.statusCode != 200){
+      return APIConst.SERVER_ERROR;
+    }
+
+    final msg = res.data[APIConst.MSG];
+    if (msg != APIConst.SUCCESS){
+      return msg;
+    }
+
+    final truckRegistrationModel = TruckRegistrationModel.fromJSON(res.data[APIConst.truckRegistrationDetail]);
+    Common.userModel.truckRegistrationModel = truckRegistrationModel;
+
+    return APIConst.SUCCESS;
+  }
 
   Future<String> changeOnOffline(String userId, String status) async {
     final url = baseURL + 'changeOnOffline';
@@ -490,6 +674,31 @@ class API {
     if(resData.containsKey(APIConst.driverPhotoDetail)) {
       final driverPhoto = DriverPhotoModel.fromJSON(resData[APIConst.driverPhotoDetail]);
       Common.userModel.driverPhotoModel = driverPhoto;
+    }
+
+    if(resData.containsKey(APIConst.truckRegistrationDetail)) {
+      final data = TruckRegistrationModel.fromJSON(resData[APIConst.truckRegistrationDetail]);
+      Common.userModel.truckRegistrationModel = data;
+    }
+
+    if(resData.containsKey(APIConst.truckInsuranceDetail)) {
+      final data = TruckInsuranceModel.fromJSON(resData[APIConst.truckInsuranceDetail]);
+      Common.userModel.truckInsuranceModel = data;
+    }
+
+    if(resData.containsKey(APIConst.iftaStickerDetail)) {
+      final data = IFTAStickerModel.fromJSON(resData[APIConst.iftaStickerDetail]);
+      Common.userModel.iftaStickerModel = data;
+    }
+
+    if(resData.containsKey(APIConst.emitionInspectionDetail)) {
+      final data = EmitionInspectionModel.fromJSON(resData[APIConst.emitionInspectionDetail]);
+      Common.userModel.emitionInspectionModel = data;
+    }
+
+    if(resData.containsKey(APIConst.truckInformationDetail)) {
+      final data = TruckInformationModel.fromJSON(resData[APIConst.truckInformationDetail]);
+      Common.userModel.truckInformationModel = data;
     }
 
     return APIConst.SUCCESS;

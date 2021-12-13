@@ -57,7 +57,7 @@ class _SubmitDriverLicensePageState extends State<SubmitDriverLicensePage> {
             'Your driver license submitted successfully!\nAdministrator will check it and reply you as soon as possible.',
             Constants.Okay, () {
               Navigator.pop(context);
-              Navigator.pop(context);
+              Navigator.pop(context, true);
         });
       }else {
         showToast(value);
