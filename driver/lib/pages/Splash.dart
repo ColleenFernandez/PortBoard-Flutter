@@ -8,7 +8,8 @@ import 'package:driver/common/Constants.dart';
 import 'package:driver/common/FirebaseAPI.dart';
 import 'package:driver/model/UserModel.dart';
 import 'package:driver/pages/Job/JobRequestPage.dart';
-import 'package:driver/pages/temp/JobSearchPage.dart';
+import 'package:driver/pages/account/FirstPage.dart';
+import 'package:driver/pages/Job/MyJobPage.dart';
 import 'package:driver/service/FCMService.dart';
 import 'package:driver/utils/Prefs.dart';
 import 'package:driver/utils/Utils.dart';
@@ -44,7 +45,7 @@ class _SplashPageState extends State<SplashPage> {
     if (phone != null){
       login();
     }else {
-      Navigator.pushNamed(context, '/FirstPage');
+      Navigator.push(context, MaterialPageRoute(builder: (context) => FirstPage()));
     }
   }
 
@@ -54,9 +55,11 @@ class _SplashPageState extends State<SplashPage> {
       closeProgress();
       if (value != APIConst.SUCCESS){
         showToast(value);
-        Navigator.pushNamed(context, '/FirstPage');
+        Navigator.push(context, MaterialPageRoute(builder: (context) => FirstPage()));
       }else {
-        FirebaseAPI.registerUser(Common.userModel);
+        if (Utils.isUserReadyToWork(Common.userModel)){
+          FirebaseAPI.registerUser(Common.userModel);
+        }
         startApp();
       }
     });

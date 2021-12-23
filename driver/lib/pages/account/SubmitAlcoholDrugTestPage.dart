@@ -20,12 +20,26 @@ class SubmitAlcoholDrugTestPage extends StatefulWidget{
 
 class _SubmitAlcoholDrugTestPageState extends State<SubmitAlcoholDrugTestPage> {
 
-  bool loading = false;
+  bool loading = false, isEditable = true;
   late dynamic frontPic = Assets.DEFAULT_IMG;
 
   @override
   void initState() {
     super.initState();
+
+    if (Common.userModel.alcoholDrugTestModel.frontPic.isNotEmpty){
+      loadData();
+    }
+  }
+
+  void loadData(){
+    if (Common.userModel.alcoholDrugTestModel.status == Constants.ACCEPT || Common.userModel.alcoholDrugTestModel.status == Constants.PENDING){
+      isEditable = false;
+    }else {
+      isEditable = true;
+    }
+
+    frontPic = Common.userModel.alcoholDrugTestModel.frontPic;
   }
 
   void submitAlcoholDrugTest() async{
@@ -111,21 +125,25 @@ class _SubmitAlcoholDrugTestPageState extends State<SubmitAlcoholDrugTestPage> {
                         heroTag: 'FAB-12',
                         backgroundColor: Colors.white,
                         onPressed: () {
-                          loadPicture();
+                          if (isEditable)
+                            loadPicture();
                         }, child: Icon(Icons.camera_alt, color: AppColors.green))),
               ],),),
-          Container(
-            margin: EdgeInsets.only(left: 20, right: 20, top: 30),
-            width: double.infinity, height: 48,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(primary: AppColors.darkBlue),
-              onPressed: (){
-                if (frontPic is AssetImage){
-                  showToast('Please upload front  picture of Alcohol Drug');
-                  return;
-                }
-                submitAlcoholDrugTest();
-              }, child: Text('SAVE', style: TextStyle(fontSize: 18),),
+          Visibility(
+            visible: Common.userModel.alcoholDrugTestModel.status != Constants.ACCEPT,
+            child: Container(
+              margin: EdgeInsets.only(left: 20, right: 20, top: 30),
+              width: double.infinity, height: 48,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(primary: AppColors.green),
+                onPressed: (){
+                  if (frontPic is AssetImage){
+                    showToast('Please upload front  picture of Alcohol Drug');
+                    return;
+                  }
+                  submitAlcoholDrugTest();
+                }, child: Text('SAVE', style: TextStyle(fontSize: 18),),
+              ),
             ),
           )
         ],

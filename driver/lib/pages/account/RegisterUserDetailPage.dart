@@ -1,6 +1,7 @@
 import 'package:driver/assets/AppColors.dart';
 import 'package:driver/assets/Assets.dart';
 import 'package:driver/common/API.dart';
+import 'package:driver/common/APIConst.dart';
 import 'package:driver/common/Common.dart';
 import 'package:driver/common/Constants.dart';
 import 'package:driver/common/FirebaseAPI.dart';
@@ -61,11 +62,9 @@ class _RegisterUserDetailPageState extends State<RegisterUserDetailPage> {
     showProgress();
     Common.api.register(widget.phone, edtFirstName.text, edtLastName.text, edtEmail.text, gender, Constants.USER_TYPE).then((value) {
       closeProgress();
-      if (value is String){
+      if (value != APIConst.SUCCESS){
         showToast(value);
       }else {
-        Common.userModel = value;
-        FirebaseAPI.registerUser(Common.userModel);
         gotoMainPage();
       }
     }).onError((error, stackTrace) {

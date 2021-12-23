@@ -68,7 +68,9 @@ class _InputPhoneNumberPageState extends State<InputPhoneNumberPage> {
       if (value != APIConst.SUCCESS){
         showToast(value);
       }else{
-        FirebaseAPI.registerUser(Common.userModel);
+        if (Utils.isUserReadyToWork(Common.userModel)){
+          FirebaseAPI.registerUser(Common.userModel);
+        }
         gotoMainPage();
       }
     }).onError((error, stackTrace) {

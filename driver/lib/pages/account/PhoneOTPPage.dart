@@ -44,7 +44,9 @@ class _PhoneOTPPageState extends State<PhoneOTPPage> {
           isUserExist = false;
         });
       }else{
-        FirebaseAPI.registerUser(Common.userModel);
+        if (Utils.isUserReadyToWork(Common.userModel)){
+          FirebaseAPI.registerUser(Common.userModel);
+        }
         gotoMainPage();
       }
     }).onError((error, stackTrace) {

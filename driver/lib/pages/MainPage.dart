@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:badges/badges.dart';
 import 'package:driver/assets/AppColors.dart';
 import 'package:driver/assets/Assets.dart';
 import 'package:driver/common/APIConst.dart';
@@ -8,9 +9,10 @@ import 'package:driver/common/Constants.dart';
 import 'package:driver/common/FirebaseAPI.dart';
 import 'package:driver/model/JobModel.dart';
 import 'package:driver/pages/Job/JobRequestPage.dart';
-import 'package:driver/pages/Job/TrackingPage.dart';
+import 'package:driver/pages/Job/GotoPortPage.dart';
 import 'package:driver/pages/account/TVerificationStatusPage.dart';
 import 'package:driver/pages/account/VerificationStatusPage.dart';
+import 'package:driver/pages/Job/MyJobPage.dart';
 import 'package:driver/utils/PermissionHelper.dart';
 import 'package:driver/utils/Prefs.dart';
 import 'package:driver/utils/log_utils.dart';
@@ -24,8 +26,7 @@ import 'package:flutter/painting.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_advanced_switch/flutter_advanced_switch.dart';
-import 'package:flutter_map/flutter_map.dart';
-import 'package:latlong2/latlong.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:visibility_aware_state/visibility_aware_state.dart';
 
 
@@ -44,6 +45,9 @@ class _MainPageState extends VisibilityAwareState<MainPage>{
 
   List<JobModel> allData = [];
   GlobalKey iconKey = GlobalKey();
+  List<Marker> markerList = [];
+  final controller = Completer<GoogleMapController>();
+  late GoogleMapController mapController;
 
   LatLng _center = LatLng(13.1896, 80.3039);
 
@@ -60,6 +64,12 @@ class _MainPageState extends VisibilityAwareState<MainPage>{
 
     checkLocationPermission();
 
+    //***** change widget visible status if user is ready to work ******//
+    FBroadcast.instance().register(Constants.NOTI_DOCUMENT_VERIFY_STATUS, (value, callback) {
+      refreshUserDetail();
+    });
+    //****//
+
     FBroadcast.instance().register(Constants.JOB_REQUEST, (value, callback) {
       Navigator.push(context, MaterialPageRoute(builder: (context) => JobRequestPage(Common.jobRequest)));
     });
@@ -75,15 +85,17 @@ class _MainPageState extends VisibilityAwareState<MainPage>{
       }
 
       if (switchController.value){
-        FirebaseAPI.updateLocation(
-            Common.userModel.id,
-            Common.myLat.toString(),
-            Common.myLng.toString(),
-            Common.heading.toString()).then((value) {
-          if (!value){
-            showToast('Firebase Error');
-          }
-        });
+        if (Utils.isUserReadyToWork(Common.userModel)){
+          FirebaseAPI.updateLocation(
+              Common.userModel.id,
+              Common.myLat.toString(),
+              Common.myLng.toString(),
+              Common.heading.toString()).then((value) {
+            if (!value){
+              showToast('Firebase Error');
+            }
+          });
+        }
       }
     });
 
@@ -91,6 +103,23 @@ class _MainPageState extends VisibilityAwareState<MainPage>{
     WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
       checkJobRequest();
       checkMyJob();
+    });
+  }
+
+  void refreshUserDetail(){
+    showProgress();
+    Common.api.login(Common.userModel.phone).then((value) {
+      closeProgress();
+      if (value == APIConst.SUCCESS){
+        loadData();
+        setState(() {});
+      }else {
+        showToast(APIConst.SERVER_ERROR);
+      }
+    }).onError((error, stackTrace) {
+      LogUtils.log('error ===> ${error.toString()}');
+      closeProgress();
+      showToast(APIConst.SERVER_ERROR);
     });
   }
 
@@ -137,7 +166,7 @@ class _MainPageState extends VisibilityAwareState<MainPage>{
 
   void checkMyJob(){
     if (Common.myJob.id > 0){
-      Navigator.push(context, MaterialPageRoute(builder: (context) => TrackingPage(Common.myJob)));
+      Navigator.push(context, MaterialPageRoute(builder: (context) => GotoPortPage(Common.myJob)));
     }
   }
 
@@ -198,12 +227,16 @@ class _MainPageState extends VisibilityAwareState<MainPage>{
 
     return Scaffold(
       appBar: AppBar(
+          elevation: 1,
           actions: [
             Container(
                 margin: EdgeInsets.only(top: 13, bottom: 13, right: 15),
-                child: AdvancedSwitch(
-                  controller: switchController,
-                  activeColor: Colors.green, inactiveColor: Colors.grey)),
+                child: Visibility(
+                  visible: Utils.isUserReadyToWork(Common.userModel),
+                  child: AdvancedSwitch(
+                    controller: switchController,
+                    activeColor: Colors.green, inactiveColor: Colors.grey),
+                )),
           ],
           title: Text('Home', style: TextStyle(color: Colors.white)), backgroundColor: AppColors.darkBlue),
       drawer: Drawer(
@@ -285,7 +318,9 @@ class _MainPageState extends VisibilityAwareState<MainPage>{
                 contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
                 dense: true,
                 leading: Icon(Icons.folder_sharp, color:Colors.black87), title: Text('My Documents', style: TextStyle(color:Colors.black87)),
-                trailing: Icon(Icons.error_outline_outlined, color: Colors.red),
+                trailing: Visibility(
+                    visible: !Utils.isAllDocVerified(Common.userModel),
+                    child: Icon(Icons.error_outline_outlined, color: Colors.red)),
                 onTap: (){
                   Navigator.pop(context);
                   Navigator.push(context, MaterialPageRoute(builder: (context) => VerificationStatusPage()));
@@ -295,6 +330,9 @@ class _MainPageState extends VisibilityAwareState<MainPage>{
                 contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
                 dense: true,
                 leading: Icon(Icons.insert_drive_file_sharp, color:Colors.black87), title: Text('My Trucks', style: TextStyle(color:Colors.black87)),
+                trailing: Visibility(
+                    visible: !Utils.isAllTruckDetailVerified(Common.userModel),
+                    child: Icon(Icons.error_outline_outlined, color: Colors.red)),
                 onTap: (){
                   Navigator.pop(context);
                   Navigator.push(context, MaterialPageRoute(builder: (context) => TVerificationStatusPage()));
@@ -336,7 +374,7 @@ class _MainPageState extends VisibilityAwareState<MainPage>{
           Column(
             children: [
               Expanded(
-                /*child: loadMap ? GoogleMap(
+                child: loadMap ? GoogleMap(
                     myLocationEnabled: true,
                     myLocationButtonEnabled: true,
                     zoomControlsEnabled: false,
@@ -345,11 +383,11 @@ class _MainPageState extends VisibilityAwareState<MainPage>{
                     initialCameraPosition:  CameraPosition(target: _center, zoom: 17), //getCameraPosition(),
                     markers: markerList.toSet(),
                     onMapCreated: (gcontroller) {
-                      controller.complete(gcontroller);
+                      //controller.complete(gcontroller);
                       setState(() {
                         mapController = gcontroller;
-                      });}) : Center(child: Text('Locating...'),)*/
-                child: loadMap ? FlutterMap(
+                      });}) : Center(child: Text('Locating...'),)
+                /*child: loadMap ? FlutterMap(
                   options: MapOptions(
                       center: LatLng(Common.myLat, Common.myLng),
                       zoom: 13.0),
@@ -380,7 +418,7 @@ class _MainPageState extends VisibilityAwareState<MainPage>{
                       ]
                     )
                   ],
-                ) : Center(child: Text('Locating...')),
+                ) : Center(child: Text('Locating...')),*/
               ),
               Container(
                 padding: EdgeInsets.only(top: 5, bottom: 5),
@@ -397,7 +435,7 @@ class _MainPageState extends VisibilityAwareState<MainPage>{
                   child: TabBar(
                     onTap: (index) {
                       if (index == 0){
-                        Navigator.pushNamed(context, '/JobSearchPage');
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => MyJobPage()));
                       }
                     },
                     indicatorColor: Colors.transparent,
@@ -409,7 +447,11 @@ class _MainPageState extends VisibilityAwareState<MainPage>{
                         Column(
                           children: [
                             SizedBox(height: 5),
-                            Icon(Icons.event_note),
+                            Common.myJob.id > 0 ? Badge(
+                              badgeColor: Colors.red,
+                              badgeContent: Text('1', style: TextStyle(color: Colors.white),),
+                              child: Icon(Icons.event_note),
+                            ) : Icon(Icons.event_note),
                             SizedBox(height: 5),
                             Text('Calendar', style: TextStyle(fontSize: 10)),
                           ],
@@ -444,14 +486,6 @@ class _MainPageState extends VisibilityAwareState<MainPage>{
               ),
             ],
           ),
-          /*Visibility(
-              visible: switchController.value,
-              child: Stack(
-                children: [
-                  Center(child: Container(width: 250, height: 250,child: WaterRipple())),
-                  Center(child: ClipOval(child: StsImgView(image: Assets.NELSON_IMG, width: 70, height: 70,),))
-                ],
-              )),*/
           Positioned(
               child: FloatingActionButton.small(
                 heroTag: 'FAB-9',

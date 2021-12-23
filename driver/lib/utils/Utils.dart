@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:driver/assets/AppColors.dart';
 import 'package:driver/common/Common.dart';
 import 'package:driver/common/Constants.dart';
+import 'package:driver/model/UserModel.dart';
 import 'package:fbroadcast/fbroadcast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_absolute_path/flutter_absolute_path.dart';
@@ -14,6 +15,70 @@ import 'package:intl/intl.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 
 class Utils {
+
+  static bool isAllTruckDetailVerified(UserModel userModel){
+
+    if (userModel.truckRegistrationModel.status != Constants.ACCEPT || isExpired(userModel.truckRegistrationModel.expirationDate))
+      return false;
+
+    if (userModel.truckInsuranceModel.status != Constants.ACCEPT || isExpired(userModel.truckInsuranceModel.expirationDate))
+      return false;
+
+    if (userModel.iftaStickerModel.status != Constants.ACCEPT || isExpired(userModel.iftaStickerModel.expirationDate))
+      return false;
+
+    if (userModel.emitionInspectionModel.status != Constants.ACCEPT || isExpired(userModel.emitionInspectionModel.expirationDate))
+      return false;
+
+    /*if (userModel.truckInformationModel.status != Constants.ACCEPT || userModel.truckInformationModel.status != Constants.ACCEPT)
+      return false;*/
+
+    return true;
+  }
+
+  static bool isAllDocVerified(UserModel userModel){
+
+    if (userModel.driverLicenseModel.status != Constants.ACCEPT || isExpired(userModel.driverLicenseModel.expirationDate))
+      return false;
+
+    if (userModel.twicCardModel.status != Constants.ACCEPT || isExpired(userModel.twicCardModel.expirationDate))
+      return false;
+
+    if (userModel.seaLinkCardModel.status != Constants.ACCEPT || isExpired(userModel.seaLinkCardModel.expirationDate))
+      return false;
+
+    if (userModel.medicalCardModel.status != Constants.ACCEPT || isExpired(userModel.medicalCardModel.expirationDate))
+      return false;
+
+    if (userModel.businessCertificateModel.status != Constants.ACCEPT || userModel.businessCertificateModel.status != Constants.ACCEPT)
+      return false;
+
+    if (userModel.businessEINModel.status != Constants.ACCEPT || userModel.businessEINModel.status != Constants.ACCEPT)
+      return false;
+
+    if (userModel.paymentDetailModel.status != Constants.ACCEPT || userModel.paymentDetailModel.status != Constants.ACCEPT)
+      return false;
+
+    if (userModel.alcoholDrugTestModel.status != Constants.ACCEPT || userModel.alcoholDrugTestModel.status != Constants.ACCEPT)
+      return false;
+
+    if (userModel.driverPhotoModel.status != Constants.ACCEPT || userModel.driverPhotoModel.status != Constants.ACCEPT)
+      return false;
+
+    return true;
+  }
+
+  static bool isUserReadyToWork(UserModel userModel) {
+    return isAllDocVerified(userModel) && isAllTruckDetailVerified(userModel);
+  }
+
+  static bool isExpired(int timestamp){
+
+    if (timestamp > DateTime.now().millisecondsSinceEpoch){
+      return false;
+    }
+    return true;
+  }
 
   static List<dynamic> sortData(dynamic allData, String sortKey){
     if (allData is List<String>){

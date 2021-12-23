@@ -22,11 +22,24 @@ class _SubmitDriverPhotoPageState extends State<SubmitDriverPhotoPage> {
 
   late dynamic frontPic = Assets.DEFAULT_IMG;
   bool isChecked = false;
-  bool loading = false;
+  bool loading = false, isEditable = true;
 
   @override
   void initState() {
     super.initState();
+
+    if (Common.userModel.driverPhotoModel.photo.isNotEmpty){
+      loadData();
+    }
+  }
+
+  void loadData(){
+    if (Common.userModel.driverPhotoModel.status == Constants.PENDING || Common.userModel.driverPhotoModel.status == Constants.ACCEPT){
+      isEditable = false;
+    }else {
+      isEditable = true;
+    }
+    frontPic = Common.userModel.driverPhotoModel.photo;
   }
 
   void submitDriverPhoto() async{
@@ -110,7 +123,8 @@ class _SubmitDriverPhotoPageState extends State<SubmitDriverPhotoPage> {
                         heroTag: 'FAB-12',
                         backgroundColor: Colors.white,
                         onPressed: () {
-                          loadPicture();
+                          if(isEditable)
+                            loadPicture();
                         }, child: Icon(Icons.camera_alt, color: AppColors.green))),
               ],
             ),
@@ -138,22 +152,25 @@ class _SubmitDriverPhotoPageState extends State<SubmitDriverPhotoPage> {
               ],
             ),
             SizedBox(height: 25),
-            Container(
-              width: double.infinity, height: 48,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(primary: AppColors.darkBlue),
-                onPressed: () {
-                  if (frontPic is AssetImage){
-                    showToast('Please upload front  picture of Alcohol Drug');
-                    return;
-                  }
-                  
-                  if (!isChecked){
-                    showToast('Please read the requirements');
-                    return;
-                  }
-                  submitDriverPhoto();
-                }, child: Text('SAVE', style: TextStyle(color: Colors.white, fontSize: 18)),
+            Visibility(
+              visible: Common.userModel.driverPhotoModel.status != Constants.ACCEPT,
+              child: Container(
+                width: double.infinity, height: 48,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(primary: AppColors.green),
+                  onPressed: () {
+                    if (frontPic is AssetImage){
+                      showToast('Please upload front  picture of Alcohol Drug');
+                      return;
+                    }
+
+                    if (!isChecked){
+                      showToast('Please read the requirements');
+                      return;
+                    }
+                    submitDriverPhoto();
+                  }, child: Text('SAVE', style: TextStyle(color: Colors.white, fontSize: 18)),
+                ),
               ),
             )
           ],

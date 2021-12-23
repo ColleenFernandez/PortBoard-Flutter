@@ -193,12 +193,17 @@ class FCMService {
         getJobRequest();
       }
 
+      // *** notification for doc & truck doc verification status change *** ///
       final notiType = message.data as Map<String, dynamic>;
       final notiTag = notiType[APIConst.tag];
       if (notiTag == Constants.NOTI_DOCUMENT_VERIFY_STATUS){
         FBroadcast.instance().broadcast(Constants.NOTI_DOCUMENT_VERIFY_STATUS);
       }
+      // ******* //
+
+
     });
+
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       LogUtils.log('A new onMessageOpenedApp event was published!');

@@ -29,7 +29,7 @@ class _SubmitBusinessEINPageState extends State<SubmitBusinessEINPage> {
   TextEditingController edtCity = new TextEditingController();
   TextEditingController edtZipCode = new TextEditingController();
 
-  bool loading = false;
+  bool loading = false, isEditable = true;
   late dynamic frontPic = Assets.DEFAULT_IMG;
   int issuedDate = 0;
   String state = '';
@@ -37,6 +37,21 @@ class _SubmitBusinessEINPageState extends State<SubmitBusinessEINPage> {
   @override
   void initState() {
     super.initState();
+
+    if (Common.userModel.businessEINModel.legalName.isNotEmpty){
+      loadData();
+    }
+  }
+
+  void loadData(){
+    edtLegalName.text = Common.userModel.businessEINModel.legalName;
+    edtBusinessEINNumber.text = Common.userModel.businessEINModel.einNumber;
+    edtIssuedDate.text = Utils.getDate(Common.userModel.businessEINModel.issuedDate);
+    edtAddress.text = Common.userModel.businessEINModel.address;
+    edtCity.text = Common.userModel.businessEINModel.city;
+    state = Common.userModel.businessEINModel.state;
+    edtZipCode.text = Common.userModel.businessEINModel.zipCode;
+    frontPic = Common.userModel.businessEINModel.frontPic;
   }
 
   void submitBusinessEINNumber() async{
@@ -178,128 +193,131 @@ class _SubmitBusinessEINPageState extends State<SubmitBusinessEINPage> {
           elevation: 1,
         ),
         body: SingleChildScrollView(
-          child: Container(
-            padding: EdgeInsets.only(top: 20, left: 15, right: 15),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Legal Name', style: TextStyle(color: AppColors.darkBlue)),
-                TextField(
-                  controller: edtLegalName,
-                  decoration: InputDecoration(
-                      suffixIcon: Icon(Icons.recent_actors, color: AppColors.darkBlue,)
-                  ),
+          padding: EdgeInsets.only(top: 20, left: 15, right: 15, bottom: 50),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Legal Name', style: TextStyle(color: AppColors.darkBlue)),
+              TextField(
+                controller: edtLegalName,
+                decoration: InputDecoration(
+                    suffixIcon: Icon(Icons.recent_actors, color: AppColors.darkBlue,)
                 ),
-                SizedBox(height: 20,),
-                Text('Business EIN Number', style: TextStyle(color: AppColors.darkBlue)),
-                TextField(
-                  controller: edtBusinessEINNumber,
-                  decoration: InputDecoration(
-                      suffixIcon: Icon(Icons.recent_actors, color: AppColors.darkBlue,)
-                  ),
+              ),
+              SizedBox(height: 20,),
+              Text('Business EIN Number', style: TextStyle(color: AppColors.darkBlue)),
+              TextField(
+                controller: edtBusinessEINNumber,
+                decoration: InputDecoration(
+                    suffixIcon: Icon(Icons.recent_actors, color: AppColors.darkBlue,)
                 ),
-                SizedBox(height: 20,),
-                Text('Issued Date', style: TextStyle(color: AppColors.darkBlue)),
-                TextField(
-                  controller: edtIssuedDate,
-                  decoration: InputDecoration(
-                      suffixIcon: IconButton(
-                        onPressed: () {
+              ),
+              SizedBox(height: 20,),
+              Text('Issued Date', style: TextStyle(color: AppColors.darkBlue)),
+              TextField(
+                controller: edtIssuedDate,
+                decoration: InputDecoration(
+                    suffixIcon: IconButton(
+                      onPressed: () {
+                        if (isEditable)
                           showCalendar();
-                        }, icon: Icon(Icons.event_note, color: AppColors.darkBlue,),
-                      )
-                  ),
+                      }, icon: Icon(Icons.event_note, color: AppColors.darkBlue,),
+                    )
                 ),
-                SizedBox(height: 20,),
-                Text('Address', style: TextStyle(color: AppColors.darkBlue)),
-                TextField(
-                  controller: edtAddress,
-                  decoration: InputDecoration(
-                      suffixIcon: Icon(Icons.location_on, color: AppColors.darkBlue,)
-                  ),
+              ),
+              SizedBox(height: 20,),
+              Text('Address', style: TextStyle(color: AppColors.darkBlue)),
+              TextField(
+                controller: edtAddress,
+                decoration: InputDecoration(
+                    suffixIcon: Icon(Icons.location_on, color: AppColors.darkBlue,)
                 ),
-                SizedBox(height: 20,),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      width: MediaQuery.of(context).size.width / 2 - 40,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('City', style: TextStyle(color: AppColors.darkBlue)),
-                          TextField(
-                            controller: edtCity,
-                          )
-                        ],
-                      ),
+              ),
+              SizedBox(height: 20,),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    width: MediaQuery.of(context).size.width / 2 - 40,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('City', style: TextStyle(color: AppColors.darkBlue)),
+                        TextField(
+                          controller: edtCity,
+                        )
+                      ],
                     ),
-                    Container(
-                      width: MediaQuery.of(context).size.width / 4 - 20,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('State', style: TextStyle(color: AppColors.darkBlue)),
-                          Column(
-                            children: [
-                              SizedBox(height: 9,),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(state),
-                                  InkWell(
-                                      onTap: () {
-                                        Navigator.push(context, MaterialPageRoute(builder: (context) => SelectStatePage())).then((value) {
-                                          if (value == null) return;
-                                          setState(() {
-                                            state = value as String;
-                                          });
+                  ),
+                  Container(
+                    width: MediaQuery.of(context).size.width / 4 - 20,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('State', style: TextStyle(color: AppColors.darkBlue)),
+                        Column(
+                          children: [
+                            SizedBox(height: 9,),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(state),
+                                InkWell(
+                                    onTap: () {
+                                      Navigator.push(context, MaterialPageRoute(builder: (context) => SelectStatePage())).then((value) {
+                                        if (value == null) return;
+                                        setState(() {
+                                          state = value as String;
                                         });
-                                      }, child: Icon(Icons.keyboard_arrow_down)),
-                                ],
-                              ),
-                              Container(
-                                margin: EdgeInsets.only(top: 15),
-                                width: double.infinity, height: 1,
-                                color: Colors.grey,
-                              )
-                            ],
-                          )
-                        ],
-                      ),
+                                      });
+                                    }, child: Icon(Icons.keyboard_arrow_down)),
+                              ],
+                            ),
+                            Container(
+                              margin: EdgeInsets.only(top: 15),
+                              width: double.infinity, height: 1,
+                              color: Colors.grey,
+                            )
+                          ],
+                        )
+                      ],
                     ),
-                    Container(
-                      width: MediaQuery.of(context).size.width / 4 - 20,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('Zip Code', style: TextStyle(color: AppColors.darkBlue)),
-                          TextField(
-                            controller: edtZipCode,
-                            keyboardType: TextInputType.number,
-                          )
-                        ],
-                      ),
+                  ),
+                  Container(
+                    width: MediaQuery.of(context).size.width / 4 - 20,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Zip Code', style: TextStyle(color: AppColors.darkBlue)),
+                        TextField(
+                          controller: edtZipCode,
+                          keyboardType: TextInputType.number,
+                        )
+                      ],
                     ),
-                  ],
-                ),
-                SizedBox(height: 20,),
-                Text('Photo'),
-                SizedBox(height: 10,),
-                Stack(
-                  children: [
-                    StsImgView(image: frontPic, width: MediaQuery.of(context).size.width, height: 250,),
-                    Positioned(right: 0, bottom: 0,
-                        child: FloatingActionButton(
-                            mini: true,
-                            heroTag: 'FAB-10',
-                            backgroundColor: Colors.white,
-                            onPressed: () {
+                  ),
+                ],
+              ),
+              SizedBox(height: 20,),
+              Text('Photo'),
+              SizedBox(height: 10,),
+              Stack(
+                children: [
+                  StsImgView(image: frontPic, width: MediaQuery.of(context).size.width, height: 250,),
+                  Positioned(right: 0, bottom: 0,
+                      child: FloatingActionButton(
+                          mini: true,
+                          heroTag: 'FAB-10',
+                          backgroundColor: Colors.white,
+                          onPressed: () {
+                            if (isEditable)
                               loadPicture();
-                            }, child: Icon(Icons.camera_alt, color: AppColors.green)))
-                  ],
-                ),
-                Container(
+                          }, child: Icon(Icons.camera_alt, color: AppColors.green)))
+                ],
+              ),
+              Visibility(
+                visible: Common.userModel.businessEINModel.status != Constants.ACCEPT,
+                child: Container(
                   margin: EdgeInsets.only(top: 30, bottom: 30),
                   width: double.infinity,
                   height: 48,
@@ -311,9 +329,9 @@ class _SubmitBusinessEINPageState extends State<SubmitBusinessEINPage> {
                       }
                     }, child: Text('SAVE'),
                   ),
-                )
-              ],
-            ),
+                ),
+              )
+            ],
           ),
         ),
       ),

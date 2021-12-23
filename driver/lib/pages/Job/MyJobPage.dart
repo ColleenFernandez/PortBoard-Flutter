@@ -1,24 +1,131 @@
 import 'package:driver/adapter/JobAdapter.dart';
 import 'package:driver/assets/AppColors.dart';
+import 'package:driver/common/Common.dart';
 import 'package:driver/model/JobModel.dart';
 import 'package:driver/pages/temp/AcceptRequestBottomSheet.dart';
 import 'package:driver/pages/temp/CompleteService.dart';
 import 'package:driver/pages/temp/ConfirmBottomSheet.dart';
 import 'package:driver/pages/temp/SaveChassisInfoBottomSheet.dart';
+import 'package:driver/utils/log_utils.dart';
 import 'package:fdottedline/fdottedline.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/physics.dart';
+import 'package:flutter/scheduler.dart';
 
-import 'ShowJobDetailBottomSheet.dart';
-import 'SignatureConfirm.dart';
+import '../temp/ShowJobDetailBottomSheet.dart';
+import '../temp/SignatureConfirm.dart';
 
-class JobSearchPage extends StatefulWidget{
+class MyJobPage extends StatefulWidget{
   @override
-  State<JobSearchPage> createState() => _JobSearchPageState();
+  State<MyJobPage> createState() => _MyJobPageState();
 }
 
-class _JobSearchPageState extends State<JobSearchPage> {
+class _MyJobPageState extends State<MyJobPage> {
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+      showCurrentJobDialog();
+    });
+  }
+
+
+  void showCurrentJobDialog() {
+    showDialog(context: context, builder: (BuildContext context) => Dialog(
+      insetPadding: EdgeInsets.all(10),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(height: 20),
+          Text('Current JOB', style: TextStyle(color: AppColors.darkBlue, fontSize: 20, fontWeight: FontWeight.bold),),
+          SizedBox(height: 5),
+          Divider(),
+          SizedBox(height: 10),
+          Row(
+              children: [
+                SizedBox(width: 10),
+                Icon(Icons.schedule, size: 15),
+                SizedBox(width: 5),
+                Text('Dropoff : '),
+                Text('${Common.myJob.dropOffDate} ${Common.myJob.dropOffTime}'),
+                Spacer(),
+                Text('\$ ${Common.myJob.finalPrice}', style: TextStyle(fontSize: 25, color: AppColors.darkBlue, fontWeight: FontWeight.bold)),
+                SizedBox(width: 10)]),
+          SizedBox(height: 10),
+          Container(
+              margin: EdgeInsets.only(
+                  left: 10, right: 10),
+              child: Stack(
+                  children: [
+                    Container(margin: EdgeInsets.only(top: 0.5), color: Colors.black12, width: double.infinity, height: 2),
+                    Container(color: AppColors.green, width: 30, height: 3)])),
+          SizedBox(height: 10),
+          Row(
+            children: [
+              SizedBox(width: 10),
+              Column(
+                  children: [
+                    SizedBox(height: 12),
+                    Container(width: 12, height: 12,
+                        decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(6)), color: AppColors.darkBlue)),
+                    Container(margin: EdgeInsets.only(left: 1, top: 1.5),
+                        child: FDottedLine(
+                            color: Colors.black38,
+                            height: 42,
+                            strokeWidth: 2,
+                            dottedLength: 5,
+                            space: 2)),
+                    Container(width: 12, height: 12,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.all(
+                                Radius.circular(6)),
+                            color: AppColors.green))
+                  ]),
+              SizedBox(width: 20),
+              Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: 10),
+                    Text(Common.myJob.pickupLocation, style: TextStyle(color: AppColors.darkBlue, fontWeight: FontWeight.bold)),
+                    SizedBox(height: 20),
+                    Container(width: MediaQuery.of(context).size.width - 90, height: 1, color: Colors.black12),
+                    SizedBox(height: 20),
+                    Text(Common.myJob.desLocation, style: TextStyle(color: AppColors.darkBlue, fontWeight: FontWeight.bold), maxLines: 1)
+                  ]),
+              SizedBox(width: 10)],
+          ),
+          Container(
+            margin: EdgeInsets.only(top: 20),
+            padding: EdgeInsets.only(
+                left: 15, right: 15, top: 8, bottom: 8),
+            color: AppColors.grey_5,
+            child: Row(
+              children: [
+                Icon(Icons.calendar_today_outlined, size: 15, color: Colors.black54),
+                SizedBox(width: 5),
+                Text('${Common.myJob.pickupDate} ${Common.myJob.pickupTime}', style: TextStyle(color: Colors.black54)),
+                Spacer(),
+                Icon(Icons.location_on_sharp, size: 15, color: Colors.black54),
+                SizedBox(width: 5),
+                Text('${Common.myJob.distance} mi', style: TextStyle(color: Colors.black54)),
+                Spacer(),
+                Icon(Icons.backpack, size: 15, color: Colors.black54),
+                SizedBox(width: 5),
+                Text('${Common.myJob.fuelGallons} gallons', style: TextStyle(color: Colors.black54))
+              ],
+            ),
+          ),
+        ],
+      )
+    ));
+  }
+
   @override
   Widget build(BuildContext context) {
+
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
@@ -243,7 +350,6 @@ class _JobSearchPageState extends State<JobSearchPage> {
                           child: JobAdapter().item(context));
                     })
             ),
-
           ],
         ),
       ),

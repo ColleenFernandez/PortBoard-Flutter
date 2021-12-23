@@ -86,6 +86,7 @@ class JobModel {
     model.booking = res[APIConst.booking];
     model.finalPrice = res[APIConst.finalPrice];
     model.status = int.parse(res[APIConst.status]);
+    model.dropOffDate = res[APIConst.dropOffDate];
 
     return model;
   }

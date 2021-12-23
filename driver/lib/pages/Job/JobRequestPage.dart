@@ -4,7 +4,7 @@ import 'package:driver/common/APIConst.dart';
 import 'package:driver/common/Common.dart';
 import 'package:driver/common/Constants.dart';
 import 'package:driver/model/JobModel.dart';
-import 'package:driver/pages/Job/TrackingPage.dart';
+import 'package:driver/pages/Job/GotoPortPage.dart';
 import 'package:driver/pages/MainPage.dart';
 import 'package:driver/utils/Prefs.dart';
 import 'package:driver/utils/log_utils.dart';
@@ -75,7 +75,7 @@ class _JobRequestPageState extends State<JobRequestPage> with SingleTickerProvid
         Common.jobRequest.driverId = int.parse(Common.userModel.id);
         Common.jobRequest.status = Constants.ACCEPT;
         Navigator.pop(context);
-        Navigator.push(context, MaterialPageRoute(builder: (context) => TrackingPage(Common.jobRequest)));
+        Navigator.push(context, MaterialPageRoute(builder: (context) => GotoPortPage(Common.jobRequest)));
       }else {
         showToast(APIConst.SERVER_ERROR);
       }

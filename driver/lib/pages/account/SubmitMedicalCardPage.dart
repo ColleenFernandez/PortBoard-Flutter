@@ -22,7 +22,7 @@ class SubmitMedicalCardPage extends StatefulWidget {
 class _SubmitMedicalCardPageState extends State<SubmitMedicalCardPage> {
 
   final int IS_FRONT_PIC = 100, IS_BACK_PIC = 101, IS_EXPIRY_DATE = 102, IS_ISSUED_DATE = 103;
-  bool loading = false;
+  bool loading = false, isEditable = true;
 
   TextEditingController edtExpiryDate = new TextEditingController();
   TextEditingController edtIssuedDate = new TextEditingController();
@@ -33,6 +33,23 @@ class _SubmitMedicalCardPageState extends State<SubmitMedicalCardPage> {
   @override
   void initState() {
     super.initState();
+
+    if (Common.userModel.medicalCardModel.frontPic.isNotEmpty){
+      loadData();
+    }
+  }
+
+  void loadData(){
+    if (Common.userModel.medicalCardModel.status == Constants.PENDING || Common.userModel.medicalCardModel.status == Constants.ACCEPT){
+      isEditable = false;
+    }else {
+      isEditable = true;
+    }
+
+    edtExpiryDate.text = Utils.getDate(Common.userModel.medicalCardModel.expirationDate);
+    edtIssuedDate.text = Utils.getDate(Common.userModel.medicalCardModel.issuedDate);
+    frontPic = Common.userModel.medicalCardModel.frontPic;
+    backPic = Common.userModel.medicalCardModel.backPic;
   }
 
   void submitMedicalCard() async{
@@ -149,7 +166,6 @@ class _SubmitMedicalCardPageState extends State<SubmitMedicalCardPage> {
     return new Scaffold(body: StsProgressHUD(context, _buildWidget(context), loading));
   }
 
-
   @override
   Widget _buildWidget(BuildContext context) {
     return GestureDetector(
@@ -161,17 +177,15 @@ class _SubmitMedicalCardPageState extends State<SubmitMedicalCardPage> {
           title: Text('Submit Medical Card'),
         ),
         body: SingleChildScrollView(
+          padding: EdgeInsets.only(top: 20, left: 20, right: 20, bottom: 50),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                margin: EdgeInsets.only(left: 30, top: 20),
-                child: Text('Expiration date'),
-              ),
+              Text('Expiration date'),
               Stack(
                 children: [
                   Container(
-                    margin: EdgeInsets.only(left: 30, top: 5, right: 30),
+                    margin: EdgeInsets.only(top: 5),
                     child: TextField(
                       enabled: false,
                       decoration: InputDecoration(
@@ -183,21 +197,22 @@ class _SubmitMedicalCardPageState extends State<SubmitMedicalCardPage> {
                     ),
                   ),
                   Positioned(
-                      right: 20,
+                      right: 0,
                       bottom: 0,
                       child: IconButton(onPressed: () {
-                        showCalendar(IS_EXPIRY_DATE);
+                        if (isEditable)
+                          showCalendar(IS_EXPIRY_DATE);
                       }, icon: Icon(Icons.calendar_today_rounded, color: AppColors.green)))
                 ],
               ),
               Container(
-                margin: EdgeInsets.only(left: 30, top: 20),
+                margin: EdgeInsets.only(top: 20),
                 child: Text('Issued date'),
               ),
               Stack(
                 children: [
                   Container(
-                    margin: EdgeInsets.only(left: 30, top: 5, right: 30),
+                    margin: EdgeInsets.only(top: 5),
                     child: TextField(
                       enabled: false,
                       decoration: InputDecoration(
@@ -209,19 +224,20 @@ class _SubmitMedicalCardPageState extends State<SubmitMedicalCardPage> {
                     ),
                   ),
                   Positioned(
-                      right: 20,
+                      right: 0,
                       bottom: 0,
                       child: IconButton(onPressed: () {
-                        showCalendar(IS_ISSUED_DATE);
+                        if (isEditable)
+                          showCalendar(IS_ISSUED_DATE);
                       }, icon: Icon(Icons.calendar_today_rounded, color: AppColors.green)))
                 ],
               ),
               Container(
-                margin: EdgeInsets.only(left: 30, top: 20),
+                margin: EdgeInsets.only(top: 20),
                 child: Text('Sealink card - front picture'),
               ),
               Container(
-                margin: EdgeInsets.only(left: 30, right: 30, top: 5),
+                margin: EdgeInsets.only(top: 5),
                 child: Stack(
                   children: [
                     StsImgView(image: frontPic, width: double.infinity, height: 250),
@@ -231,17 +247,18 @@ class _SubmitMedicalCardPageState extends State<SubmitMedicalCardPage> {
                             heroTag: 'FAB-12',
                             backgroundColor: Colors.white,
                             onPressed: () {
-                              loadPicture(IS_FRONT_PIC);
+                              if (isEditable)
+                                loadPicture(IS_FRONT_PIC);
                             }, child: Icon(Icons.camera_alt, color: AppColors.green)))
                   ],
                 ),
               ),
               Container(
-                margin: EdgeInsets.only(left: 30, top: 20),
+                margin: EdgeInsets.only(top: 20),
                 child: Text('Sealink card - back picture'),
               ),
               Container(
-                margin: EdgeInsets.only(left: 30, right: 30, top: 5),
+                margin: EdgeInsets.only(top: 5),
                 child: Stack(
                   children: [
                     StsImgView(image: backPic, width: double.infinity, height: 250),
@@ -251,22 +268,26 @@ class _SubmitMedicalCardPageState extends State<SubmitMedicalCardPage> {
                             backgroundColor: Colors.white,
                             mini: true,
                             onPressed: () {
-                              loadPicture(IS_BACK_PIC);
+                              if (isEditable)
+                                loadPicture(IS_BACK_PIC);
                             }, child: Icon(Icons.camera_alt, color: AppColors.green)))
                   ],
                 ),
               ),
-              Container(
-                margin: EdgeInsets.all(30),
-                width: double.infinity,
-                height: 48,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(primary: AppColors.green),
-                  onPressed: () {
-                    if (isValid()){
-                      submitMedicalCard();
-                    }
-                  }, child: Text('Submit'),
+              Visibility(
+                visible: Common.userModel.medicalCardModel.status != Constants.ACCEPT,
+                child: Container(
+                  margin: EdgeInsets.only(top: 30),
+                  width: double.infinity,
+                  height: 48,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(primary: AppColors.green),
+                    onPressed: () {
+                      if (isValid()){
+                        submitMedicalCard();
+                      }
+                    }, child: Text('Submit'),
+                  ),
                 ),
               )
             ],

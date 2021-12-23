@@ -9,17 +9,17 @@ import 'package:fdottedline/fdottedline.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-class TrackingPage extends StatefulWidget{
+class GotoPortPage extends StatefulWidget{
 
   JobModel? model;
 
-  TrackingPage(@required this.model);
+  GotoPortPage(@required this.model);
 
   @override
-  State<TrackingPage> createState() => _TrackingPageState();
+  State<GotoPortPage> createState() => _GotoPortPageState();
 }
 
-class _TrackingPageState extends State<TrackingPage> {
+class _GotoPortPageState extends State<GotoPortPage> {
 
   LatLng _center = LatLng(Common.myLat, Common.myLng);
 
@@ -35,6 +35,11 @@ class _TrackingPageState extends State<TrackingPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: AppColors.darkBlue,
+        elevation: 1,
+        title: Text('Goto Port Terminal', style: TextStyle(color: Colors.white, fontSize: 25),),
+      ),
       body: Stack(
         children: [
           GoogleMap(
@@ -47,23 +52,6 @@ class _TrackingPageState extends State<TrackingPage> {
                 setState(() {
                   mapController = gcontroller;
                 });}),
-          Container(width: MediaQuery.of(context).size.width, height: 80,
-            color: AppColors.darkBlue,
-            padding: EdgeInsets.only(top: 30, left: 10, right: 5),
-            child: Row(
-              children: [
-                IconButton(onPressed: () {
-                  Navigator.pop(context);
-                }, icon: Icon(Icons.arrow_back_ios, color: Colors.white,)),
-                Spacer(),
-                Text('Tracking', style: TextStyle(color: Colors.white, fontSize: 25),),
-                Spacer(),
-                IconButton(onPressed: () {
-
-                }, icon: Icon(Icons.more_vert_outlined, color: Colors.white,))
-              ],
-            )
-          ),
           Positioned(
             bottom: 0,
               child: Container(

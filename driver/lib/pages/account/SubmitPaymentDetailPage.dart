@@ -26,11 +26,32 @@ class _SubmitPaymentDetailPageState extends State<SubmitPaymentDetailPage> {
 
   String state = '';
 
-  bool loading = false;
+  bool loading = false, isEditable = true;
 
   @override
   void initState() {
     super.initState();
+
+    if (Common.userModel.paymentDetailModel.accountNumber.isNotEmpty){
+      loadData();
+    }
+  }
+
+  void loadData(){
+    if (Common.userModel.paymentDetailModel.status == Constants.PENDING || Common.userModel.paymentDetailModel.status == Constants.ACCEPT) {
+      isEditable = false;
+    }else {
+      isEditable = true;
+    }
+
+    edtBankName.text = Common.userModel.paymentDetailModel.bankName;
+    edtAccountNumber.text = Common.userModel.paymentDetailModel.accountNumber;
+    edtRouting.text = Common.userModel.paymentDetailModel.routing;
+    edtPhone.text = Common.userModel.paymentDetailModel.phone;
+    edtAddress.text = Common.userModel.paymentDetailModel.address;
+    edtCity.text = Common.userModel.paymentDetailModel.city;
+    state = Common.userModel.paymentDetailModel.state;
+    edtZipCode.text = Common.userModel.paymentDetailModel.zipCode;
   }
 
   void submitPaymentDetails() {
@@ -126,118 +147,119 @@ class _SubmitPaymentDetailPageState extends State<SubmitPaymentDetailPage> {
           elevation: 1,
         ),
         body: SingleChildScrollView(
-          child: Container(
-            padding: EdgeInsets.only(top: 20, left: 15, right: 15),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Bank Name', style: TextStyle(color: AppColors.darkBlue)),
-                TextField(
-                  controller: edtBankName,
-                  decoration: InputDecoration(
-                      suffixIcon: Icon(Icons.account_balance, color: AppColors.darkBlue,)
-                  ),
+          padding: EdgeInsets.only(top: 20, left: 15, right: 15),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Bank Name', style: TextStyle(color: AppColors.darkBlue)),
+              TextField(
+                controller: edtBankName,
+                decoration: InputDecoration(
+                    suffixIcon: Icon(Icons.account_balance, color: AppColors.darkBlue,)
                 ),
-                SizedBox(height: 20,),
-                Text('Account Number', style: TextStyle(color: AppColors.darkBlue)),
-                TextField(
-                  controller: edtAccountNumber,
-                  decoration: InputDecoration(
-                      suffixIcon: Icon(Icons.price_change, color: AppColors.darkBlue,)
-                  ),
+              ),
+              SizedBox(height: 20,),
+              Text('Account Number', style: TextStyle(color: AppColors.darkBlue)),
+              TextField(
+                controller: edtAccountNumber,
+                decoration: InputDecoration(
+                    suffixIcon: Icon(Icons.price_change, color: AppColors.darkBlue,)
                 ),
-                SizedBox(height: 20,),
-                Text('Routing', style: TextStyle(color: AppColors.darkBlue)),
-                TextField(
-                  controller: edtRouting,
-                  decoration: InputDecoration(
-                      suffixIcon: Icon(Icons.price_change, color: AppColors.darkBlue,)
-                  ),
+              ),
+              SizedBox(height: 20,),
+              Text('Routing', style: TextStyle(color: AppColors.darkBlue)),
+              TextField(
+                controller: edtRouting,
+                decoration: InputDecoration(
+                    suffixIcon: Icon(Icons.price_change, color: AppColors.darkBlue,)
                 ),
-                SizedBox(height: 20,),
-                Text('Phone number', style: TextStyle(color: AppColors.darkBlue)),
-                TextField(
-                  keyboardType: TextInputType.phone,
-                  controller: edtPhone,
-                  decoration: InputDecoration(
-                      suffixIcon: Icon(Icons.phone_enabled, color: AppColors.darkBlue,)
-                  ),
+              ),
+              SizedBox(height: 20,),
+              Text('Phone number', style: TextStyle(color: AppColors.darkBlue)),
+              TextField(
+                keyboardType: TextInputType.phone,
+                controller: edtPhone,
+                decoration: InputDecoration(
+                    suffixIcon: Icon(Icons.phone_enabled, color: AppColors.darkBlue,)
                 ),
-                SizedBox(height: 20,),
-                Text('Address', style: TextStyle(color: AppColors.darkBlue)),
-                TextField(
-                  controller: edtAddress,
-                  decoration: InputDecoration(
-                      suffixIcon: Icon(Icons.location_on, color: AppColors.darkBlue,)
-                  ),
+              ),
+              SizedBox(height: 20,),
+              Text('Address', style: TextStyle(color: AppColors.darkBlue)),
+              TextField(
+                controller: edtAddress,
+                decoration: InputDecoration(
+                    suffixIcon: Icon(Icons.location_on, color: AppColors.darkBlue,)
                 ),
-                SizedBox(height: 20,),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      width: MediaQuery.of(context).size.width / 2 - 40,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('City', style: TextStyle(color: AppColors.darkBlue)),
-                          TextField(
-                            controller: edtCity,
-                          )
-                        ],
-                      ),
+              ),
+              SizedBox(height: 20,),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    width: MediaQuery.of(context).size.width / 2 - 40,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('City', style: TextStyle(color: AppColors.darkBlue)),
+                        TextField(
+                          controller: edtCity,
+                        )
+                      ],
                     ),
-                    Container(
-                      width: MediaQuery.of(context).size.width / 4 - 20,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('State', style: TextStyle(color: AppColors.darkBlue)),
-                          Column(
-                            children: [
-                              SizedBox(height: 9,),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(state),
-                                  InkWell(
-                                      onTap: () {
-                                        Navigator.push(context, MaterialPageRoute(builder: (context) => SelectStatePage())).then((value) {
-                                          if (value == null) return;
-                                          setState(() {
-                                            state = value as String;
-                                          });
+                  ),
+                  Container(
+                    width: MediaQuery.of(context).size.width / 4 - 20,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('State', style: TextStyle(color: AppColors.darkBlue)),
+                        Column(
+                          children: [
+                            SizedBox(height: 9,),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(state),
+                                InkWell(
+                                    onTap: () {
+                                      Navigator.push(context, MaterialPageRoute(builder: (context) => SelectStatePage())).then((value) {
+                                        if (value == null) return;
+                                        setState(() {
+                                          state = value as String;
                                         });
-                                      }, child: Icon(Icons.keyboard_arrow_down)),
-                                ],
-                              ),
-                              Container(
-                                margin: EdgeInsets.only(top: 15),
-                                width: double.infinity, height: 1,
-                                color: Colors.grey,
-                              )
-                            ],
-                          )
-                        ],
-                      ),
+                                      });
+                                    }, child: Icon(Icons.keyboard_arrow_down)),
+                              ],
+                            ),
+                            Container(
+                              margin: EdgeInsets.only(top: 15),
+                              width: double.infinity, height: 1,
+                              color: Colors.grey,
+                            )
+                          ],
+                        )
+                      ],
                     ),
-                    Container(
-                      width: MediaQuery.of(context).size.width / 4 - 20,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('Zip Code', style: TextStyle(color: AppColors.darkBlue)),
-                          TextField(
-                            controller: edtZipCode,
-                            keyboardType: TextInputType.number,
-                          )
-                        ],
-                      ),
+                  ),
+                  Container(
+                    width: MediaQuery.of(context).size.width / 4 - 20,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Zip Code', style: TextStyle(color: AppColors.darkBlue)),
+                        TextField(
+                          controller: edtZipCode,
+                          keyboardType: TextInputType.number,
+                        )
+                      ],
                     ),
-                  ],
-                ),
-                SizedBox(height: 20,),
-                Container(
+                  ),
+                ],
+              ),
+              SizedBox(height: 20,),
+              Visibility(
+                visible: Common.userModel.paymentDetailModel.status != Constants.ACCEPT,
+                child: Container(
                   margin: EdgeInsets.only(top: 30, bottom: 30),
                   width: double.infinity,
                   height: 48,
@@ -249,9 +271,9 @@ class _SubmitPaymentDetailPageState extends State<SubmitPaymentDetailPage> {
                       }
                     }, child: Text('SAVE'),
                   ),
-                )
-              ],
-            ),
+                ),
+              )
+            ],
           ),
         ),
       ),

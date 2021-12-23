@@ -22,7 +22,7 @@ class SubmitSealinkCardPage extends StatefulWidget {
 class _SubmitSealinkCardPageState extends State<SubmitSealinkCardPage> {
 
   final int IS_FRONT_PIC = 100, IS_BACK_PIC = 101;
-  bool loading = false;
+  bool loading = false, isEditable = false;
 
   TextEditingController edtCardNumber =  new TextEditingController();
   TextEditingController edtExpiryDate = new TextEditingController();
@@ -33,6 +33,23 @@ class _SubmitSealinkCardPageState extends State<SubmitSealinkCardPage> {
   @override
   void initState() {
     super.initState();
+
+    if (Common.userModel.seaLinkCardModel.cardNumber.isNotEmpty){
+      loadData();
+    }
+  }
+
+  void loadData(){
+    if (Common.userModel.seaLinkCardModel.status == Constants.PENDING || Common.userModel.seaLinkCardModel.status == Constants.ACCEPT){
+      isEditable = false;
+    }else {
+      isEditable = true;
+    }
+
+    edtCardNumber.text = Common.userModel.seaLinkCardModel.cardNumber;
+    edtExpiryDate.text = Utils.getDate(Common.userModel.seaLinkCardModel.expirationDate);
+    frontPic = Common.userModel.seaLinkCardModel.frontPic;
+    backPic = Common.userModel.seaLinkCardModel.backPic;
   }
 
   void submitSealinkCard() async{
@@ -151,15 +168,13 @@ class _SubmitSealinkCardPageState extends State<SubmitSealinkCardPage> {
           title: Text('Submit Sealink Card'),
         ),
         body: SingleChildScrollView(
+          padding: EdgeInsets.only(top: 20, left: 20, right: 20, bottom: 50),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Text('Sealink Card number'),
               Container(
-                margin: EdgeInsets.only(left: 30, top: 20),
-                child: Text('Sealink Card number'),
-              ),
-              Container(
-                margin: EdgeInsets.only(left: 30, top: 5, right: 30),
+                margin: EdgeInsets.only(top: 5),
                 child: TextField(
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
@@ -172,13 +187,13 @@ class _SubmitSealinkCardPageState extends State<SubmitSealinkCardPage> {
                 ),
               ),
               Container(
-                margin: EdgeInsets.only(left: 30, top: 20),
+                margin: EdgeInsets.only(top: 20),
                 child: Text('Expiration date'),
               ),
               Stack(
                 children: [
                   Container(
-                    margin: EdgeInsets.only(left: 30, top: 5, right: 30),
+                    margin: EdgeInsets.only(top: 5),
                     child: TextField(
                       enabled: false,
                       decoration: InputDecoration(
@@ -190,19 +205,21 @@ class _SubmitSealinkCardPageState extends State<SubmitSealinkCardPage> {
                     ),
                   ),
                   Positioned(
-                      right: 20,
+                      right: 0,
                       bottom: 0,
                       child: IconButton(onPressed: () {
-                        showCalendar();
+                        if (isEditable)
+                          showCalendar();
+
                       }, icon: Icon(Icons.calendar_today_rounded, color: AppColors.green)))
                 ],
               ),
               Container(
-                margin: EdgeInsets.only(left: 30, top: 20),
+                margin: EdgeInsets.only(top: 20),
                 child: Text('Sealink card - front picture'),
               ),
               Container(
-                margin: EdgeInsets.only(left: 30, right: 30, top: 5),
+                margin: EdgeInsets.only(top: 5),
                 child: Stack(
                   children: [
                     StsImgView(image: frontPic, width: double.infinity, height: 250),
@@ -212,17 +229,19 @@ class _SubmitSealinkCardPageState extends State<SubmitSealinkCardPage> {
                             heroTag: 'FAB-12',
                             backgroundColor: Colors.white,
                             onPressed: () {
-                              loadPicture(IS_FRONT_PIC);
+                              if (isEditable)
+                                loadPicture(IS_FRONT_PIC);
+
                             }, child: Icon(Icons.camera_alt, color: AppColors.green)))
                   ],
                 ),
               ),
               Container(
-                margin: EdgeInsets.only(left: 30, top: 20),
+                margin: EdgeInsets.only(top: 20),
                 child: Text('Sealink card - back picture'),
               ),
               Container(
-                margin: EdgeInsets.only(left: 30, right: 30, top: 5),
+                margin: EdgeInsets.only(top: 5),
                 child: Stack(
                   children: [
                     StsImgView(image: backPic, width: double.infinity, height: 250),
@@ -232,22 +251,28 @@ class _SubmitSealinkCardPageState extends State<SubmitSealinkCardPage> {
                             backgroundColor: Colors.white,
                             mini: true,
                             onPressed: () {
-                              loadPicture(IS_BACK_PIC);
+
+                              if (isEditable)
+                                loadPicture(IS_BACK_PIC);
+
                             }, child: Icon(Icons.camera_alt, color: AppColors.green)))
                   ],
                 ),
               ),
-              Container(
-                margin: EdgeInsets.all(30),
-                width: double.infinity,
-                height: 48,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(primary: AppColors.green),
-                  onPressed: () {
-                    if (isValid()){
-                      submitSealinkCard();
-                    }
-                  }, child: Text('Submit'),
+              Visibility(
+                visible: Common.userModel.seaLinkCardModel.status != Constants.ACCEPT,
+                child: Container(
+                  margin: EdgeInsets.only(top: 30),
+                  width: double.infinity,
+                  height: 48,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(primary: AppColors.green),
+                    onPressed: () {
+                      if (isValid()){
+                        submitSealinkCard();
+                      }
+                    }, child: Text('Submit'),
+                  ),
                 ),
               )
             ],

@@ -27,8 +27,8 @@ class API {
 
   var dio = Dio();
 
-  String baseURL = 'https://admin.portboard.app/index.php/DriverApi/';
-  //static String baseURL = 'http://192.168.101.58:2000/index.php/DriverApi/';
+  //String baseURL = 'https://admin.portboard.app/index.php/DriverApi/';
+  static String baseURL = 'http://192.168.101.58:2000/index.php/DriverApi/';
   final header = {
     'Content-Type': 'application/x-www-form-urlencoded',
   };
@@ -704,7 +704,7 @@ class API {
     return APIConst.SUCCESS;
   }
 
-  Future<dynamic> register(String phone, String firstName, String lastName, String email, String gender, String userType) async {
+  Future<String> register(String phone, String firstName, String lastName, String email, String gender, String userType) async {
     final url = baseURL + '/register';
     final params = {
       APIConst.phone : phone,
@@ -725,6 +725,8 @@ class API {
       return msg;
     }
 
-    return UserModel.fromJSON(res.data[APIConst.user]);
+    Common.userModel = UserModel.fromJSON(res.data[APIConst.user]);
+
+    return APIConst.SUCCESS;
   }
 }

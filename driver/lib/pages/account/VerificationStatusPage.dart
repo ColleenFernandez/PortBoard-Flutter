@@ -4,14 +4,6 @@ import 'package:driver/common/APIConst.dart';
 import 'package:driver/common/Common.dart';
 import 'package:driver/common/Constants.dart';
 import 'package:driver/model/VerificationModel.dart';
-import 'package:driver/pages/account/AlcoholDrugTestDetailPage.dart';
-import 'package:driver/pages/account/BusinessCertificateDetailPage.dart';
-import 'package:driver/pages/account/BusinessEINDetailPage.dart';
-import 'package:driver/pages/account/DriverLicenseDetailPage.dart';
-import 'package:driver/pages/account/DriverPhotoPage.dart';
-import 'package:driver/pages/account/MedicalCardDetailPage.dart';
-import 'package:driver/pages/account/PaymentDetailPage.dart';
-import 'package:driver/pages/account/SealinkCaradDetailPage.dart';
 import 'package:driver/pages/account/SubmitAlcoholDrugTestPage.dart';
 import 'package:driver/pages/account/SubmitBusinessCertificatePage.dart';
 import 'package:driver/pages/account/SubmitBusinessEINPage.dart';
@@ -21,7 +13,6 @@ import 'package:driver/pages/account/SubmitMedicalCardPage.dart';
 import 'package:driver/pages/account/SubmitPaymentDetailPage.dart';
 import 'package:driver/pages/account/SubmitSealinkCardPage.dart';
 import 'package:driver/pages/account/SubmitTwicCardPage.dart';
-import 'package:driver/pages/account/TwicCardDetailPage.dart';
 import 'package:driver/utils/Utils.dart';
 import 'package:driver/utils/log_utils.dart';
 import 'package:driver/widget/StsProgressHUD.dart';
@@ -191,120 +182,84 @@ class _VerificationStatusPageState extends State<VerificationStatusPage> {
                     return InkWell(
                       onTap: () {
                         if (model.documentName == Constants.DRIVER_LICENSE) {
-                          if (model.status == Constants.NOT_SUBMITTED){
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => SubmitDriverLicensePage())).then((value) {
-                              if (value == null) return;
-                              if (value == true){
-                                refreshUserDetail();
-                              }
-                            });
-                          }else {
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => DriverLicenseDetailPage()));
-                          }
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => SubmitDriverLicensePage())).then((value) {
+                            if (value == null) return;
+                            if (value == true){
+                              refreshUserDetail();
+                            }
+                          });
                         }
 
                         if (model.documentName == Constants.TWIC_CARD){
-                          if (model.status == Constants.NOT_SUBMITTED){
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => SubmitTwicCardPage())).then((value) {
-                              if (value == null) return;
-                              if (value == true){
-                                refreshUserDetail();
-                              }
-                            });
-                          }else {
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => TwicCardDetailPage()));
-                          }
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => SubmitTwicCardPage())).then((value) {
+                            if (value == null) return;
+                            if (value == true){
+                              refreshUserDetail();
+                            }
+                          });
                         }
 
                         if (model.documentName == Constants.SEALINK_CARD){
-                          if (model.status == Constants.NOT_SUBMITTED){
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => SubmitSealinkCardPage())).then((value) {
-                              if (value == null) return;
-                              if (value == true) {
-                                refreshUserDetail();
-                              }
-                            });
-                          }else {
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => SealinkCaradDetailPage()));
-                          }
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => SubmitSealinkCardPage())).then((value) {
+                            if (value == null) return;
+                            if (value == true) {
+                              refreshUserDetail();
+                            }
+                          });
                         }
 
                         if (model.documentName == Constants.MEDICAL_CARD){
-                          if (model.status == Constants.NOT_SUBMITTED){
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => SubmitMedicalCardPage())).then((value) {
-                              if (value == null) return;
-                              if (value == true){
-                                refreshUserDetail();
-                              }
-                            });
-                          }else {
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => MedicalCardDetailPage()));
-                          }
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => SubmitMedicalCardPage())).then((value) {
+                            if (value == null) return;
+                            if (value == true){
+                              refreshUserDetail();
+                            }
+                          });
                         }
 
                         if (model.documentName == Constants.BUSINESS_CERTIFICATE){
-                          if (model.status == Constants.NOT_SUBMITTED){
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => SubmitBusinessCertificatePage())).then((value) {
-                              if (value == null) return;
-                              if (value == true){
-                                refreshUserDetail();
-                              }
-                            });
-                          }else {
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => BusinessCertificateDetailPage()));
-                          }
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => SubmitBusinessCertificatePage())).then((value) {
+                            if (value == null) return;
+                            if (value == true){
+                              refreshUserDetail();
+                            }
+                          });
                         }
 
                         if (model.documentName == Constants.BUSINESS_EIN_NUMBER){
-                          if (model.status == Constants.NOT_SUBMITTED){
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => SubmitBusinessEINPage())).then((value) {
-                              if (value == null) return;
-                              if (value == true){
-                                refreshUserDetail();
-                              }
-                            });
-                          }else {
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => BusinessEINDetailPage()));
-                          }
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => SubmitBusinessEINPage())).then((value) {
+                            if (value == null) return;
+                            if (value == true){
+                              refreshUserDetail();
+                            }
+                          });
                         }
 
                         if (model.documentName == Constants.PAYMENT_DETAILS) {
-                          if (model.status == Constants.NOT_SUBMITTED){
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => SubmitPaymentDetailPage())).then((value) {
-                              if (value == null) return;
-                              if (value == true){
-                                refreshUserDetail();
-                              }
-                            });
-                          }else {
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => PaymentDetailPage()));
-                          }
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => SubmitPaymentDetailPage())).then((value) {
+                            if (value == null) return;
+                            if (value == true){
+                              refreshUserDetail();
+                            }
+                          });
                         }
 
                         if (model.documentName == Constants.ALCOHOL_DRUG_TEST){
-                          if (model.status == Constants.NOT_SUBMITTED){
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => SubmitAlcoholDrugTestPage())).then((value) {
-                              if (value == null) return;
-                              if (value == true){
-                                refreshUserDetail();
-                              }
-                            });
-                          }else {
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => AlcoholDrugTestDetailPage()));
-                          }
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => SubmitAlcoholDrugTestPage())).then((value) {
+                            if (value == null) return;
+                            if (value == true){
+                              refreshUserDetail();
+                            }
+                          });
                         }
 
                         if (model.documentName == Constants.DRIVER_PHOTO){
-                          if (model.status == Constants.NOT_SUBMITTED){
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => SubmitDriverPhotoPage())).then((value) {
-                              if (value == null) return;
-                              if (value == true){
-                                refreshUserDetail();
-                              }
-                            });
-                          }else {
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => DriverPhotoPage()));
-                          }
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => SubmitDriverPhotoPage())).then((value) {
+                            if (value == null) return;
+                            if (value == true){
+                              refreshUserDetail();
+                            }
+                          });
                         }
                       },
                       child: Container(
