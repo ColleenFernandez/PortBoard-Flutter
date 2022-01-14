@@ -1,4 +1,6 @@
 import 'package:driver/common/APIConst.dart';
+import 'package:driver/model/UserModel.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
 class JobModel {
@@ -42,6 +44,13 @@ class JobModel {
   String sealNumber = '';
   String booking = '';
   String finalPrice = '';
+  UserModel brokerDetail = UserModel();
+  String chassisPic = '';
+  String containerPic = '';
+  String tirInGatePic = '';
+  String tirOutGatePic = '';
+  String sealNumberPic = '';
+  String deliveryOrderPic = '';
 
   JobModel();
 
@@ -87,6 +96,13 @@ class JobModel {
     model.finalPrice = res[APIConst.finalPrice];
     model.status = int.parse(res[APIConst.status]);
     model.dropOffDate = res[APIConst.dropOffDate];
+    model.brokerDetail = UserModel.fromJSON(res['brokerDetail']);
+    model.containerPic = res['containerPic'];
+    model.chassisPic = res['chassisPic'];
+    model.tirInGatePic = res['tirInGatePic'];
+    model.tirOutGatePic = res['tirOutGatePic'];
+    model.sealNumber = res['sealNumber'];
+    model.deliveryOrderPic = res['deliveryOrderPic'];
 
     return model;
   }

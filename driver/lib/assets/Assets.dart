@@ -19,7 +19,9 @@ class Assets{
   static const IMG_BG_FOCUS = AssetImage('assets/images/bg_focus.png');
   static const IMG_CRANE_ARM = AssetImage('assets/images/crane_arm.png');
   static const IMG_TRUCK = AssetImage('assets/images/img_truck.png');
+  static const IMG_COMPANY_CHASSIS = AssetImage('assets/images/ic_company_chassis.png');
 
+  static const String IC_TRUCK_PATH = 'assets/images/ic_truck.png';
   static const String ROBOTO_FONT = 'RobotoCondensed';
   static const String NOTI_ICON_PATH = 'assets/images/noti_icon.png';
   static const String LOADING_GIF_PATH = 'assets/images/loading_gif.gif';

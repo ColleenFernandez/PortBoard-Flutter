@@ -9,7 +9,7 @@ import 'package:driver/common/Constants.dart';
 import 'package:driver/common/FirebaseAPI.dart';
 import 'package:driver/model/JobModel.dart';
 import 'package:driver/pages/Job/JobRequestPage.dart';
-import 'package:driver/pages/Job/GotoPortPage.dart';
+import 'package:driver/pages/Job/SaveChassisTypePage.dart';
 import 'package:driver/pages/account/TVerificationStatusPage.dart';
 import 'package:driver/pages/account/VerificationStatusPage.dart';
 import 'package:driver/pages/Job/MyJobPage.dart';
@@ -77,6 +77,9 @@ class _MainPageState extends VisibilityAwareState<MainPage>{
     FBroadcast.instance().register(Constants.LOCATION_UPDATE, (value, callback) {
 
       if (!loadMap){
+        // check job status after location is acquired
+        checkMyJob();
+
         loadMap = true;
         _center = LatLng(Common.myLat, Common.myLng);
         changeOnOffline(Constants.ONLINE);
@@ -102,7 +105,6 @@ class _MainPageState extends VisibilityAwareState<MainPage>{
     updateToken();
     WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
       checkJobRequest();
-      checkMyJob();
     });
   }
 
@@ -166,7 +168,7 @@ class _MainPageState extends VisibilityAwareState<MainPage>{
 
   void checkMyJob(){
     if (Common.myJob.id > 0){
-      Navigator.push(context, MaterialPageRoute(builder: (context) => GotoPortPage(Common.myJob)));
+      Navigator.push(context, MaterialPageRoute(builder: (context) => SelectChassisTypePage(Common.myJob)));
     }
   }
 

@@ -7,6 +7,8 @@ import 'package:driver/common/Constants.dart';
 import 'package:driver/model/AlcoholDrugTestModel.dart';
 import 'package:driver/model/BusinessCertificateModel.dart';
 import 'package:driver/model/BusinessEINModel.dart';
+import 'package:driver/model/ChassisTypeModel.dart';
+import 'package:driver/model/CompanyChassisModel.dart';
 import 'package:driver/model/DriverLicenseModel.dart';
 import 'package:driver/model/DriverPhotoModel.dart';
 import 'package:driver/model/EmitionInspectionModel.dart';
@@ -28,10 +30,78 @@ class API {
   var dio = Dio();
 
   //String baseURL = 'https://admin.portboard.app/index.php/DriverApi/';
-  static String baseURL = 'http://192.168.101.58:2000/index.php/DriverApi/';
+  static String baseURL = 'http://192.168.0.58:2000/index.php/DriverApi/';
   final header = {
     'Content-Type': 'application/x-www-form-urlencoded',
   };
+
+  Future<String> saveChassisInfo(String jobId, String chassisType, String companyChassis, String chassisNumber, String chassisPic) async{
+    final url = baseURL + 'saveChassisInfo';
+    final Map<String, dynamic> params = {
+      'id' : jobId,
+      'chassisType' : chassisType,
+      'companyChassis' : companyChassis,
+      'chassisNumber' : chassisNumber,
+      'chassisPic' : chassisPic
+    };
+
+    final res = await dio.post(url, data:  params, options: Options(headers: header));
+    if (res.statusCode != 200){
+      return APIConst.SERVER_ERROR;
+    }
+
+    final msg = res.data[APIConst.MSG];
+    if (msg != APIConst.SUCCESS){
+      return msg;
+    }
+    return APIConst.SUCCESS;
+  }
+
+  Future<String> uploadPic(String frontPic) async {
+    final url = baseURL + 'uploadPic';
+    final params = FormData.fromMap({
+      APIConst.frontPic : frontPic.isNotEmpty ? await MultipartFile.fromFile(frontPic) : ''
+    });
+
+    final res = await dio.post(url, data:  params, options: Options(headers: header));
+    if (res.statusCode != 200){
+      return APIConst.SERVER_ERROR;
+    }
+
+    final msg = res.data[APIConst.MSG];
+    if (msg != APIConst.SUCCESS){
+      return msg;
+    }
+
+    return res.data['picURL'];
+  }
+
+  Future<dynamic> getChassisType() async{
+    final url = baseURL + 'getChassisType';
+
+    final res = await dio.post(url, options: Options(headers: header));
+    if (res.statusCode != 200){
+      return APIConst.SERVER_ERROR;
+    }
+
+    final msg = res.data[APIConst.MSG];
+    if (msg != APIConst.SUCCESS){
+      return msg;
+    }
+
+    return {
+      'chassisList' : ChassisTypeModel().getList(res.data['chassisList']),
+      'companyChassisList' : CompanyChassisModel().getList(res.data['companyChassisList'])
+    };
+  }
+
+  Future<String> getRoute(double pickupLat, double pickupLng, double desLat, double desLng) async {
+    String directionUrl = 'https://maps.googleapis.com/maps/api/directions/json?origin=${pickupLat},${pickupLng}&destination=${desLat},${desLng}&key=${Constants.GOOGLE_MAP_KEY}';
+    final result = await dio.get(directionUrl);
+
+    final String encodedPoint = result.data['routes'][0]['overview_polyline']['points'];
+    return  encodedPoint;
+  }
 
   Future<String> submitTruckInfo(String userId,
       String vehiculeIDNumber,

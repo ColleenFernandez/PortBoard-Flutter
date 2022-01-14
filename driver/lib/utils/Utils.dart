@@ -16,6 +16,29 @@ import 'package:multi_image_picker/multi_image_picker.dart';
 
 class Utils {
 
+  static checkJobPicType (int imgType){
+    switch (imgType) {
+      case 1:
+        showToast('Please select Container Picture');
+        break;
+      case 2:
+        showToast('Please select Chassis Picture');
+        break;
+      case 3 :
+        showToast('Please select TIR in gate Picture');
+        break;
+      case 4:
+        showToast('Please select TIR out gate Picture');
+        break;
+      case 5:
+        showToast('Please select Seal number Picture');
+        break;
+      case 6:
+        showToast('Please select Delivery Order Picture');
+        break;
+    }
+  }
+
   static bool isAllTruckDetailVerified(UserModel userModel){
 
     if (userModel.truckRegistrationModel.status != Constants.ACCEPT || isExpired(userModel.truckRegistrationModel.expirationDate))

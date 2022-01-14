@@ -15,4 +15,6 @@ class Common {
   static JobModel jobRequest = new JobModel();
   static JobModel myJob = new JobModel();
   static bool isMainPageLoaded = false;
+  static String chassisNumber = '';
+  static String containerNumber = '';
 }

@@ -27,7 +27,9 @@ class _MyJobPageState extends State<MyJobPage> {
     super.initState();
 
     WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
-      showCurrentJobDialog();
+      if (Common.myJob.id > 0) {
+        showCurrentJobDialog();
+      }
     });
   }
 
@@ -118,6 +120,34 @@ class _MyJobPageState extends State<MyJobPage> {
               ],
             ),
           ),
+          SizedBox(height: 15,),
+          Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  margin: EdgeInsets.only(left: 15),
+                    width: (MediaQuery.of(context).size.width - 50) / 2 - 15, height: 40,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(primary: AppColors.darkBlue),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text('Close'),
+                    )
+                ),
+                Container(
+                  margin: EdgeInsets.only(right: 15),
+                    width: (MediaQuery.of(context).size.width - 50) / 2 - 15, height: 40,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          primary: AppColors.green),
+                      onPressed: () {
+                        Navigator.pop(context, true);
+                      },
+                      child: Text('Go Detail'),
+                    ))]
+          ),
+          SizedBox(height: 15,),
         ],
       )
     ));

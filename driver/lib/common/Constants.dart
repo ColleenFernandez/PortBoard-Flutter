@@ -13,6 +13,9 @@ class Constants {
   static const LatLng initMapPosition = const LatLng(0.0, 0.0);
   static const double SOUND_VOL = 0.8;
 
+  // google map const
+  static const String GOOGLE_MAP_KEY = 'AIzaSyBOOl2m6uh4H6INt4wWUI5PJXXBE8-QfmM';
+
   // mapbox const
   static const String MAP_PUBLIC_KEY = 'pk.eyJ1IjoiYnVsZGllcjIxIiwiYSI6ImNrd2F3bnp3bDd1cXYydW8wZm16NTRxeDEifQ.79VqSwRmDwRrQhqgZ9rz9g';
   static const String MAP_SECRET_KEY = 'sk.eyJ1IjoiYnVsZGllcjIxIiwiYSI6ImNrd2t6bzFxcjF3d3gydnVzZ3AwNXg5ejUifQ.4SSHDTuc9zNhOZinTz4mLg';
